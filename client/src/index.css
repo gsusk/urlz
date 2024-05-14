@@ -1,7 +1,12 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --main-darkest-color: #151515;
+  --main-gray-color: #31363f;
+  --main-pink-color: hsl(340, 100%, 59%);
+  --main-white-color: #fff;
+  --color-alt-pink: #fb2576;
 }
-
+/*hsl(346, 77%, 55%);
 /*! normalize.css v8.0.1 | MIT License | github.com/necolas/normalize.css */
 
 /* Document
@@ -15,7 +20,8 @@
 html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
-  /* box-sizing: border-box; */
+  background: var(--main-darkest-color);
+  color: var(--main-white-color);
 }
 
 /**,
