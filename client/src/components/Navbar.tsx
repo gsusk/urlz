@@ -1,10 +1,10 @@
 function Navbar() {
   return (
-    <div>
-      <div>
-        <img src="" alt="" />
+    <div className="nav-container">
+      <div className="logo-cont">
+        <img src="/logosm.png" alt="logosmall" />
       </div>
-      <div>
+      <div className="grow-end-c">
         <button className="button __vmc">Sign Up</button>
         <button className="button __vmc">Sign In</button>
       </div>
