@@ -1,6 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { login } from "../../services/auth";
 
+type Auth = {
+  user: {
+    token: string;
+    email: string;
+    first_name: string;
+    last_name: string;
+    id: string;
+  } | null;
+  loading: boolean;
+  error: string | null;
+};
+
 const initialState: Auth = {
   user: null,
   loading: false,
@@ -8,10 +20,18 @@ const initialState: Auth = {
 };
 
 export const signIn = createAsyncThunk<
-  Auth,
+  Auth["user"],
   { email: string; password: string }
 >("auth/signin", async (credentials) => {
   const data = await login(credentials);
+  return data;
+});
+
+export const signUp = createAsyncThunk<
+  Auth,
+  { email: string; password: string; first_name: string; last_name: string }
+>("auth/signup", async (credentials) => {
+  const data = await register(credentials);
   return data;
 });
 
@@ -20,7 +40,18 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(signIn.fulfilled, (_state, _action) => {});
+    builder.addCase(signIn.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.error = null;
+    });
+    builder.addCase(signIn.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(signIn.rejected, (state) => {
+      state.loading = false;
+      state.error = "Temporal error";
+    });
   },
 });
 
