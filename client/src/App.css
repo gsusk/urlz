@@ -4,6 +4,7 @@
   padding-right: 3rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
+  border-bottom: 0.05rem solid var(--main-gray-color);
 }
 
 .nav-container {
@@ -13,7 +14,6 @@
 
 .main-container {
   display: flex;
-  border: 1px solid white;
   justify-content: center;
   padding-top: 1.3rem;
 }
@@ -29,8 +29,10 @@
 }
 
 .title > span {
+  pointer-events: none;
+  cursor: pointer;
   position: relative;
-  animation: jumpy 1s infinite;
+  animation: jumpy 1s ease-in-out 1;
   display: inline-block;
 }
 
@@ -39,6 +41,7 @@
   justify-content: center;
   flex-direction: column;
   max-width: 65rem;
+  padding-bottom: 3rem;
 }
 
 .main-description {
@@ -88,30 +91,36 @@
 }
 
 .title > span:nth-child(1) {
-  animation-delay: 0.1s;
+  --i: 0;
 }
 
 .title > span:nth-child(2) {
-  animation-delay: 0.2s;
+  --i: -100%;
 }
 
 .title > span:nth-child(3) {
-  animation-delay: 0.3s;
+  --i: -200%;
 }
 .title > span:nth-child(4) {
-  animation-delay: 0.4s;
+  --i: -300%;
 }
 
 .title > span:nth-child(5) {
-  animation-delay: 0.5s;
+  --i: -400%;
 }
+
 @keyframes jumpy {
-  0%,
-  40%,
-  100% {
-    transform: translateY(0);
+  0% {
+    opacity: 0;
+    transform: translateX(var(--i));
   }
-  20% {
-    transform: translateY(-1rem);
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
 }

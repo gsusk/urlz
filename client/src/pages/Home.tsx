@@ -17,10 +17,10 @@ function Home() {
           </small>
           <div className="main-description">
             <p>
-              Introducing , the ultimate URL shortening tool designed to
+              Introducing URLZY, the ultimate URL shortening tool designed to
               simplify your links and streamline your online experience. With
-              [Your Project Name], long and cumbersome URLs become concise and
-              shareable with just a click
+              URLZY, long and cumbersome URLs become concise and shareable with
+              just a click
             </p>
           </div>
         </div>
