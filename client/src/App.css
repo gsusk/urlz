@@ -11,6 +11,30 @@
   justify-content: space-around;
 }
 
+.main-container {
+  display: flex;
+  border: 1px solid white;
+  justify-content: center;
+  padding-top: 1.3rem;
+}
+
+.title {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+  margin-top: 2rem;
+}
+
+.presentation {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  max-width: 65rem;
+}
+
+.main-description {
+  max-width: 35rem;
+}
+
 .img-c-fit {
   display: flex;
   align-items: center;
