@@ -1,17 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
-type Auth = {
-  data: {
-    token: string;
-    username: string;
-    id: string;
-  } | null;
-  loading: boolean;
-  error: string | null;
-};
+import { login } from "../../services/auth";
 
 const initialState: Auth = {
-  data: null,
+  user: null,
   loading: false,
   error: null,
 };
@@ -19,11 +10,9 @@ const initialState: Auth = {
 export const signIn = createAsyncThunk<
   Auth,
   { email: string; password: string }
->("auth/signin", async ({ email, password }, api) => {
-  email;
-  password;
-  api;
-  return {} as Auth;
+>("auth/signin", async (credentials) => {
+  const data = await login(credentials);
+  return data;
 });
 
 const authSlice = createSlice({
@@ -31,7 +20,7 @@ const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(signIn.fulfilled, (state, action) => {});
+    builder.addCase(signIn.fulfilled, (_state, _action) => {});
   },
 });
 
