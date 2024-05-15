@@ -5,7 +5,13 @@ function Home() {
     <div>
       <section className="main-container">
         <div className="presentation">
-          <h1 className="title">URLZY</h1>
+          <h1 className="title">
+            <span>U</span>
+            <span>R</span>
+            <span>L</span>
+            <span>Z</span>
+            <span>Y</span>
+          </h1>
           <small>
             <i>Shorten Any Link</i>
           </small>
