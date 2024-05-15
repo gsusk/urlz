@@ -29,3 +29,31 @@ export async function login({
   );
   return response.data;
 }
+
+export async function register({
+  email,
+  password,
+  first_name,
+  last_name,
+}: {
+  email: string;
+  password: string;
+  first_name: string;
+  last_name: string;
+}) {
+  const response = await client.post<Credentials>(
+    "/auth/signup",
+    {
+      email,
+      password,
+      first_name,
+      last_name,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return response.data;
+}
