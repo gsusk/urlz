@@ -1,6 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./auth/auth";
 
-const rootReducer = {};
+const rootReducer = {
+  auth: authReducer,
+};
 
 const store = configureStore({
   reducer: rootReducer,
@@ -11,8 +14,7 @@ const store = configureStore({
   devTools: import.meta.env.DEV,
 });
 
-//types
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];
 export default store;
