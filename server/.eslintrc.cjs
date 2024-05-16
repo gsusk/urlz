@@ -12,5 +12,6 @@ module.exports = {
   rules: {
     prettier: 0,
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+    '@typescript-eslint/no-explicit-any': 'error',
   },
 };
