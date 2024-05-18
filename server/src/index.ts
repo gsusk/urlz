@@ -15,5 +15,18 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);
 
 app.listen(8081, () => {
-  console.log('server listening on 8081');
+  async function t() {
+    return await fetch('http://localhost:8081/api/url/create', {
+      method: 'POST',
+      body: JSON.stringify({
+        url: 'https://www.google.com',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+  }
+  t()
+    .then(() => console.log('ye'))
+    .catch((e) => console.error(e));
 });

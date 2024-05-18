@@ -26,6 +26,7 @@
     "eslint-plugin-prettier": "^5.1.3",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
+    "prisma": "^5.14.0",
     "regenerator-runtime": "^0.14.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.2.2"
@@ -40,10 +41,10 @@
     "bracketSpacing": true
   },
   "dependencies": {
+    "@prisma/client": "^5.14.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
-    "pg": "^8.11.5",
-    "prisma": "^5.13.0"
+    "pg": "^8.11.5"
   }
 }
