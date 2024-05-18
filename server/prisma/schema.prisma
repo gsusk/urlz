@@ -32,7 +32,7 @@ model User {
 }
 
 model Url {
-  id         Int        @id @default(autoincrement())
+  id         BigInt     @id @default(autoincrement())
   shortUrl   String?    @unique
   original   String?    
   userId     String?    @db.Uuid

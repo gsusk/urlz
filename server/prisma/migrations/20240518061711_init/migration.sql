@@ -11,7 +11,7 @@ CREATE TABLE "User" (
 
 -- CreateTable
 CREATE TABLE "Url" (
-    "id" SERIAL NOT NULL,
+    "id" BIGSERIAL NOT NULL,
     "shortUrl" TEXT,
     "original" TEXT,
     "userId" UUID,
