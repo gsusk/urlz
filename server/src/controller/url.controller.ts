@@ -9,11 +9,11 @@ const encode = (id: bigint) => {
   if (id === BigInt(0)) return '0';
   let shortUrl = '';
   let n = id;
-  while (n > BigInt(0)) {
+  do {
     const remainder = Number(n % BLENGTH);
     shortUrl = BASE62C[remainder] + shortUrl;
     n /= BLENGTH;
-  }
+  } while (n > BigInt(0));
   return shortUrl;
 };
 

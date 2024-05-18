@@ -37,7 +37,8 @@ model Url {
   original   String?    
   userId     String?    @db.Uuid
   user       User?      @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
-
+  
+  @@index([id])
   @@index([shortUrl])
 }
 

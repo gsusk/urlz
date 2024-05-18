@@ -27,6 +27,6 @@ app.listen(8081, () => {
     });
   }
   t()
-    .then(() => console.log('ye'))
+    .then(async (r) => console.log('ye', await r.json()))
     .catch((e) => console.error(e));
 });
