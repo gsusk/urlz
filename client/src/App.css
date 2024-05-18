@@ -16,16 +16,21 @@
   display: flex;
   justify-content: center;
   padding-top: 1.3rem;
+  overflow: hidden;
 }
 
 .title {
   font-size: 7rem;
+  margin-top: 0;
   margin-bottom: 1rem;
-  margin-top: 2rem;
   text-shadow: 3px 0 var(--main-pink-color), -3px 0 var(--main-pink-color),
     0 3px var(--main-pink-color), 0 -3px var(--main-pink-color),
     2px 2px var(--main-pink-color), -2px -2px var(--main-pink-color),
     2px -2px var(--main-pink-color), -2px 2px var(--main-pink-color);
+}
+
+.bmt {
+  margin-top: 2rem;
 }
 
 .title > span {
@@ -40,7 +45,7 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
-  max-width: 65rem;
+  max-width: 30rem;
   padding-bottom: 3rem;
 }
 

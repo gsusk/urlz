@@ -15,7 +15,7 @@ type Auth = {
 
 const initialState: Auth = {
   user: null,
-  loading: false,
+  loading: true,
   error: null,
 };
 

@@ -3,9 +3,9 @@ import Shortener from "../components/Shortener";
 function Home() {
   return (
     <div>
-      <section className="main-container">
+      <section className="main-container bmt">
         <div className="presentation">
-          <h1 className="title">
+          <h1 className="title ">
             <span>U</span>
             <span>R</span>
             <span>L</span>
@@ -24,10 +24,10 @@ function Home() {
             </p>
           </div>
         </div>
-      </section>
-      <section className="main-container">
-        <Shortener />
-        <div>asd</div>
+        <div>
+          <Shortener />
+          <div>asd</div>
+        </div>
       </section>
     </div>
   );

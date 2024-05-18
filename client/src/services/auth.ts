@@ -2,8 +2,7 @@ import client from "./axios";
 
 type Credentials = {
   email: string;
-  first_name: string;
-  last_name: string;
+  username: string;
   id: string;
   token: string;
 };

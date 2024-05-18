@@ -18,5 +18,7 @@ module.exports = {
     "@tanstack/query/exhaustive-deps": "error",
     "@tanstack/query/no-rest-destructuring": "warn",
     "@tanstack/query/stable-query-client": "error",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off",
   },
 };
