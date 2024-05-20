@@ -19,12 +19,12 @@ const encode = (id: bigint) => {
 };
 
 export const shortenUrl = async (
-  request: Request,
+  request: Request<object, unknown, { url: string }>,
   response: Response,
   next: NextFunction,
 ) => {
   try {
-    const { url } = request.body as { url: string };
+    const { url } = request.body;
     if (!url) {
       return response.json({
         error: 'No url provided',
@@ -36,7 +36,6 @@ export const shortenUrl = async (
         original: url,
       },
     });
-
     const shortenedUrl = encode(savedUrl.id);
     const shortUrl = await prisma.url.update({
       where: {
@@ -51,7 +50,6 @@ export const shortenUrl = async (
     });
     console.log(url);
     console.log(shortUrl);
-
     return response.status(200).json({
       shortUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
