@@ -128,14 +128,16 @@ export function errorHandler(
       console.log('handlePrismaError');
       error = handlePrismaError(err);
     } else if (error.name === 'JsonWebTokenError') {
-      error = handleJWTError();
+      error = new CustomError('JWTError', 400);
     } else if (error.name === 'TokenExpiredError') {
-      error = handleJWTError();
+      error = new CustomError('JWTError', 400);
     } else {
+      console.log(error);
       error = new CustomError('Something went wrong', HttpStatus.BAD_REQUEST);
     }
     return sendErrorProd(error, request, response);
   }
+  return sendErrorDev(err, request, response);
 }
 
 function sendErrorDev(err: Error, _req: Request, res: Response) {
@@ -147,10 +149,10 @@ function sendErrorDev(err: Error, _req: Request, res: Response) {
   ) {
     status = err.statusCode;
     console.log(err.serializeError());
-    res.status(status).json(err);
-  } else {
-    res.status(400).json(err);
+    return res.status(status).json(err);
   }
+  console.log(err);
+  return res.status(400).json(err);
 }
 
 function sendErrorProd(err: Error, _req: Request, res: Response) {
@@ -161,12 +163,12 @@ function sendErrorProd(err: Error, _req: Request, res: Response) {
   ) {
     const status = err.statusCode;
     console.log(err.serializeError());
-    res.status(status).json(err.serializeError());
-  } else {
-    res
-      .status(500)
-      .json({ name: 'Unexpected Error', message: 'Something went wrong' });
+    return res.status(status).json(err.serializeError());
   }
+  console.log(err);
+  return res
+    .status(500)
+    .json({ name: 'Unexpected Error', message: 'Something went wrong' });
 }
 
 function handlePrismaError(err: Prisma.PrismaClientKnownRequestError) {
@@ -182,12 +184,4 @@ function handlePrismaError(err: Prisma.PrismaClientKnownRequestError) {
     default:
       return new CustomError(`Something went wrong`, 500);
   }
-}
-
-function handleJWTError(): {
-  name: string;
-  message: string;
-  stack?: string | undefined;
-} {
-  return new CustomError('', 200);
 }
