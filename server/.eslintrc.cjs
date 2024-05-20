@@ -14,4 +14,6 @@ module.exports = {
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     '@typescript-eslint/no-explicit-any': 'error',
   },
+  'no-unused-vars': 'off',
+  '@typescript-eslint/no-unused-vars': 'off',
 };

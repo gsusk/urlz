@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
+import { Prisma } from '@prisma/client';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 const BLENGTH = BigInt(BASE62C.length);
 
-const encode = (id: bigint) => {
-  if (id === BigInt(0)) return '0';
+const encode = (id: bigint): string => {
   let shortUrl = '';
   let n = id;
   do {
@@ -28,12 +28,15 @@ export const shortenUrl = async (
     if (!url) {
       return response.json({
         error: 'No url provided',
-        status: 400,
+        name: 'BadRequest',
       });
     }
     const savedUrl = await prisma.url.create({
       data: {
         original: url,
+      },
+      select: {
+        id: true,
       },
     });
     const shortenedUrl = encode(savedUrl.id);
@@ -48,12 +51,13 @@ export const shortenUrl = async (
         shortUrl: true,
       },
     });
-    console.log(url);
-    console.log(shortUrl);
     return response.status(200).json({
       shortUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
   } catch (err) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError) {
+      console.log('yes, ===', err);
+    }
     return next(err);
   }
 };

@@ -3,6 +3,16 @@ import cors from 'cors';
 import helmet from 'helmet';
 import apiRoutes from './routes/api';
 import { redirectUrl } from './controller/url.controller';
+import { errorHandler } from './middleware/errorHandler';
+
+process
+  .on('unhandledRejection', (reason, p) => {
+    console.error(reason, 'Unhandled Rejection at Promise', p);
+  })
+  .on('uncaughtException', (err) => {
+    console.error(err, 'Uncaught Exception thrown');
+    process.exit(1);
+  });
 
 const app = express();
 
@@ -14,6 +24,8 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api', apiRoutes);
 app.use('/:url', redirectUrl);
+app.use(errorHandler);
+
 app.use('*', (req, res) => {
   const { name, stack, message } = new Error(
     `"${req.originalUrl}" doesnt exists.`,
