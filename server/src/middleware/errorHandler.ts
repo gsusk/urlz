@@ -1,6 +1,66 @@
 import { NextFunction, Request, Response } from 'express';
 import { Prisma } from '@prisma/client';
 
+export class ValidationError extends Error {
+  constructor(
+    public message: string,
+    public statusCode: number,
+    public errors: string[] | string,
+  ) {
+    super(message);
+    this.name = 'ValidationError';
+    this.statusCode = statusCode;
+    this.errors = Array.isArray(errors) ? errors : [errors];
+  }
+
+  serializeError() {
+    return {
+      name: this.name,
+      errors: this.errors as string[],
+      message: this.message,
+    };
+  }
+}
+
+export class AuthorizationError extends Error {
+  constructor(
+    public message: string,
+    public statusCode: number,
+    public errors: string[] | string,
+  ) {
+    super(message);
+    this.name = 'AuthorizationError';
+    this.statusCode = statusCode;
+    this.errors = Array.isArray(errors) ? errors : [errors];
+  }
+
+  serializeError() {
+    return {
+      name: this.name,
+      errors: this.errors as string[],
+      message: this.message,
+    };
+  }
+}
+
+export class CustomError extends Error {
+  constructor(
+    public message: string,
+    public statusCode: number,
+  ) {
+    super(message);
+    this.name = 'CustomError';
+    this.statusCode = statusCode;
+  }
+
+  serializeError() {
+    return {
+      name: this.name,
+      message: this.message,
+    };
+  }
+}
+
 export function errorHandler(
   err: Error,
   request: Request,
@@ -41,13 +101,9 @@ function handlePrismaError(err: Prisma.PrismaClientKnownRequestError): {
 } {
   switch (err.code) {
     case 'P2002':
+      console.log(err.meta.target);
       return {
         name: 'P2002',
-        message: 'Invalid input syntax for integer: "1"',
-      };
-    case 'P2003':
-      return {
-        name: 'P2003',
         message: 'Invalid input syntax for integer: "1"',
       };
     case 'P2004':
