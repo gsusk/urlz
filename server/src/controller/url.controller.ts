@@ -14,35 +14,72 @@ const encode = (id: bigint) => {
     shortUrl = BASE62C[remainder] + shortUrl;
     n /= BLENGTH;
   } while (n > BigInt(0));
+
   return shortUrl;
 };
 
 export const shortenUrl = async (
   request: Request,
   response: Response,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _next: NextFunction,
+  next: NextFunction,
 ) => {
-  const { url } = request.body as { url: string };
-  const savedUrl = await prisma.url.create({
-    data: {
-      original: url,
-    },
-  });
+  try {
+    const { url } = request.body as { url: string };
+    if (!url) {
+      return response.json({
+        error: 'No url provided',
+        status: 400,
+      });
+    }
+    const savedUrl = await prisma.url.create({
+      data: {
+        original: url,
+      },
+    });
 
-  const shortenedUrl = encode(savedUrl.id);
-  const shortUrl = await prisma.url.update({
+    const shortenedUrl = encode(savedUrl.id);
+    const shortUrl = await prisma.url.update({
+      where: {
+        id: savedUrl.id,
+      },
+      data: {
+        shortUrl: shortenedUrl,
+      },
+      select: {
+        shortUrl: true,
+      },
+    });
+    console.log(url);
+    console.log(shortUrl);
+
+    response.status(200).json({
+      shortUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const redirectUrl = async (
+  request: Request<{ url: string }>,
+  response: Response,
+  next: NextFunction,
+) => {
+  const { url } = request.params;
+  const shortUrl = await prisma.url.findUnique({
+    select: {
+      original: true,
+    },
     where: {
-      id: savedUrl.id,
-    },
-    data: {
-      shortUrl: shortenedUrl,
+      shortUrl: url,
     },
   });
-
-  console.log(shortUrl);
-
-  response.status(200).json({
-    url: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
-  });
+  if (!shortUrl?.original) {
+    return response.status(404).json({
+      message: 'URL not found',
+      status: 404,
+    });
+  }
+  next;
+  return response.redirect(301, shortUrl?.original);
 };
