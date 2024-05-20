@@ -118,29 +118,22 @@ export function errorHandler(
   response: Response,
   _next: NextFunction,
 ) {
-  if (process.env.NODE_ENV === 'development') {
-    return sendErrorDev(err, request, response);
+  //if (process.env.NODE_ENV === 'development') {
+  //  return sendErrorDev(err, request, response);
+  //}
+  let error = err;
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    console.log('handlePrismaError');
+    error = handlePrismaError(err);
+  } else if (error.name === 'JsonWebTokenError') {
+    error = new CustomError('JWTError', 400);
+  } else if (error.name === 'TokenExpiredError') {
+    error = new CustomError('JWTError', 400);
   }
-  if (process.env.NODE_ENV === 'production') {
-    let error = err;
-
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      console.log('handlePrismaError');
-      error = handlePrismaError(err);
-    } else if (error.name === 'JsonWebTokenError') {
-      error = new CustomError('JWTError', 400);
-    } else if (error.name === 'TokenExpiredError') {
-      error = new CustomError('JWTError', 400);
-    } else {
-      console.log(error);
-      error = new CustomError('Something went wrong', HttpStatus.BAD_REQUEST);
-    }
-    return sendErrorProd(error, request, response);
-  }
-  return sendErrorDev(err, request, response);
+  return sendErrorProd(error, request, response);
 }
 
-function sendErrorDev(err: Error, _req: Request, res: Response) {
+/*function sendErrorDev(err: Error, _req: Request, res: Response) {
   let status;
   if (
     err instanceof CustomError ||
@@ -153,7 +146,7 @@ function sendErrorDev(err: Error, _req: Request, res: Response) {
   }
   console.log(err);
   return res.status(400).json(err);
-}
+}*/
 
 function sendErrorProd(err: Error, _req: Request, res: Response) {
   if (

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
-import { Prisma } from '@prisma/client';
+import { HttpStatus, ValidationError } from '../middleware/errorHandler';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -26,10 +26,13 @@ export const shortenUrl = async (
   try {
     const { url } = request.body;
     if (!url) {
-      return response.json({
-        error: 'No url provided',
-        name: 'BadRequest',
-      });
+      return next(
+        new ValidationError(
+          'Bad Input',
+          HttpStatus.BAD_REQUEST,
+          'url must be provided',
+        ),
+      );
     }
     const savedUrl = await prisma.url.create({
       data: {
@@ -55,9 +58,6 @@ export const shortenUrl = async (
       shortUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
   } catch (err) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError) {
-      console.log('yes, ===', err);
-    }
     return next(err);
   }
 };
