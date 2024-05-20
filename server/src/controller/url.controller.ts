@@ -52,11 +52,11 @@ export const shortenUrl = async (
     console.log(url);
     console.log(shortUrl);
 
-    response.status(200).json({
+    return response.status(200).json({
       shortUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -65,21 +65,24 @@ export const redirectUrl = async (
   response: Response,
   next: NextFunction,
 ) => {
-  const { url } = request.params;
-  const shortUrl = await prisma.url.findUnique({
-    select: {
-      original: true,
-    },
-    where: {
-      shortUrl: url,
-    },
-  });
-  if (!shortUrl?.original) {
-    return response.status(404).json({
-      message: 'URL not found',
-      status: 404,
+  try {
+    const { url } = request.params;
+    const shortUrl = await prisma.url.findUnique({
+      select: {
+        original: true,
+      },
+      where: {
+        shortUrl: url,
+      },
     });
+    if (!shortUrl?.original) {
+      return response.status(404).json({
+        message: 'URL not found',
+        status: 404,
+      });
+    }
+    return response.redirect(301, shortUrl?.original);
+  } catch (err) {
+    next(err);
   }
-  next;
-  return response.redirect(301, shortUrl?.original);
 };
