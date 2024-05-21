@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
-import { HttpStatus, ValidationError } from '../middleware/errorHandler';
+import { HttpStatus } from '../constants/httpStatus';
+import { CustomError } from '../utils/customErrors';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -25,15 +26,6 @@ export const shortenUrl = async (
 ) => {
   try {
     const { url } = request.body;
-    if (!url) {
-      return next(
-        new ValidationError(
-          'Bad Input',
-          HttpStatus.BAD_REQUEST,
-          'url must be provided',
-        ),
-      );
-    }
     const savedUrl = await prisma.url.create({
       data: {
         original: url,
@@ -54,7 +46,7 @@ export const shortenUrl = async (
         shortUrl: true,
       },
     });
-    return response.status(200).json({
+    return response.status(201).json({
       shortUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
   } catch (err) {
@@ -78,12 +70,9 @@ export const redirectUrl = async (
       },
     });
     if (!shortUrl?.original) {
-      return response.status(404).json({
-        message: 'URL not found',
-        status: 404,
-      });
+      return next(new CustomError('Not Found', HttpStatus.NOT_FOUND));
     }
-    return response.redirect(301, shortUrl?.original);
+    return response.redirect(301, shortUrl.original);
   } catch (err) {
     next(err);
   }

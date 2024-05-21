@@ -3,7 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import apiRoutes from './routes/api';
 import { redirectUrl } from './controller/url.controller';
-import { errorHandler } from './middleware/errorHandler';
+import { errorHandler } from './utils/error';
 
 process
   .on('unhandledRejection', (reason, p) => {
