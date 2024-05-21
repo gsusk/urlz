@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { CustomError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
+import { addToken } from '../utils/jwt';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchema>,
@@ -33,7 +34,10 @@ export const signIn = async (
         new CustomError('Invalid User or Password', HttpStatus.NOT_FOUND),
       );
     }
-    response.status(200).json({ username: user.username, email: user.email });
+    const token = addToken(user);
+    response
+      .status(200)
+      .json({ username: user.username, email: user.email, token: token });
   } catch (err) {
     next(err);
   }
@@ -59,7 +63,8 @@ export const signUp = async (
         email: true,
       },
     });
-    response.status(201).json(user);
+    const token = addToken(user);
+    response.status(201).json({ ...user, token });
   } catch (err) {
     next(err);
   }
