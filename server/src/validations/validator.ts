@@ -1,21 +1,26 @@
 import z from 'zod';
 
-const SignUpSchema = z
-  .object({
-    username: z.string().trim().min(4),
-    email: z.string().trim().email(),
-    password: z.string().trim().min(7),
-    confirmPassword: z.string().trim().min(7),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: 'Passwords doesnt match',
-  });
+const sSchema = z.object({
+  username: z.string().trim().min(4),
+  email: z.string().trim().email(),
+  password: z.string().trim().min(7),
+  confirmPassword: z.string().trim().min(7),
+});
 
-const UrlSchema = z.object({
+export const SignUpSchema = sSchema.refine(
+  (data) => data.password === data.confirmPassword,
+  { message: 'Confirm Password', path: ['confirmPassword'] },
+);
+
+export const SignInSchema = sSchema.pick({
+  username: true,
+  password: true,
+});
+
+export const UrlSchema = z.object({
   url: z.string().trim().min(5).url({ message: 'Invalid Url' }),
 });
 
 export type SignUpSchema = z.infer<typeof SignUpSchema>;
-type UrlSchema = z.infer<typeof UrlSchema>;
-
-export default UrlSchema;
+export type SignInSchema = z.infer<typeof SignInSchema>;
+export type UrlSchema = z.infer<typeof UrlSchema>;
