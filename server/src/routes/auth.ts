@@ -1,7 +1,7 @@
-import { validation } from '@/utils/validation';
+import { validation } from '../utils/validation';
 import { signIn, signUp } from '../controller/auth.controller';
 import { Router } from 'express';
-import { SignInSchema, SignUpSchema } from '@/validations/validator';
+import { SignInSchema, SignUpSchema } from '../validations/schemas';
 const router = Router();
 
 router.post('/signin', validation(SignInSchema, 'body'), signIn);

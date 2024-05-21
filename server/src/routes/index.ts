@@ -1,6 +1,6 @@
-import { redirectUrl } from '@/controller/url.controller';
-import { validation } from '@/utils/validation';
-import UrlSchema from '@/validations/validator';
+import { redirectUrl } from '../controller/url.controller';
+import { validation } from '../utils/validation';
+import { UrlSchema } from '../validations/schemas';
 import { Router } from 'express';
 
 const router = Router();
