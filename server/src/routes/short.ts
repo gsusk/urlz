@@ -5,6 +5,6 @@ import UrlSchema from '../validations/validator';
 
 const router = Router();
 
-router.post('/create', validation(UrlSchema), shortenUrl);
+router.post('/create', validation(UrlSchema, 'body'), shortenUrl);
 
 export default router;
