@@ -11,7 +11,7 @@ type Auth = {
 };
 
 const initialState: Auth = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user") || "") || null,
   loading: true,
   error: null,
 };
@@ -23,6 +23,7 @@ export const signIn = createAsyncThunk<
   const data = await login(credentials);
   const { token, ...rest } = data;
   localStorage.setItem("x-auth-token", token);
+  localStorage.setItem("user", JSON.stringify(rest));
   return rest;
 });
 
@@ -33,6 +34,7 @@ export const signUp = createAsyncThunk<
   const data = await register(credentials);
   const { token, ...rest } = data;
   localStorage.setItem("x-auth-token", token);
+  localStorage.setItem("user", JSON.stringify(rest));
   return rest;
 });
 
