@@ -3,11 +3,8 @@ import { login, register } from "../../services/auth";
 
 type Auth = {
   user: {
-    token: string;
     email: string;
-    first_name: string;
-    last_name: string;
-    id: string;
+    username: string;
   } | null;
   loading: boolean;
   error: string | null;
@@ -24,15 +21,19 @@ export const signIn = createAsyncThunk<
   { email: string; password: string }
 >("auth/signin", async (credentials) => {
   const data = await login(credentials);
-  return data;
+  const { token, ...rest } = data;
+  localStorage.setItem("x-auth-token", token);
+  return rest;
 });
 
 export const signUp = createAsyncThunk<
   Auth["user"],
-  { email: string; password: string; first_name: string; last_name: string }
+  { email: string; password: string; username: string; confirmPassword: string }
 >("auth/signup", async (credentials) => {
   const data = await register(credentials);
-  return data;
+  const { token, ...rest } = data;
+  localStorage.setItem("x-auth-token", token);
+  return rest;
 });
 
 const authSlice = createSlice({
