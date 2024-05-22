@@ -15,7 +15,7 @@ function App() {
   return (
     <>
       <Header></Header>
-      <main className="mpc">
+      <main>
         <Routes>
           <Route path="/" element={<Home />}>
             <Route path="register" element={<Register />} />

@@ -20,7 +20,7 @@
 }
 
 .title {
-  font-size: 7rem;
+  font-size: 3rem;
   margin-top: 0;
   margin-bottom: 1rem;
   text-shadow: 3px 0 var(--main-pink-color), -3px 0 var(--main-pink-color),
@@ -39,9 +39,10 @@
 
 .lat-bar {
   position: absolute;
-  top: 0;
+  top: -2rem;
   right: 0;
-  width: 24rem;
+  bottom: 0;
+  width: 26rem;
   height: 100%;
   background-color: var(--main-pink-color);
 }
@@ -64,6 +65,16 @@
 
 .main-description {
   max-width: 35rem;
+  color: var(--main-lgray-color);
+  line-height: 1.6rem;
+}
+
+small {
+  color: var(--main-gray-color);
+}
+
+.h-container {
+  margin-top: 8rem;
 }
 
 .img-c-fit {

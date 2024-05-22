@@ -1,5 +1,5 @@
 function Register() {
-  return <div>r</div>;
+  return <div className="lat-bar">rs</div>;
 }
 
 export default Register;

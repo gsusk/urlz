@@ -1,6 +1,7 @@
 :root {
   font-family: Roboto, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   --main-darkest-color: #151515;
+  --main-lgray-color: #989ba0;
   --main-gray-color: #31363f;
   --main-pink-color: #ff2e74;
   --main-white-color: #fff;
