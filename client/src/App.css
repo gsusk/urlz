@@ -33,6 +33,19 @@
   margin-top: 2rem;
 }
 
+.rc {
+  position: relative;
+}
+
+.lat-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 24rem;
+  height: 100%;
+  background-color: var(--main-pink-color);
+}
+
 .title > span {
   pointer-events: none;
   cursor: pointer;

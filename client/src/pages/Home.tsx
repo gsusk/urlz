@@ -1,8 +1,10 @@
+import { Outlet } from "react-router-dom";
 import Shortener from "../components/Shortener";
 
 function Home() {
   return (
-    <div>
+    <div className="rc">
+      <Outlet />
       <section className="main-container bmt">
         <div className="presentation">
           <h1 className="title ">

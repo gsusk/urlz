@@ -11,7 +11,7 @@ type Auth = {
 };
 
 const initialState: Auth = {
-  user: JSON.parse(localStorage.getItem("user") || "") || null,
+  user: JSON.parse(localStorage.getItem("user") as string) || null,
   loading: true,
   error: null,
 };
