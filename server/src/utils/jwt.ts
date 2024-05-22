@@ -4,6 +4,7 @@ import { AuthorizationError, CustomError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 
 const SECRET = process.env.TOKEN_PRIVATE_SECRET as string;
+const jwtAlgorithm = 'HS256';
 
 export const addToken = ({
   username,
@@ -14,13 +15,13 @@ export const addToken = ({
 }) => {
   return jwt.sign({ email: email }, SECRET, {
     expiresIn: '2 days',
-    algorithm: 'HS256',
+    algorithm: jwtAlgorithm,
     subject: username,
   });
 };
 
 export const verifyJwt = (token: string) => {
-  return jwt.verify(token, SECRET, { algorithms: ['HS256'] });
+  return jwt.verify(token, SECRET, { algorithms: [jwtAlgorithm] });
 };
 
 export const tokenHandler = async (
