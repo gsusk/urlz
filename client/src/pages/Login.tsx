@@ -1,12 +1,20 @@
 import { Link } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
-import * as t from "./Login.css";
-console.log(t);
+import { GrClose } from "react-icons/gr";
+import "./Login.css";
+
 function Login() {
   return (
     <>
-      <div className="modal"></div>
+      <Link to={"/"} className="modal"></Link>
       <section className="lat-bar">
+        <div className="form-top-sep">
+          <Link to={"/"} className="close-form-button">
+            <button className="button __vsc log-b-f">
+              <GrClose />
+            </button>
+          </Link>
+        </div>
         <div className="lat-bar-icontainer">
           <div className="lb-i-cont">
             <img
@@ -27,6 +35,9 @@ function Login() {
                 <span>Sign Up</span>
               </Link>
             </p>
+          </div>
+          <div className="sign-form-cont">
+            <button className="sign-form-button button __vmc">Login</button>
           </div>
         </div>
       </section>

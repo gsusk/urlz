@@ -3,18 +3,16 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 22rem;
+  width: 23rem;
   height: 100%;
   background-color: var(--main-darkest-color);
-  padding: 0 1.5rem;
   box-shadow: 0 0 0.3rem var(--main-gray-color);
 }
 
 .lat-bar-icontainer {
   width: 100%;
   height: 100%;
-  border: 1px solid white;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   overflow-wrap: break-word;
   overflow: hidden;
   text-align: start;
@@ -27,6 +25,7 @@
   bottom: 0;
   right: 0;
   background-color: rgba(0, 0, 0, 0.3);
+  cursor: default;
 }
 
 .lb-i-cont {
@@ -44,4 +43,50 @@
   text-align: center;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.login-form-input {
+  width: 100%;
+  height: 2.2rem;
+  margin: 0.5rem 0;
+  border-radius: 0.3rem;
+  padding-left: 0.5rem;
+  font-weight: 500;
+  background-color: var(--main-darkest-color);
+  border: 0.1rem solid var(--main-white-color);
+  color: var(--main-white-color);
+}
+
+.login-form-label {
+  color: var(--main-lgray-color);
+  padding-left: 0.1rem;
+}
+
+.form-top-sep {
+  border-bottom: 0.1rem solid var(--main-gray-color);
+  padding: 1.6rem;
+  display: flex;
+  justify-content: end;
+}
+
+.close-form-button {
+  text-decoration: none;
+}
+
+.log-b-f {
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sign-form-cont {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin: 2rem 0;
+}
+
+.sign-form-button {
+  font-size: 1.2rem;
 }
