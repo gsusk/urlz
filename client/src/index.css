@@ -27,13 +27,14 @@ html {
   line-height: 1.5; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
   background: var(--main-darkest-color);
+  box-sizing: border-box;
 }
 
-/**,
+*,
 *::before,
 *::after {
   box-sizing: inherit;
-}*/
+}
 
 /* Sections
    ========================================================================== */

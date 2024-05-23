@@ -4,8 +4,8 @@ import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./pages/Home";
 import { useAppDispatch, useAppSelector } from "./hooks/appSelector";
-import Login from "./components/Login";
-import Register from "./components/Register";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 
 function App() {
   const user = useAppSelector((state) => state.auth.user);

@@ -1,0 +1,47 @@
+.lat-bar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 22rem;
+  height: 100%;
+  background-color: var(--main-darkest-color);
+  padding: 0 1.5rem;
+  box-shadow: 0 0 0.3rem var(--main-gray-color);
+}
+
+.lat-bar-icontainer {
+  width: 100%;
+  height: 100%;
+  border: 1px solid white;
+  padding: 1rem;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  text-align: start;
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.lb-i-cont {
+  max-width: 200px;
+  display: flex;
+  margin: 0 auto;
+  justify-content: center;
+}
+
+.lb-img {
+  object-fit: cover;
+}
+
+.feat-text {
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

@@ -27,11 +27,6 @@
   font-weight: 400;
 }
 
-.title > span {
-  position: relative;
-  animation: fliker 2s infinite ease-in-out alternate-reverse;
-}
-
 @keyframes fliker {
   0% {
     text-shadow: 0 0 0;
@@ -59,9 +54,6 @@
 small {
   color: var(--main-gray-color);
   margin-bottom: 1rem;
-}
-
-.h-container {
 }
 
 .img-c-fit {
@@ -108,22 +100,19 @@ small {
 
 .denote {
   color: var(--main-pink-color);
+  animation: fliker 2s infinite ease-in-out alternate-reverse;
+  &.__c,
+  __c:checked,
+  __c:visited {
+    cursor: pointer;
+    text-decoration: none;
+    padding: 0 0.5rem;
+  }
 }
-
 .bmt {
   margin-top: 2rem;
 }
 
 .rc {
   position: relative;
-}
-
-.lat-bar {
-  position: absolute;
-  top: -2rem;
-  right: 0;
-  bottom: 0;
-  width: 26rem;
-  height: 100%;
-  background-color: var(--main-pink-color);
 }
