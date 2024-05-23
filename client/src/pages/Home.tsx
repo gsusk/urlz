@@ -9,14 +9,11 @@ function Home() {
         <section className="main-container bmt">
           <div className="presentation">
             <h1 className="title">
-              <span>U</span>
-              <span>R</span>
-              <span>L</span>
-              <span>Z</span>
-              <span>Y</span>
+              Shorten and manage your <span className="denote">Urls</span> with
+              ease
             </h1>
             <small>
-              <i>Shorten Any Url</i>
+              <i>Make short and reliable urls.</i>
             </small>
             <div className="main-description">
               <p>
