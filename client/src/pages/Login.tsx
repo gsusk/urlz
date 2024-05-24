@@ -11,7 +11,7 @@ function Login() {
         <div className="form-top-sep">
           <Link to={"/"} className="close-form-button">
             <button className="button __vsc log-b-f">
-              <GrClose />
+              <GrClose className="GrClose" />
             </button>
           </Link>
         </div>

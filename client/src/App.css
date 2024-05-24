@@ -77,6 +77,7 @@ small {
   cursor: pointer;
   text-decoration: none;
   letter-spacing: 0.1rem;
+  font-size: 1rem;
   &.__vmc {
     background-color: var(--main-pink-color);
     color: var(--main-white-color);
