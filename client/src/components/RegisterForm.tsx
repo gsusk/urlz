@@ -30,6 +30,7 @@ function RegisterForm() {
             value={formData.username}
             onChange={handleChange}
             className="login-form-input"
+            required
           />
           <label htmlFor="email" className="login-form-label">
             Email
@@ -41,6 +42,7 @@ function RegisterForm() {
             name="email"
             onChange={handleChange}
             className="login-form-input"
+            required
           />
           <label htmlFor="password" className="login-form-label">
             Password
@@ -52,6 +54,7 @@ function RegisterForm() {
             value={formData.password}
             onChange={handleChange}
             className="login-form-input"
+            required
           />
           <div>
             <p className="feat-text">

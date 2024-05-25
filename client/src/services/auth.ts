@@ -7,7 +7,7 @@ type AuthenticatedUserData = {
 };
 
 type LoginForm = {
-  email: string;
+  username: string;
   password: string;
 };
 
@@ -18,11 +18,11 @@ type RegisterForm = {
   confirmPassword: string;
 };
 
-export async function login({ email, password }: LoginForm) {
+export async function login({ username, password }: LoginForm) {
   const response = await client.post<AuthenticatedUserData>(
     "/auth/signin",
     {
-      email,
+      username,
       password,
     },
     {

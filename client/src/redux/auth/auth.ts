@@ -18,7 +18,7 @@ const initialState: Auth = {
 
 export const signIn = createAsyncThunk<
   Auth["user"],
-  { email: string; password: string }
+  { username: string; password: string }
 >("auth/signin", async (credentials) => {
   const data = await login(credentials);
   const { token, ...rest } = data;

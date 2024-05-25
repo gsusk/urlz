@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { signIn } from "../redux/auth/auth";
+import { useAppDispatch } from "../hooks/appSelector";
 
 function LoginForm() {
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const dispatch = useAppDispatch();
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
@@ -13,8 +16,9 @@ function LoginForm() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    await dispatch(signIn(formData));
   };
 
   return (
@@ -31,6 +35,7 @@ function LoginForm() {
             value={formData.username}
             onChange={handleChange}
             className="login-form-input"
+            required
           />
           <label htmlFor="password" className="login-form-label">
             Password
@@ -42,6 +47,7 @@ function LoginForm() {
             value={formData.password}
             onChange={handleChange}
             className="login-form-input"
+            required
           />
           <div>
             <p className="feat-text">
