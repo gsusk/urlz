@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
@@ -16,43 +17,56 @@ function RegisterForm() {
   };
 
   return (
-    <div className="bmt">
-      <form>
-        <label htmlFor="username" className="login-form-label">
-          Username
-        </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          className="login-form-input"
-        />
-        <label htmlFor="email" className="login-form-label">
-          email
-        </label>
-        <input
-          type="email"
-          id="email"
-          value={formData.email}
-          name="email"
-          onChange={handleChange}
-          className="login-form-input"
-        />
-        <label htmlFor="password" className="login-form-label">
-          Password
-        </label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className="login-form-input"
-        />
-      </form>
-    </div>
+    <>
+      <div className="bmt">
+        <form>
+          <label htmlFor="username" className="login-form-label">
+            Username
+          </label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+            className="login-form-input"
+          />
+          <label htmlFor="email" className="login-form-label">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            name="email"
+            onChange={handleChange}
+            className="login-form-input"
+          />
+          <label htmlFor="password" className="login-form-label">
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className="login-form-input"
+          />
+          <div>
+            <p className="feat-text">
+              ALready have an account?
+              <Link className="denote __c" to={"/login"}>
+                <span>Sign In</span>
+              </Link>
+            </p>
+          </div>
+          <div className="sign-form-cont">
+            <button className="sign-form-button button __vmc">Register</button>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }
 

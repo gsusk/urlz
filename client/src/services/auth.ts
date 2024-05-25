@@ -1,19 +1,25 @@
 import client from "./axios";
 
-type Credentials = {
+type AuthenticatedUserData = {
   email: string;
   username: string;
   token: string;
 };
 
-export async function login({
-  email,
-  password,
-}: {
+type LoginForm = {
   email: string;
   password: string;
-}) {
-  const response = await client.post<Credentials>(
+};
+
+type RegisterForm = {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+};
+
+export async function login({ email, password }: LoginForm) {
+  const response = await client.post<AuthenticatedUserData>(
     "/auth/signin",
     {
       email,
@@ -33,13 +39,8 @@ export async function register({
   username,
   password,
   confirmPassword,
-}: {
-  email: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
-}) {
-  const response = await client.post<Credentials>(
+}: RegisterForm) {
+  const response = await client.post<AuthenticatedUserData>(
     "/auth/signup",
     {
       email,

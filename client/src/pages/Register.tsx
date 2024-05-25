@@ -28,17 +28,6 @@ function Register() {
             <p className="feat-text">Join us to access more features!</p>
           </div>
           <RegisterForm />
-          <div>
-            <p className="feat-text">
-              ALready have an account?
-              <Link className="denote __c" to={"/login"}>
-                <span>Sign In</span>
-              </Link>
-            </p>
-          </div>
-          <div className="sign-form-cont">
-            <button className="sign-form-button button __vmc">Register</button>
-          </div>
         </div>
       </section>
     </>

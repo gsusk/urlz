@@ -28,17 +28,6 @@ function Login() {
             <p className="feat-text">Join us to access more features!</p>
           </div>
           <LoginForm />
-          <div>
-            <p className="feat-text">
-              Don't have an account?
-              <Link className="denote __c" to={"/register"}>
-                <span>Sign Up</span>
-              </Link>
-            </p>
-          </div>
-          <div className="sign-form-cont">
-            <button className="sign-form-button button __vmc">Login</button>
-          </div>
         </div>
       </section>
     </>
