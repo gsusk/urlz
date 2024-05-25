@@ -3,15 +3,10 @@ import "./App.css";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 import Home from "./pages/Home";
-import { useAppDispatch, useAppSelector } from "./hooks/appSelector";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
 function App() {
-  const user = useAppSelector((state) => state.auth.user);
-  const loading = useAppSelector((state) => state.auth.loading);
-  const dispatch = useAppDispatch();
-
   return (
     <>
       <Header></Header>

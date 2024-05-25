@@ -58,14 +58,14 @@ function RegisterForm() {
           />
           <div>
             <p className="feat-text">
-              ALready have an account?
+              Already have an account?
               <Link className="denote __c" to={"/login"}>
                 <span>Sign In</span>
               </Link>
             </p>
           </div>
           <div className="sign-form-cont">
-            <button className="sign-form-button button __vmc">Register</button>
+            <button className="sign-form-button button __vmc">Sign Up</button>
           </div>
         </form>
       </div>

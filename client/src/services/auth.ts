@@ -1,8 +1,6 @@
 import client from "./axios";
 
 type AuthenticatedUserData = {
-  email: string;
-  username: string;
   token: string;
 };
 

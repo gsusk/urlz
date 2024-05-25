@@ -2,40 +2,34 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { login, register } from "../../services/auth";
 
 type Auth = {
-  user: {
-    email: string;
-    username: string;
-  } | null;
+  token: string | null;
   loading: boolean;
   error: string | null;
 };
 
+const token = localStorage.getItem("token");
 const initialState: Auth = {
-  user: JSON.parse(localStorage.getItem("user") as string) || null,
-  loading: true,
+  token: token,
+  loading: false,
   error: null,
 };
 
 export const signIn = createAsyncThunk<
-  Auth["user"],
+  Auth["token"],
   { username: string; password: string }
 >("auth/signin", async (credentials) => {
   const data = await login(credentials);
-  const { token, ...rest } = data;
-  localStorage.setItem("x-auth-token", token);
-  localStorage.setItem("user", JSON.stringify(rest));
-  return rest;
+  localStorage.setItem("token", data.token);
+  return data.token;
 });
 
 export const signUp = createAsyncThunk<
-  Auth["user"],
+  Auth["token"],
   { email: string; password: string; username: string; confirmPassword: string }
 >("auth/signup", async (credentials) => {
   const data = await register(credentials);
-  const { token, ...rest } = data;
-  localStorage.setItem("x-auth-token", token);
-  localStorage.setItem("user", JSON.stringify(rest));
-  return rest;
+  localStorage.setItem("user", data.token);
+  return data.token;
 });
 
 const authSlice = createSlice({
@@ -45,7 +39,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(signIn.fulfilled, (state, action) => {
       state.loading = false;
-      state.user = action.payload;
+      state.token = action.payload;
       state.error = null;
     });
     builder.addCase(signIn.pending, (state) => {
@@ -57,7 +51,7 @@ const authSlice = createSlice({
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
-      state.user = action.payload;
+      state.token = action.payload;
       state.error = null;
     });
     builder.addCase(signUp.pending, (state) => {
