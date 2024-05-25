@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { signIn } from "../redux/auth/auth";
-import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
+import { useAppDispatch } from "../hooks/appSelector";
 
 function LoginForm() {
   const [formData, setFormData] = useState({ username: "", password: "" });
