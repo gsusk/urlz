@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAppDispatch } from "../hooks/appSelector";
+import { signUp } from "../redux/auth/auth";
 
 function RegisterForm() {
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     email: "",
+    confirmPassword: "",
   });
+  const dispatch = useAppDispatch();
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
     const id = e.currentTarget.id;
@@ -16,10 +20,16 @@ function RegisterForm() {
     }));
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const test = await dispatch(signUp(formData)).unwrap();
+    console.log(test);
+  };
+
   return (
     <>
       <div className="bmt">
-        <form>
+        <form onSubmit={handleSubmit}>
           <label htmlFor="username" className="login-form-label">
             Username
           </label>
@@ -52,6 +62,18 @@ function RegisterForm() {
             id="password"
             name="password"
             value={formData.password}
+            onChange={handleChange}
+            className="login-form-input"
+            required
+          />
+          <label htmlFor="password" className="login-form-label">
+            Confirm Password
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={formData.confirmPassword}
             onChange={handleChange}
             className="login-form-input"
             required

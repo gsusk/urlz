@@ -17,7 +17,8 @@ function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await dispatch(signIn(formData));
+    const test = await dispatch(signIn(formData)).unwrap();
+    console.log(test);
   };
 
   return (
