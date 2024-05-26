@@ -1,5 +1,5 @@
 import {
-  AuthorizationError,
+  AuthenticationError,
   CustomError,
   ValidationError,
 } from './customErrors';
@@ -45,7 +45,7 @@ export function errorHandler(
 function sendErrorProd(err: Error, _req: Request, res: Response) {
   if (
     err instanceof CustomError ||
-    err instanceof AuthorizationError ||
+    err instanceof AuthenticationError ||
     err instanceof ValidationError
   ) {
     const status = err.statusCode;

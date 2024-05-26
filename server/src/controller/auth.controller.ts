@@ -50,6 +50,27 @@ export const signUp = async (
 ) => {
   try {
     const { username, email, password } = request.body;
+
+    const exists = await prisma.user.findFirst({
+      where: {
+        OR: [{ username }, { email }],
+      },
+      select: { username: true, email: true },
+    });
+
+    if (exists) {
+      const errors = [];
+
+      if (exists.username === username) {
+        errors.push(`Username '${username}' is already in use`);
+      }
+
+      if (exists.email === email) {
+        errors.push(`Email '${email}' is already in use`);
+      }
+      return next(new CustomError('Conflict', HttpStatus.CONFLICT));
+    }
+
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     const user = await prisma.user.create({

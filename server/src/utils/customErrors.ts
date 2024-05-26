@@ -21,7 +21,7 @@ export class ValidationError extends Error {
   }
 }
 
-export class AuthorizationError extends Error {
+export class AuthenticationError extends Error {
   constructor(
     public message: string,
     public statusCode: HttpStatus,

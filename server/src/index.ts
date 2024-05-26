@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import apiRoutes from './routes/api';
 import { redirectUrl } from './controller/url.controller';
 import { errorHandler } from './utils/error';
+import morgan from 'morgan';
 
 process
   .on('unhandledRejection', (reason, p) => {
@@ -15,8 +16,13 @@ process
   });
 
 const app = express();
-
-app.use(cors());
+app.use(morgan('dev'));
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  }),
+);
 app.use(helmet());
 app.use(express.json());
 app.use(express.static('public'));

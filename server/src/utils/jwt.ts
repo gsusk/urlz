@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { AuthorizationError, CustomError } from './customErrors';
+import { AuthenticationError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 
 const SECRET = process.env.TOKEN_PRIVATE_SECRET as string;
@@ -32,14 +32,13 @@ export const tokenHandler = async (
   const token = req.headers.authorization;
   if (!token) {
     return next(
-      new AuthorizationError('Invalid Token', HttpStatus.UNAUTHORIZED, [
-        'Invalid Token',
+      new AuthenticationError('JWTError', HttpStatus.UNAUTHORIZED, [
+        'Token Missing',
       ]),
     );
   }
   try {
     const verifiedToken = verifyJwt(token);
-    if (!verifiedToken) return next(new CustomError('unoath', 401));
     if (typeof verifiedToken !== 'string') {
       req.user = verifiedToken;
       return next();
