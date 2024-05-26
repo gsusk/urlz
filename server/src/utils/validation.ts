@@ -10,7 +10,7 @@ export const validation = (validator: z.Schema, option: optionType) => {
     const { error, data, success } = validator.safeParse(req[option]);
     console.log(error, data, success);
     if (!success) {
-      const errors = error.errors.map((i) => i.message);
+      const errors = error.errors.map((i) => `${i.path}: ${i.message}`);
       return next(
         new ValidationError('Bad Input', HttpStatus.BAD_REQUEST, errors),
       );

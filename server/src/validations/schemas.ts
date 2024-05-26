@@ -9,7 +9,7 @@ const sSchema = z.object({
 
 export const SignUpSchema = sSchema.refine(
   (data) => data.password === data.confirmPassword,
-  { message: 'Confirm Password', path: ['confirmPassword'] },
+  { message: 'Password dont match', path: ['confirmPassword'] },
 );
 
 export const SignInSchema = sSchema.pick({

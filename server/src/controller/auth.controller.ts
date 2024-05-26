@@ -2,7 +2,7 @@ import { prisma } from '../db';
 import { SignInSchema, SignUpSchema } from '../validations/schemas';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { CustomError } from '../utils/customErrors';
+import { CustomError, ValidationError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { addToken } from '../utils/jwt';
 
@@ -29,13 +29,14 @@ export const signIn = async (
       );
     }
     const isMatch = await bcrypt.compare(password, user.password);
+
     if (!isMatch) {
       return next(
         new CustomError('Invalid User or Password', HttpStatus.NOT_FOUND),
       );
     }
     const token = addToken(user);
-    response
+    return response
       .status(200)
       .json({ username: user.username, email: user.email, token: token });
   } catch (err) {
@@ -62,13 +63,13 @@ export const signUp = async (
       const errors = [];
 
       if (exists.username === username) {
-        errors.push(`Username '${username}' is already in use`);
+        errors.push(`username is already in use`);
       }
 
       if (exists.email === email) {
-        errors.push(`Email '${email}' is already in use`);
+        errors.push(`email is already in use`);
       }
-      return next(new CustomError('Conflict', HttpStatus.CONFLICT));
+      return next(new ValidationError('Conflict', HttpStatus.CONFLICT, errors));
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -87,6 +88,6 @@ export const signUp = async (
     const token = addToken(user);
     response.status(201).json({ ...user, token });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
