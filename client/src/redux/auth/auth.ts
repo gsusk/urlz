@@ -1,36 +1,39 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { login, register } from "../../services/auth";
+import {
+  type LoginForm,
+  type RegisterForm,
+  type AuthenticatedData,
+  login,
+  register,
+} from "../../services/auth";
 
-type Auth = {
-  token: string | null;
+type User = {
+  user: AuthenticatedData | null;
   loading: boolean;
   error: string | null;
 };
 
-const token = localStorage.getItem("token");
-const initialState: Auth = {
-  token: token,
+const initialState: User = {
+  user: null,
   loading: false,
   error: null,
 };
 
-export const signIn = createAsyncThunk<
-  Auth["token"],
-  { username: string; password: string }
->("auth/signin", async (credentials) => {
-  const data = await login(credentials);
-  localStorage.setItem("token", data.token);
-  return data.token;
-});
+export const signIn = createAsyncThunk<AuthenticatedData, LoginForm>(
+  "user/signin",
+  async (credentials) => {
+    const data = await login(credentials);
+    return data;
+  }
+);
 
-export const signUp = createAsyncThunk<
-  Auth["token"],
-  { email: string; password: string; username: string; confirmPassword: string }
->("auth/signup", async (credentials) => {
-  const data = await register(credentials);
-  localStorage.setItem("user", data.token);
-  return data.token;
-});
+export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
+  "user/signup",
+  async (credentials) => {
+    const data = await register(credentials);
+    return data;
+  }
+);
 
 const authSlice = createSlice({
   name: "auth",
@@ -39,7 +42,7 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(signIn.fulfilled, (state, action) => {
       state.loading = false;
-      state.token = action.payload;
+      state.user = action.payload;
       state.error = null;
     });
     builder.addCase(signIn.pending, (state) => {
@@ -51,7 +54,7 @@ const authSlice = createSlice({
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
-      state.token = action.payload;
+      state.user = action.payload;
       state.error = null;
     });
     builder.addCase(signUp.pending, (state) => {

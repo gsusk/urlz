@@ -1,9 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [show, setShow] = useState(false);
-
-  const handleClick = (e: React.FormEvent<HTMLButtonElement>) => {};
 
   return (
     <div className="nav-container">
@@ -11,12 +10,12 @@ function Navbar() {
         <img src="/logosm.png" alt="logosmall" />
       </div>
       <div className="grow-end-c">
-        <button className="button __vsc" onClick={handleClick}>
-          Sign Up
-        </button>
-        <button className="button __vsc" onClick={handleClick}>
-          Sign In
-        </button>
+        <Link to="/login">
+          <button className="button __vsc">Sign Up</button>
+        </Link>
+        <Link to="/register">
+          <button className="button __vsc">Sign In</button>
+        </Link>
       </div>
     </div>
   );

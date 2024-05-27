@@ -9,7 +9,7 @@ import Register from "./pages/Register";
 function App() {
   return (
     <>
-      <Header></Header>
+      <Header />
       <main>
         <Routes>
           <Route path="/" element={<Home />}>
@@ -18,7 +18,7 @@ function App() {
           </Route>
         </Routes>
       </main>
-      <Footer></Footer>
+      <Footer />
     </>
   );
 }

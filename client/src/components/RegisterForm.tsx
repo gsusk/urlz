@@ -66,7 +66,7 @@ function RegisterForm() {
             className="login-form-input"
             required
           />
-          <label htmlFor="password" className="login-form-label">
+          <label htmlFor="confirmPassword" className="login-form-label">
             Confirm Password
           </label>
           <input
