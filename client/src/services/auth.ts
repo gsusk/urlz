@@ -28,6 +28,7 @@ export async function login({ username, password }: LoginForm) {
       headers: {
         "Content-Type": "application/json",
       },
+      __retry: false,
     }
   );
   return response.data;
@@ -51,6 +52,7 @@ export async function register({
       headers: {
         "Content-Type": "application/json",
       },
+      __retry: false,
     }
   );
   return response.data;
