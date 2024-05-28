@@ -2,7 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./auth/auth";
 
 const rootReducer = {
-  auth: authReducer,
+  user: authReducer,
 };
 
 const store = configureStore({

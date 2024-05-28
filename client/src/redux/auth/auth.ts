@@ -14,18 +14,22 @@ type User = {
 };
 
 const initialState: User = {
-  user: null,
+  user: JSON.parse(localStorage.getItem("user") as string),
   loading: false,
   error: null,
 };
 
-export const signIn = createAsyncThunk<AuthenticatedData, LoginForm>(
-  "user/signin",
-  async (credentials) => {
-    const data = await login(credentials);
-    return data;
+export const signIn = createAsyncThunk<
+  AuthenticatedData,
+  LoginForm,
+  { rejectValue: string }
+>("user/signin", async (credentials, api) => {
+  const data = await login(credentials);
+  if (!data) {
+    return api.rejectWithValue("errorr");
   }
-);
+  return data;
+});
 
 export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
   "user/signup",
@@ -36,7 +40,7 @@ export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
 );
 
 const authSlice = createSlice({
-  name: "auth",
+  name: "user",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -48,9 +52,9 @@ const authSlice = createSlice({
     builder.addCase(signIn.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(signIn.rejected, (state) => {
+    builder.addCase(signIn.rejected, (state, action) => {
       state.loading = false;
-      state.error = "Temporal error";
+      state.error = action.error.message as string;
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;

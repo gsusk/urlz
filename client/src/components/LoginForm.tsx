@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { signIn } from "../redux/auth/auth";
-import { useAppDispatch } from "../hooks/appSelector";
+import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 
 function LoginForm() {
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const loading = useAppSelector((state) => state.user.loading);
   const dispatch = useAppDispatch();
+
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
     const id = e.currentTarget.id;
@@ -17,9 +19,12 @@ function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const test = await dispatch(signIn(formData)).unwrap();
-    console.log(test);
+    await dispatch(signIn(formData));
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>

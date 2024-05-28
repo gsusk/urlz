@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAppDispatch } from "../hooks/appSelector";
+import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { signUp } from "../redux/auth/auth";
 
 function RegisterForm() {
+  const loading = useAppSelector((state) => state.user.loading);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -22,9 +23,12 @@ function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const test = await dispatch(signUp(formData)).unwrap();
-    console.log(test);
+    await dispatch(signUp(formData));
   };
+
+  if (loading) {
+    return <div>Loading</div>;
+  }
 
   return (
     <>
