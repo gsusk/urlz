@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { NextFunction, Request, Response } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
-import { AuthenticationError } from './customErrors';
+import jwt, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken';
+import { AuthenticationError, CustomError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 
 const SECRET = process.env.TOKEN_PRIVATE_SECRET as string;
@@ -20,10 +21,23 @@ export const addAccessToken = ({
   username: string;
   email: string;
 }) => {
-  return jwt.sign({ email: email }, SECRET, {
-    expiresIn: '2 days',
-    algorithm: jwtAlgorithm,
-    subject: username,
+  return new Promise((res, rej) => {
+    jwt.sign(
+      { email: email },
+      SECRET,
+      {
+        expiresIn: '1h',
+        algorithm: jwtAlgorithm,
+        subject: username,
+      },
+      (err, payload) => {
+        if (err) {
+          console.error(err);
+          return rej(err);
+        }
+        res(payload!);
+      },
+    );
   });
 };
 
@@ -34,22 +48,25 @@ export const addRefreshToken = ({
   username: string;
   email: string;
 }) => {
-  return jwt.sign(
-    { email: email },
-    SECRET,
-    { subject: username, algorithm: jwtAlgorithm, expiresIn: '2 days' },
-    (err, payload) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
-    },
-  );
+  return new Promise<string>((res, rej) => {
+    jwt.sign(
+      { email: email },
+      SECRET,
+      { subject: username, algorithm: jwtAlgorithm, expiresIn: '12 days' },
+      (err, payload) => {
+        if (err) {
+          console.error(err);
+          return rej(err);
+        }
+        res(payload!);
+      },
+    );
+  });
 };
 
 export const verifyToken = (
   req: IRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ) => {
   const token = req.cookies['access_token'] as string | undefined;
@@ -64,30 +81,29 @@ export const verifyToken = (
 
   jwt.verify(token, SECRET, (err, decoded) => {
     if (err) {
-      return res.status(401).json(err.message);
+      console.error(err);
+      return next(
+        new AuthenticationError('JWTokenError', HttpStatus.UNAUTHORIZED, [
+          err.message,
+        ]),
+      );
     }
-    req;
     req.user = decoded as IRequest['user'];
     return next();
   });
 };
 
-export const tokenHandler = async (
+export const refreshToken = async (
   req: Request & { user: JwtPayload },
   _res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization;
+  const token = req.cookies['refresh-token'] as string | undefined;
   if (!token) {
     return next(
-      new AuthenticationError('JWTError', HttpStatus.UNAUTHORIZED, [
+      new AuthenticationError('JWTokenError', HttpStatus.UNAUTHORIZED, [
         'Token Missing',
       ]),
     );
-  }
-  const verifiedToken = verifyJwt(token);
-  if (typeof verifiedToken !== 'string') {
-    req.user = verifiedToken;
-    return next();
   }
 };
