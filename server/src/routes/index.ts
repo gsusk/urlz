@@ -1,5 +1,5 @@
 import { redirectUrl } from '../controller/url.controller';
-import { validation } from '../utils/validation';
+import { validation } from '../utils/validationMiddleware';
 import { UrlSchema } from '../validations/schemas';
 import { Router } from 'express';
 

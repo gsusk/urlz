@@ -1,4 +1,4 @@
-import { validation } from '../utils/validation';
+import { validation } from '../utils/validationMiddleware';
 import { shortenUrl } from '../controller/url.controller';
 import { Router } from 'express';
 import { UrlSchema } from '../validations/schemas';

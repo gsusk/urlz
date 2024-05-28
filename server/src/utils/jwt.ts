@@ -6,7 +6,14 @@ import { HttpStatus } from '../constants/httpStatus';
 const SECRET = process.env.TOKEN_PRIVATE_SECRET as string;
 const jwtAlgorithm = 'HS256';
 
-export const addToken = ({
+interface IRequest extends Request {
+  user: {
+    username: string;
+    email: string;
+  };
+}
+
+export const addAccessToken = ({
   username,
   email,
 }: {
@@ -20,8 +27,49 @@ export const addToken = ({
   });
 };
 
-export const verifyJwt = (token: string) => {
-  return jwt.verify(token, SECRET, { algorithms: [jwtAlgorithm] });
+export const addRefreshToken = ({
+  username,
+  email,
+}: {
+  username: string;
+  email: string;
+}) => {
+  return jwt.sign(
+    { email: email },
+    SECRET,
+    { subject: username, algorithm: jwtAlgorithm, expiresIn: '2 days' },
+    (err, payload) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+    },
+  );
+};
+
+export const verifyToken = (
+  req: IRequest,
+  res: Response,
+  next: NextFunction,
+) => {
+  const token = req.cookies['access_token'] as string | undefined;
+
+  if (!token) {
+    return next(
+      new AuthenticationError('TokenError', HttpStatus.UNAUTHORIZED, [
+        'Missing Token',
+      ]),
+    );
+  }
+
+  jwt.verify(token, SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json(err.message);
+    }
+    req;
+    req.user = decoded as IRequest['user'];
+    return next();
+  });
 };
 
 export const tokenHandler = async (
@@ -37,13 +85,9 @@ export const tokenHandler = async (
       ]),
     );
   }
-  try {
-    const verifiedToken = verifyJwt(token);
-    if (typeof verifiedToken !== 'string') {
-      req.user = verifiedToken;
-      return next();
-    }
-  } catch (err) {
-    return next(err);
+  const verifiedToken = verifyJwt(token);
+  if (typeof verifiedToken !== 'string') {
+    req.user = verifiedToken;
+    return next();
   }
 };
