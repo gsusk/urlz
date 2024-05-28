@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { NextFunction, Request, Response } from 'express';
-import jwt, { JsonWebTokenError, JwtPayload } from 'jsonwebtoken';
-import { AuthenticationError, CustomError } from './customErrors';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import { AuthenticationError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 
 const SECRET = process.env.TOKEN_PRIVATE_SECRET as string;
@@ -14,14 +14,11 @@ interface IRequest extends Request {
   };
 }
 
-export const addAccessToken = ({
-  username,
-  email,
-}: {
-  username: string;
-  email: string;
-}) => {
-  return new Promise((res, rej) => {
+export const generateAccessToken = (
+  { username, email }: { username: string; email: string },
+  res: Response,
+) => {
+  return new Promise<void>((resolve, rej) => {
     jwt.sign(
       { email: email },
       SECRET,
@@ -35,20 +32,28 @@ export const addAccessToken = ({
           console.error(err);
           return rej(err);
         }
-        res(payload!);
+        res.cookie('access_token', payload, {
+          httpOnly: false,
+          secure: false,
+          sameSite: 'lax',
+        });
+        resolve();
       },
     );
   });
 };
 
-export const addRefreshToken = ({
-  username,
-  email,
-}: {
-  username: string;
-  email: string;
-}) => {
-  return new Promise<string>((res, rej) => {
+export const generateRefreshToken = (
+  {
+    username,
+    email,
+  }: {
+    username: string;
+    email: string;
+  },
+  res: Response,
+) => {
+  return new Promise<void>((resolve, rej) => {
     jwt.sign(
       { email: email },
       SECRET,
@@ -58,7 +63,12 @@ export const addRefreshToken = ({
           console.error(err);
           return rej(err);
         }
-        res(payload!);
+        res.cookie('refresh-token', payload, {
+          httpOnly: true,
+          secure: false,
+          sameSite: 'lax',
+        });
+        resolve();
       },
     );
   });
@@ -69,7 +79,7 @@ export const verifyToken = (
   _res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies['access_token'] as string | undefined;
+  const token = req.cookies['access-token'] as string | undefined;
 
   if (!token) {
     return next(

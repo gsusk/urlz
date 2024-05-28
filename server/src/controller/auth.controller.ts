@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { CustomError, ValidationError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { addAccessToken } from '../utils/jwt';
+import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchema>,
@@ -36,10 +36,12 @@ export const signIn = async (
       );
     }
 
-    const token = addAccessToken(user);
+    const aToken = generateAccessToken(user, response);
+    const rToken = generateRefreshToken(user, response);
+    await Promise.all([rToken, aToken]);
     return response
       .status(200)
-      .json({ username: user.username, email: user.email, token: token });
+      .json({ username: user.username, email: user.email });
   } catch (err) {
     next(err);
   }
@@ -86,8 +88,10 @@ export const signUp = async (
         email: true,
       },
     });
-    const token = addAccessToken(user);
-    response.status(201).json({ ...user, token });
+    const aToken = generateAccessToken(user, response);
+    const rToken = generateRefreshToken(user, response);
+    await Promise.all([rToken, aToken]);
+    response.status(201).json({ ...user });
   } catch (err) {
     return next(err);
   }
