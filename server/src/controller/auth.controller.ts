@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { CustomError, ValidationError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { generateAccessToken, generateRefreshToken } from '../utils/jwt';
+import { generateAccessToken, generateRefreshToken } from '../utils/token';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchema>,
