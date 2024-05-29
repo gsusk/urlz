@@ -3,9 +3,15 @@ import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AuthenticationError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-
-const SECRET = process.env.TOKEN_PRIVATE_SECRET as string;
-const jwtAlgorithm = 'HS256';
+import {
+  ACCESS_COOKIE_CONFIG,
+  ACCESS_TOKEN_SECRET,
+  JWT_ALGORITHM,
+  REFRESH_COOKIE_CONFIG,
+  REFRESH_TOKEN_SECRET,
+  access_cookie,
+  refresh_cookie,
+} from '@/constants/jwt';
 
 interface IRequest extends Request {
   user: {
@@ -21,10 +27,10 @@ export const generateAccessToken = (
   return new Promise<void>((resolve, rej) => {
     jwt.sign(
       { email: email },
-      SECRET,
+      ACCESS_TOKEN_SECRET,
       {
         expiresIn: '1h',
-        algorithm: jwtAlgorithm,
+        algorithm: JWT_ALGORITHM,
         subject: username,
       },
       (err, payload) => {
@@ -32,11 +38,7 @@ export const generateAccessToken = (
           console.error(err);
           return rej(err);
         }
-        res.cookie('access_token', payload, {
-          httpOnly: false,
-          secure: false,
-          sameSite: 'lax',
-        });
+        res.cookie(access_cookie, payload, ACCESS_COOKIE_CONFIG);
         resolve();
       },
     );
@@ -56,18 +58,14 @@ export const generateRefreshToken = (
   return new Promise<void>((resolve, rej) => {
     jwt.sign(
       { email: email },
-      SECRET,
-      { subject: username, algorithm: jwtAlgorithm, expiresIn: '12 days' },
+      REFRESH_TOKEN_SECRET,
+      { subject: username, algorithm: JWT_ALGORITHM, expiresIn: '12 days' },
       (err, payload) => {
         if (err) {
           console.error(err);
           return rej(err);
         }
-        res.cookie('refresh-token', payload, {
-          httpOnly: true,
-          secure: false,
-          sameSite: 'lax',
-        });
+        res.cookie(refresh_cookie, payload, REFRESH_COOKIE_CONFIG);
         resolve();
       },
     );
@@ -79,7 +77,7 @@ export const verifyToken = (
   _res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies['access-token'] as string | undefined;
+  const token = req.cookies[access_cookie] as string | undefined;
 
   if (!token) {
     return next(
@@ -89,7 +87,7 @@ export const verifyToken = (
     );
   }
 
-  jwt.verify(token, SECRET, (err, decoded) => {
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
       console.error(err);
       return next(
@@ -108,7 +106,7 @@ export const refreshToken = async (
   _res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies['refresh-token'] as string | undefined;
+  const token = req.cookies[refresh_cookie] as string | undefined;
   if (!token) {
     return next(
       new AuthenticationError('JWTokenError', HttpStatus.UNAUTHORIZED, [
