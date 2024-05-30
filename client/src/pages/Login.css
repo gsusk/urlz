@@ -3,15 +3,15 @@
   top: 0;
   right: 0;
   bottom: 0;
-  width: 23rem;
+  width: 25rem;
   height: 100%;
   background-color: var(--main-darkest-color);
-  box-shadow: 0 0 0.3rem var(--main-gray-color);
+  box-shadow: 0 0 0.5rem var(--main-darkest-color);
 }
 
 .lat-bar-icontainer {
   width: 100%;
-  padding: 1rem 1.5rem;
+  padding: 1rem 2.5rem;
   overflow-wrap: break-word;
   overflow: hidden;
   text-align: start;
@@ -42,6 +42,18 @@
   text-align: center;
   text-overflow: ellipsis;
   overflow: hidden;
+}
+
+.password-cover-wrapper {
+  position: relative;
+}
+.password-cover-wrapper > input {
+  padding-right: 3rem;
+}
+.password-cover-icon {
+  position: absolute;
+  top: 1.05rem;
+  right: 1rem;
 }
 
 .login-form-input {
@@ -84,4 +96,15 @@
   justify-content: center;
   align-content: center;
   margin: 2rem 0;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px var(--main-darkest-color) inset !important;
+}
+
+input:-webkit-autofill {
+  -webkit-text-fill-color: var(--main-white-color) !important;
 }

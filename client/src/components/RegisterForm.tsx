@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { signUp } from "../redux/auth/auth";
+import { FaRegEye } from "react-icons/fa";
+import { FaRegEyeSlash } from "react-icons/fa6";
 
 function RegisterForm() {
   const loading = useAppSelector((state) => state.user.loading);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
     email: "",
     confirmPassword: "",
   });
+  const [inputType, setInputType] = useState("password");
   const dispatch = useAppDispatch();
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
@@ -61,15 +65,30 @@ function RegisterForm() {
           <label htmlFor="password" className="login-form-label">
             Password
           </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="login-form-input"
-            required
-          />
+          <div className="password-cover-wrapper">
+            <input
+              type={inputType}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="login-form-input"
+              ref={passwordRef}
+              autoComplete="new-password"
+              required
+            />
+            {inputType === "text" ? (
+              <FaRegEyeSlash
+                className="password-cover-icon"
+                onClick={() => setInputType("password")}
+              />
+            ) : (
+              <FaRegEye
+                className="password-cover-icon"
+                onClick={() => setInputType("text")}
+              />
+            )}
+          </div>
           <label htmlFor="confirmPassword" className="login-form-label">
             Confirm Password
           </label>
@@ -80,6 +99,7 @@ function RegisterForm() {
             value={formData.confirmPassword}
             onChange={handleChange}
             className="login-form-input"
+            autoComplete="new-password"
             required
           />
           <div>
