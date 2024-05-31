@@ -1,10 +1,56 @@
+.outer-shortener-container {
+}
+
 .shortener-container {
   display: flex;
   flex-direction: column;
+  border-radius: 1rem;
+  box-shadow: 0 0 0.4rem var(--main-gray-color);
+  width: 22rem;
+  overflow: hidden;
+  padding: 1rem 2rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.shortener-container:hover {
+  transform: translate(-0.1rem, -0.1rem);
+}
+
+@keyframes moveup {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  100% {
+    transform: translate(2rem, 2rem);
+  }
+}
+
+.shortener-label {
+  color: var(--main-white-color);
+  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  font-size: 1.1rem;
 }
 
 .long-url-input {
+  padding: 0.3rem 0.5rem;
+  margin: 0.4rem 0;
+  border-radius: 0.3rem;
 }
 
 .custom-url-input {
+  padding: 0.3rem 0.5rem;
+  margin: 0.4rem 0;
+  border-radius: 0.3rem;
+}
+
+.shortener-submit {
+  margin: 1.5rem 0 0.5rem;
+}
+
+.icon-label-shortener {
+  color: var(--main-pink-color);
+  margin-right: 0.4rem;
 }

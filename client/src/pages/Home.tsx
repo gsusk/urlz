@@ -24,7 +24,6 @@ function Home() {
           </div>
           <div>
             <Shortener />
-            <div>asd</div>
           </div>
         </section>
       </div>

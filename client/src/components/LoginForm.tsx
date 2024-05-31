@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { signIn } from "../redux/auth/auth";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
+import { FaRegEyeSlash } from "react-icons/fa";
+import { FaRegEye } from "react-icons/fa6";
 
 function LoginForm() {
   const [formData, setFormData] = useState({ username: "", password: "" });
+  const [inputType, setInputType] = useState("password");
   const loading = useAppSelector((state) => state.user.loading);
   const dispatch = useAppDispatch();
 
@@ -45,15 +48,28 @@ function LoginForm() {
           <label htmlFor="password" className="login-form-label">
             Password
           </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            className="login-form-input"
-            required
-          />
+          <div className="password-cover-wrapper">
+            <input
+              type={inputType}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className="login-form-input"
+              required
+            />
+            {inputType === "text" ? (
+              <FaRegEyeSlash
+                className="password-cover-icon"
+                onClick={() => setInputType("password")}
+              />
+            ) : (
+              <FaRegEye
+                className="password-cover-icon"
+                onClick={() => setInputType("text")}
+              />
+            )}
+          </div>
           <div>
             <p className="feat-text">
               Don't have an account?
