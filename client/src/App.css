@@ -82,7 +82,7 @@ small {
   &.__vmc {
     background-color: var(--main-pink-color);
     color: var(--main-white-color);
-    border: 0;
+    border: 1px solid var(--main-pink-color);
     &:hover {
       color: var(--main-pink-color);
       background-color: var(--main-darkest-color);

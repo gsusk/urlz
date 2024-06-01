@@ -9,11 +9,11 @@
   width: 22rem;
   overflow: hidden;
   padding: 1rem 2rem;
-  transition: transform 0.2s ease-in-out;
+  transition: box-shadow 0.3s ease-in-out;
 }
 
 .shortener-container:hover {
-  transform: translate(-0.1rem, -0.1rem);
+  box-shadow: 0 0 0.4rem var(--main-pink-color);
 }
 
 @keyframes moveup {
@@ -35,22 +35,48 @@
 }
 
 .long-url-input {
-  padding: 0.3rem 0.5rem;
+  padding: 0.5rem 0.5rem;
   margin: 0.4rem 0;
   border-radius: 0.3rem;
+  border: 0;
 }
 
 .custom-url-input {
-  padding: 0.3rem 0.5rem;
+  padding: 0.5rem 0.5rem;
   margin: 0.4rem 0;
   border-radius: 0.3rem;
+  border: 0;
 }
 
 .shortener-submit {
+  position: relative;
   margin: 1.5rem 0 0.5rem;
+  overflow: hidden;
 }
 
 .icon-label-shortener {
   color: var(--main-pink-color);
   margin-right: 0.4rem;
+}
+
+.shortener-submit::before {
+  content: "";
+  border: 1px solid;
+  height: 100%;
+  position: absolute;
+  opacity: 0.6;
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 1.6rem 1.3rem;
+  animation: linear 10s infinite lightx;
+}
+
+@keyframes lightx {
+  0%,
+  92% {
+    transform: translateX(-4000%) rotate(35deg);
+  }
+  100% {
+    transform: translateX(20000%) rotate(35deg);
+  }
 }

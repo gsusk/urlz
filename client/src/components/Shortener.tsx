@@ -5,7 +5,7 @@ import { useState } from "react";
 
 function Shortener() {
   const [form, setform] = useState({ longUrl: "", customUrl: "" });
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const id = e.currentTarget.id;
     const value = e.currentTarget.value;
     setform((prev) => {
