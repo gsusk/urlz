@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
 import { HttpStatus } from '../constants/httpStatus';
 import { CustomError } from '../utils/customErrors';
+import { CustomUrlSchemaType, UrlSchemaType } from '@/validations/schemas';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -20,7 +21,7 @@ const encodeBase62 = (id: bigint): string => {
 };
 
 export const shortenUrl = async (
-  request: Request<object, unknown, { url: string }>,
+  request: Request<object, unknown, UrlSchemaType>,
   response: Response,
   next: NextFunction,
 ) => {
@@ -54,31 +55,33 @@ export const shortenUrl = async (
   }
 };
 
-export const customUrl = async (
-  request: Request<object, unknown, { url: string; alias: string }>,
+export const createCustomUrl = async (
+  request: Request<object, unknown, CustomUrlSchemaType>,
   response: Response,
   next: NextFunction,
 ) => {
   try {
-    const { url, alias } = request.body;
-    const exists = await prisma.url.findUnique({ where: { shortUrl: alias } });
+    const { url, customUrl } = request.body;
+    const exists = await prisma.url.findUnique({
+      where: { shortUrl: customUrl },
+    });
     if (exists) {
-      return next(new CustomError('Alias taken', HttpStatus.CONFLICT));
+      return next(new CustomError('Url taken', HttpStatus.CONFLICT));
     }
     const newUrl = await prisma.url.create({
       data: {
-        shortUrl: alias,
+        shortUrl: customUrl,
         original: url,
       },
     });
     response.status(201).json(newUrl);
   } catch (err) {
-    console.error(err);
+    next(err);
   }
 };
 
 export const redirectUrl = async (
-  request: Request<{ url: string }>,
+  request: Request<UrlSchemaType>,
   response: Response,
   next: NextFunction,
 ) => {
