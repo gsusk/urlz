@@ -6,7 +6,7 @@ import { HttpStatus } from '../constants/httpStatus';
 import { CookieOptions } from 'express';
 
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_SECRET as string;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN as string;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_SECRET as string;
 const refresh_cookie = 'x-refresh-token' as const;
 const access_cookie = 'x-access-token' as const;
 const JWT_ALGORITHM = 'HS256' as const;
@@ -140,6 +140,6 @@ export const refreshTokenHandler = async (
     }
 
     await generateAccessToken(decoded as IRequest['user'], res);
-    res.status(200).end();
+    return res.status(200).end();
   });
 };

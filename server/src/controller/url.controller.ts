@@ -7,7 +7,7 @@ const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 const BLENGTH = BigInt(BASE62C.length);
 
-const encode = (id: bigint): string => {
+const encodeBase62 = (id: bigint): string => {
   let shortUrl = '';
   let n = id;
   do {
@@ -34,7 +34,7 @@ export const shortenUrl = async (
         id: true,
       },
     });
-    const shortenedUrl = encode(savedUrl.id);
+    const shortenedUrl = encodeBase62(savedUrl.id);
     const shortUrl = await prisma.url.update({
       where: {
         id: savedUrl.id,
@@ -51,6 +51,29 @@ export const shortenUrl = async (
     });
   } catch (err) {
     return next(err);
+  }
+};
+
+export const customUrl = async (
+  request: Request<object, unknown, { url: string; alias: string }>,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { url, alias } = request.body;
+    const exists = await prisma.url.findUnique({ where: { shortUrl: alias } });
+    if (exists) {
+      return next(new CustomError('Alias taken', HttpStatus.CONFLICT));
+    }
+    const newUrl = await prisma.url.create({
+      data: {
+        shortUrl: alias,
+        original: url,
+      },
+    });
+    response.status(201).json(newUrl);
+  } catch (err) {
+    console.error(err);
   }
 };
 
