@@ -10,9 +10,22 @@ export async function generateShortUrl(url: string): Promise<Url> {
     { url: url },
     { headers: { "Content-Type": "application/json" }, __retry: true }
   );
+  console.log(response);
   return response.data;
 }
 
-//export async function redirectToUrl(param: string) {
-//  await client.get(`/${param}`);
-//}
+export async function generateCustomShortUrl({
+  longUrl: url,
+  customUrl,
+}: {
+  longUrl: string;
+  customUrl: string;
+}) {
+  const response = await client.post<Url>(
+    "/url/custom",
+    { url, customUrl },
+    { headers: { "Content-Type": "application/json" }, __retry: true }
+  );
+  console.log(response);
+  return response.data;
+}
