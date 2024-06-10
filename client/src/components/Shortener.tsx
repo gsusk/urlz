@@ -2,6 +2,7 @@ import { FaLink } from "react-icons/fa";
 import { LuBrush } from "react-icons/lu";
 import "./shortener.css";
 import { useState } from "react";
+import { generateShortUrl } from "../services/shorten";
 
 function Shortener() {
   const [form, setform] = useState({ longUrl: "", customUrl: "" });
@@ -16,9 +17,17 @@ function Shortener() {
     });
   };
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (form.customUrl && form.customUrl.trim() !== "") {
+    }
+    const res = await generateShortUrl(form.longUrl);
+    console.log(res.shortUrl);
+  };
+
   return (
     <section className="outer-shortener-container">
-      <form className="shortener-container">
+      <form className="shortener-container" onSubmit={handleSubmit}>
         <label htmlFor="longUrl" className="shortener-label">
           <FaLink className="icon-label-shortener" />
           <span>Shorten a long URL</span>

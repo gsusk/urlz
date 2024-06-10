@@ -6,7 +6,7 @@ type Url = {
 
 export async function generateShortUrl(url: string): Promise<Url> {
   const response = await client.post<Url>(
-    "/api/url/create",
+    "/url/create",
     { url: url },
     { headers: { "Content-Type": "application/json" }, __retry: true }
   );
