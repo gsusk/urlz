@@ -1,5 +1,10 @@
 import { prisma } from '../db';
-import { SignInSchema, SignUpSchema } from '../validations/schemas';
+import {
+  SignInSchema,
+  type SignInSchemaType,
+  SignUpSchema,
+  type SignUpSchemaType,
+} from '../validations/schemas';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { CustomError, ValidationError } from '../utils/customErrors';
@@ -7,7 +12,7 @@ import { HttpStatus } from '../constants/httpStatus';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
 
 export const signIn = async (
-  request: Request<unknown, unknown, SignInSchema>,
+  request: Request<unknown, unknown, SignInSchemaType>,
   response: Response,
   next: NextFunction,
 ) => {
@@ -25,14 +30,14 @@ export const signIn = async (
     });
     if (!user) {
       return next(
-        new CustomError('Invalid User or Password', HttpStatus.NOT_FOUND),
+        new CustomError('Invalid Username or Password', HttpStatus.NOT_FOUND),
       );
     }
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return next(
-        new CustomError('Invalid User or Password', HttpStatus.NOT_FOUND),
+        new ValidationError('Invalid User or Password', HttpStatus.NOT_FOUND),
       );
     }
 
@@ -48,7 +53,7 @@ export const signIn = async (
 };
 
 export const signUp = async (
-  request: Request<unknown, unknown, SignUpSchema>,
+  request: Request<unknown, unknown, SignUpSchemaType>,
   response: Response,
   next: NextFunction,
 ) => {
@@ -63,14 +68,14 @@ export const signUp = async (
     });
 
     if (exists) {
-      const errors = [];
+      const errors = {} as Record<string, unknown>;
 
       if (exists.username === username) {
-        errors.push(`username is already in use`);
+        errors['username'] = 'An account with that username already exists.';
       }
 
       if (exists.email === email) {
-        errors.push(`email is already in use`);
+        errors['email'] = 'An account with that email already exists.';
       }
       return next(new ValidationError('Conflict', HttpStatus.CONFLICT, errors));
     }

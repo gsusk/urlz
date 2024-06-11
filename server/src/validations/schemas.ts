@@ -6,19 +6,19 @@ function notOwnDomain(url: string): boolean {
   return !domain.includes('localhost');
 }
 
-const sSchema = z.object({
+const baseAuthSchema = z.object({
   username: z.string().trim().min(4).max(64),
   email: z.string().trim().email(),
   password: z.string().trim().min(7),
   confirmPassword: z.string().trim().min(7),
 });
 
-export const SignUpSchema = sSchema.refine(
+export const SignUpSchema = baseAuthSchema.refine(
   (data) => data.password === data.confirmPassword,
   { message: 'Password dont match', path: ['confirmPassword'] },
 );
 
-export const SignInSchema = sSchema.pick({
+export const SignInSchema = baseAuthSchema.pick({
   username: true,
   password: true,
 });

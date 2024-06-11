@@ -2,7 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
 import { HttpStatus } from '../constants/httpStatus';
 import { CustomError, ValidationError } from '../utils/customErrors';
-import { CustomUrlSchemaType, UrlSchemaType } from '@/validations/schemas';
+import {
+  type CustomUrlSchemaType,
+  type UrlSchemaType,
+} from '@/validations/schemas';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -48,7 +51,7 @@ export const shortenUrl = async (
       },
     });
     return response.status(201).json({
-      shortUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
+      shortenUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
   } catch (err) {
     return next(err);
