@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
 import { HttpStatus } from '../constants/httpStatus';
-import { CustomError } from '../utils/customErrors';
+import { CustomError, ValidationError } from '../utils/customErrors';
 import { CustomUrlSchemaType, UrlSchemaType } from '@/validations/schemas';
 
 const BASE62C =
@@ -66,7 +66,11 @@ export const createCustomUrl = async (
       where: { shortUrl: customUrl },
     });
     if (exists) {
-      return next(new CustomError('Url taken', HttpStatus.CONFLICT));
+      return next(
+        new ValidationError('Url not available.', HttpStatus.CONFLICT, {
+          customUrl: 'Url not available',
+        }),
+      );
     }
     const newUrl = await prisma.url.create({
       data: {
@@ -74,7 +78,7 @@ export const createCustomUrl = async (
         original: url,
       },
     });
-    response.status(201).json(newUrl);
+    return response.status(201).json(newUrl);
   } catch (err) {
     next(err);
   }

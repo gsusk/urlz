@@ -4,23 +4,21 @@ export class ValidationError extends Error {
   constructor(
     public message: string,
     public statusCode: HttpStatus,
-    public errors: string[] | string,
+    public errors?: Record<string, unknown>,
   ) {
     super(message);
     this.name = 'ValidationError';
     this.statusCode = statusCode;
-    this.errors = Array.isArray(errors) ? errors : [errors];
+    this.errors = errors;
   }
 
   serializeError() {
     return {
-      name: this.name,
-      errors: this.errors as string[],
+      errors: this.errors,
       message: this.message,
     };
   }
 }
-
 export class AuthenticationError extends Error {
   constructor(
     public message: string,
@@ -34,7 +32,6 @@ export class AuthenticationError extends Error {
 
   serializeError() {
     return {
-      name: this.name,
       errors: this.errors as string[],
       message: this.message,
     };
@@ -53,7 +50,6 @@ export class CustomError extends Error {
 
   serializeError() {
     return {
-      name: this.name,
       message: this.message,
     };
   }

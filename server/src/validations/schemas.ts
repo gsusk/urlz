@@ -1,5 +1,11 @@
 import z from 'zod';
 
+function notOwnDomain(url: string): boolean {
+  const parsedUrl = new URL(url);
+  const domain = parsedUrl.hostname;
+  return !domain.includes('localhost');
+}
+
 const sSchema = z.object({
   username: z.string().trim().min(4).max(64),
   email: z.string().trim().email(),
@@ -18,11 +24,21 @@ export const SignInSchema = sSchema.pick({
 });
 
 export const UrlSchema = z.object({
-  url: z.string().trim().min(5).url({ message: 'Invalid Url' }),
+  url: z
+    .string()
+    .trim()
+    .min(5)
+    .url({ message: 'Invalid Url' })
+    .refine(notOwnDomain, { message: 'Banned domain' }),
 });
 
 export const CustomUrlSchema = z.object({
-  url: z.string().trim().min(5).url({ message: 'Invalid Url' }),
+  url: z
+    .string()
+    .trim()
+    .min(5)
+    .url({ message: 'Invalid Url' })
+    .refine(notOwnDomain, { message: 'Banned domain' }),
   customUrl: z.string().trim().min(4),
 });
 
