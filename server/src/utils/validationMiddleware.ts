@@ -6,8 +6,10 @@ import { HttpStatus } from '../constants/httpStatus';
 type optionType = 'params' | 'body';
 
 export const validation = (validator: z.Schema, option: optionType) => {
-  return (req: Request, _res: Response, next: NextFunction) => {
-    const { error, data, success } = validator.safeParse(req[option]);
+  return async (req: Request, _res: Response, next: NextFunction) => {
+    const { error, data, success } = await validator.safeParseAsync(
+      req[option],
+    );
     console.log(error, data, success);
     if (!success) {
       const errors = error.errors.reduce(

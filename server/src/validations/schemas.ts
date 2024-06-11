@@ -1,9 +1,20 @@
 import z from 'zod';
 
-function notOwnDomain(url: string): boolean {
-  const parsedUrl = new URL(url);
-  const domain = parsedUrl.hostname;
-  return !domain.includes('localhost');
+function notOwnDomain(arg: string, ctx: z.RefinementCtx) {
+  console.log(URL.canParse(arg), 'URL PARSING', ctx.path);
+  try {
+    const parsedUrl = new URL(arg);
+    const domain = parsedUrl.hostname;
+    console.log(domain);
+    if (domain.includes('localhost.com')) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Banned Domain',
+      });
+    }
+  } catch (err) {
+    return;
+  }
 }
 
 const baseAuthSchema = z.object({
@@ -29,7 +40,7 @@ export const UrlSchema = z.object({
     .trim()
     .min(5)
     .url({ message: 'Invalid Url' })
-    .refine(notOwnDomain, { message: 'Banned domain' }),
+    .superRefine(notOwnDomain),
 });
 
 export const CustomUrlSchema = z.object({
@@ -38,7 +49,7 @@ export const CustomUrlSchema = z.object({
     .trim()
     .min(5)
     .url({ message: 'Invalid Url' })
-    .refine(notOwnDomain, { message: 'Banned domain' }),
+    .superRefine(notOwnDomain),
   customUrl: z.string().trim().min(4),
 });
 

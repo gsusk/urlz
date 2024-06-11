@@ -1,8 +1,6 @@
 import { prisma } from '../db';
 import {
-  SignInSchema,
   type SignInSchemaType,
-  SignUpSchema,
   type SignUpSchemaType,
 } from '../validations/schemas';
 import { Request, Response, NextFunction } from 'express';

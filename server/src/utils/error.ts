@@ -59,6 +59,7 @@ function sendErrorProd(err: Error, _req: Request, res: Response) {
 }
 
 function handlePrismaError(err: Prisma.PrismaClientKnownRequestError) {
+  console.error(err);
   switch (err.code) {
     case 'P2002':
       return new CustomError('Duplicate field value', 400);
