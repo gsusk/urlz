@@ -1,4 +1,5 @@
 .outer-shortener-container {
+  margin-bottom: 1rem;
 }
 
 .shortener-container {
@@ -34,18 +35,14 @@
   font-size: 1.1rem;
 }
 
-.long-url-input {
+.shortener-input {
   padding: 0.5rem 0.5rem;
   margin: 0.4rem 0;
   border-radius: 0.3rem;
-  border: 0;
-}
-
-.custom-url-input {
-  padding: 0.5rem 0.5rem;
-  margin: 0.4rem 0;
-  border-radius: 0.3rem;
-  border: 0;
+  border: 0.15rem solid var(--main-darkest-color);
+  &.__err {
+    border-color: var(--main-pink-color);
+  }
 }
 
 .shortener-submit {
@@ -71,6 +68,13 @@
   animation: linear 10s infinite lightx;
 }
 
+.shortener-err-div {
+  overflow: hidden;
+  font-size: 0.8rem;
+  min-height: 1.2rem;
+  color: var(--main-pink-color);
+}
+
 @keyframes lightx {
   0%,
   92% {
@@ -78,5 +82,23 @@
   }
   100% {
     transform: translateX(20000%) rotate(35deg);
+  }
+}
+
+/* HTML: <div class="loader"></div> */
+.loader {
+  width: 100%;
+  height: 14px;
+  background: radial-gradient(
+      circle closest-side,
+      var(--main-pink-color),
+      #0000
+    )
+    calc(100% / 3) 0 / calc(100% / 4) 100%;
+  animation: l2 0.5s infinite linear;
+}
+@keyframes l2 {
+  100% {
+    background-position: 0 0;
   }
 }

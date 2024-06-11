@@ -3,10 +3,16 @@ import { LuBrush } from "react-icons/lu";
 import "./shortener.css";
 import { useState } from "react";
 import { generateCustomShortUrl, generateShortUrl } from "../services/shorten";
+import { AxiosError } from "axios";
 
 function Shortener() {
   const [form, setform] = useState({ longUrl: "", customUrl: "" });
+  const [formError, setFormError] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(false);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (formError.url || formError.customUrl) {
+      setFormError({});
+    }
     const id = e.currentTarget.id;
     const value = e.currentTarget.value;
     setform((prev) => {
@@ -19,13 +25,30 @@ function Shortener() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (form.customUrl && form.customUrl.trim() !== "") {
-      const res = await generateCustomShortUrl(form);
-      console.log(res);
+    console.log(formError);
+    if (Object.keys(formError).length > 0) {
       return;
     }
-    const res = await generateShortUrl(form.longUrl);
-    console.log(res.shortUrl);
+    setLoading(true);
+    try {
+      if (form.customUrl && form.customUrl.trim() !== "") {
+        const res = await generateCustomShortUrl(form);
+        setLoading(false);
+        console.log(res);
+        return;
+      }
+      const res = await generateShortUrl(form.longUrl);
+      setLoading(false);
+      console.log(res.shortUrl);
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        console.log("yes");
+        setFormError(err.response?.data.errors || { url: "Internal Error" });
+      }
+      setLoading(false);
+      setFormError({ url: "Internal Error" });
+      console.error(err.response?.data, "hihihihi");
+    }
   };
 
   return (
@@ -39,11 +62,12 @@ function Shortener() {
           type="text"
           name="longUrl"
           id="longUrl"
-          className="long-url-input "
+          className={`shortener-input ${formError.url && "__err"}`}
           value={form.longUrl}
           onChange={handleChange}
           placeholder="Enter long url"
         />
+        <div className="shortener-err-div">{formError.url}</div>
         <label htmlFor="customUrl" className="shortener-label">
           <LuBrush className="icon-label-shortener" />
           <span>Custom URL</span>
@@ -52,14 +76,18 @@ function Shortener() {
           type="text"
           name="customUrl"
           id="customUrl"
-          className="custom-url-input"
+          className={`shortener-input ${formError.customUrl && "__err"}`}
           value={form.customUrl}
           onChange={handleChange}
           placeholder="Enter Custom Alias"
         />
-
-        <button type="submit" className="button __vmc shortener-submit">
-          Shorten
+        <div className="shortener-err-div">{formError.customUrl}</div>
+        <button
+          type="submit"
+          className="button __vmc shortener-submit"
+          disabled={loading}
+        >
+          {loading ? <div className="loader"> </div> : "Shorten"}
         </button>
       </form>
     </section>

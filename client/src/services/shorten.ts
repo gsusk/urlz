@@ -26,6 +26,5 @@ export async function generateCustomShortUrl({
     { url, customUrl },
     { headers: { "Content-Type": "application/json" }, __retry: true }
   );
-  console.log(response);
   return response.data;
 }

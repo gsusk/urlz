@@ -1,22 +1,5 @@
 import z from 'zod';
 
-function notOwnDomain(arg: string, ctx: z.RefinementCtx) {
-  console.log(URL.canParse(arg), 'URL PARSING', ctx.path);
-  try {
-    const parsedUrl = new URL(arg);
-    const domain = parsedUrl.hostname;
-    console.log(domain);
-    if (domain.includes('localhost.com')) {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Banned Domain',
-      });
-    }
-  } catch (err) {
-    return;
-  }
-}
-
 const baseAuthSchema = z.object({
   username: z.string().trim().min(4).max(64),
   email: z.string().trim().email(),
@@ -52,6 +35,21 @@ export const CustomUrlSchema = z.object({
     .superRefine(notOwnDomain),
   customUrl: z.string().trim().min(4),
 });
+
+function notOwnDomain(arg: string, ctx: z.RefinementCtx) {
+  try {
+    const parsedUrl = new URL(arg);
+    const domain = parsedUrl.hostname;
+    if (domain.includes('localhost.com')) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Banned Domain',
+      });
+    }
+  } catch (err) {
+    return;
+  }
+}
 
 export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 export type SignInSchemaType = z.infer<typeof SignInSchema>;

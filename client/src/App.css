@@ -40,7 +40,6 @@
 
 .presentation {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   max-width: 30rem;
   padding-bottom: 3rem;
@@ -97,6 +96,10 @@ small {
       background-color: var(--main-pink-color);
       color: var(--main-white-color);
     }
+  }
+
+  &:disabled {
+    background-color: var(--main-gray-color) !important;
   }
 }
 
