@@ -4,11 +4,48 @@ import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { signUp } from "../redux/user/user";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import { type RegisterForm } from "../services/auth";
+import { z } from "zod";
+
+const registerFormSchema = z
+  .object({
+    username: z
+      .string()
+      .trim()
+      .min(4, { message: "Must be at least 4 characters long" })
+      .max(64, { message: "Too many characters" }),
+    email: z
+      .string()
+      .trim()
+      .email({ message: "Not valid email" })
+      .min(5, { message: "Must be at least 5 characters long" })
+      .max(64, { message: "Too many characters" }),
+    password: z
+      .string()
+      .trim()
+      .min(8, { message: "Must be at least 8 characters long" }),
+    confirmPassword: z.string().trim(),
+  })
+  .superRefine(({ password, confirmPassword }, ctx) => {
+    if (password !== confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: "The passwords doesnt match",
+        path: ["confirmPassword"],
+      });
+    }
+  });
 
 function RegisterForm() {
   const loading = useAppSelector((state) => state.user.loading);
+  const username = useAppSelector((state) => state.user.error.username);
+  const email = useAppSelector((state) => state.user.error.email);
+  const password = useAppSelector((state) => state.user.error.password);
+  const confirmPassword = useAppSelector(
+    (state) => state.user.error.confirmPassword
+  );
   const passwordRef = useRef<HTMLInputElement>(null);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterForm>({
     username: "",
     password: "",
     email: "",
@@ -27,7 +64,15 @@ function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    await dispatch(signUp(formData));
+    const result = registerFormSchema.safeParse(formData);
+
+    if (result.success) {
+      await dispatch(signUp(result.data));
+    } else {
+      const errors = serializeZodError<typeof formData>(result.error);
+      console.log(errors);
+      dispatch(formError(errors));
+    }
   };
 
   if (loading) {
@@ -47,9 +92,10 @@ function RegisterForm() {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="login-form-input"
+            className={`login-form-input ${username && "__err"}`}
             required
           />
+          <div className="shortener-err-div">{username}</div>
           <label htmlFor="email" className="login-form-label">
             Email
           </label>
@@ -59,9 +105,10 @@ function RegisterForm() {
             value={formData.email}
             name="email"
             onChange={handleChange}
-            className="login-form-input"
+            className={`login-form-input ${email && "__err"}`}
             required
           />
+          <div className="shortener-err-div">{email}</div>
           <label htmlFor="password" className="login-form-label">
             Password
           </label>
@@ -72,7 +119,7 @@ function RegisterForm() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="login-form-input"
+              className={`login-form-input ${password && "__err"}`}
               ref={passwordRef}
               autoComplete="new-password"
               required
@@ -89,6 +136,7 @@ function RegisterForm() {
               />
             )}
           </div>
+          <div className="shortener-err-div">{password}</div>
           <label htmlFor="confirmPassword" className="login-form-label">
             Confirm Password
           </label>
@@ -98,7 +146,7 @@ function RegisterForm() {
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
-            className="login-form-input"
+            className={`login-form-input ${confirmPassword && "__err"}`}
             autoComplete="new-password"
             required
           />
@@ -110,6 +158,7 @@ function RegisterForm() {
               </Link>
             </p>
           </div>
+          <div className="shortener-err-div">{confirmPassword}</div>
           <div className="sign-form-cont">
             <button className="sign-form-button button __vmc">Sign Up</button>
           </div>

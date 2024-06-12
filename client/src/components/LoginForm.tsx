@@ -4,7 +4,7 @@ import { resetError, signIn } from "../redux/user/user";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
-import { ZodError, z } from "zod";
+import { z } from "zod";
 import { type LoginForm } from "../services/auth";
 import { formError } from "../redux/user/user";
 import { serializeZodError } from "../utils/errorparser";
