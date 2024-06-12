@@ -5,6 +5,7 @@ declare module "axios" {
     __retry: boolean;
   }
 }
+
 const client = axios.create({
   baseURL: "http://localhost:8081/api",
   withCredentials: true,
@@ -40,5 +41,9 @@ client.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export function isAxiosError<T>(error: unknown): error is AxiosError<T> {
+  return axios.isAxiosError(error);
+}
 
 export default client;

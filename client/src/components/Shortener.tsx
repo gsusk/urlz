@@ -3,7 +3,7 @@ import { LuBrush } from "react-icons/lu";
 import "./shortener.css";
 import { useState } from "react";
 import { generateCustomShortUrl, generateShortUrl } from "../services/shorten";
-import { AxiosError } from "axios";
+import axios from "axios";
 
 function Shortener() {
   const [form, setform] = useState({ longUrl: "", customUrl: "" });
@@ -30,25 +30,24 @@ function Shortener() {
       return;
     }
     setLoading(true);
-    try {
-      if (form.customUrl && form.customUrl.trim() !== "") {
-        const res = await generateCustomShortUrl(form);
-        setLoading(false);
-        console.log(res);
-        return;
-      }
-      const res = await generateShortUrl(form.longUrl);
+
+    if (form.customUrl && form.customUrl.trim() !== "") {
+      const res = await generateCustomShortUrl(form);
       setLoading(false);
-      console.log(res.shortUrl);
-    } catch (err) {
-      if (err instanceof AxiosError) {
-        console.log("yes");
-        setFormError(err.response?.data.errors || { url: "Internal Error" });
-      }
-      setLoading(false);
-      setFormError({ url: "Internal Error" });
-      console.error(err.response?.data, "hihihihi");
+      console.log(res);
+      return;
     }
+    const res = await generateShortUrl(form.longUrl);
+    setLoading(false);
+    console.log(res.shortUrl);
+
+    if (axios.isAxiosError(err)) {
+      console.log("yes");
+      setFormError(err.response?.data.errors || { url: "Internal Error" });
+    }
+    setLoading(false);
+    setFormError({ url: "Internal Error" });
+    console.error(err.response?.data, "hihihihi");
   };
 
   return (

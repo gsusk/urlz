@@ -1,17 +1,42 @@
-import client from "./axios";
+import client, { isAxiosError } from "./axios";
 
-type Url = {
-  shortUrl: string;
+type UrlSuccessResponse = {
+  shortenedUrl: string;
 };
 
-export async function generateShortUrl(url: string): Promise<Url> {
-  const response = await client.post<Url>(
-    "/url/create",
-    { url: url },
-    { headers: { "Content-Type": "application/json" }, __retry: true }
-  );
-  console.log(response);
-  return response.data;
+type UrlErrorResponse = {
+  errors: {
+    url?: string;
+    shortUrl?: string;
+  };
+  message: string;
+};
+
+export async function generateShortUrl(
+  url: string
+): Promise<UrlSuccessResponse | UrlErrorResponse> {
+  try {
+    const response = await client.post<UrlSuccessResponse>(
+      "/url/create",
+      { url: url },
+      { headers: { "Content-Type": "application/json" }, __retry: true }
+    );
+    return response.data;
+  } catch (err) {
+    if (
+      isAxiosError<UrlErrorResponse & Partial<UrlErrorResponse["errors"]>>(
+        err
+      ) &&
+      err.response
+    ) {
+      return err.response.data;
+    } else {
+      return {
+        errors: { url: "Something went wrong" },
+        message: "Something went wrong",
+      };
+    }
+  }
 }
 
 export async function generateCustomShortUrl({
@@ -21,10 +46,21 @@ export async function generateCustomShortUrl({
   longUrl: string;
   customUrl: string;
 }) {
-  const response = await client.post<Url>(
-    "/url/custom",
-    { url, customUrl },
-    { headers: { "Content-Type": "application/json" }, __retry: true }
-  );
-  return response.data;
+  try {
+    const response = await client.post<UrlSuccessResponse>(
+      "/url/custom",
+      { url, customUrl },
+      { headers: { "Content-Type": "application/json" }, __retry: true }
+    );
+    return response.data;
+  } catch (err) {
+    if (isAxiosError<UrlErrorResponse>(err) && err.response) {
+      return err.response.data;
+    } else {
+      return {
+        errors: { url: "Something went wrong" },
+        message: "Something went wrong",
+      };
+    }
+  }
 }
