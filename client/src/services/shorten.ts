@@ -1,13 +1,13 @@
 import client, { isAxiosError } from "./axios";
 
-type UrlSuccessResponse = {
+export type UrlSuccessResponse = {
   shortenedUrl: string;
 };
 
-type UrlErrorResponse = {
+export type UrlErrorResponse = {
   errors: {
     url?: string;
-    shortUrl?: string;
+    customUrl?: string;
   };
   message: string;
 };

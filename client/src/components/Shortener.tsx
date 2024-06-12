@@ -2,12 +2,37 @@ import { FaLink } from "react-icons/fa";
 import { LuBrush } from "react-icons/lu";
 import "./shortener.css";
 import { useState } from "react";
-import { generateCustomShortUrl, generateShortUrl } from "../services/shorten";
-import axios from "axios";
+import {
+  type UrlErrorResponse,
+  generateCustomShortUrl,
+  generateShortUrl,
+} from "../services/shorten";
+import { z } from "zod";
+
+const urlSchema = z.object({
+  url: z
+    .string()
+    .trim()
+    .min(5, { message: "Url must be at least 5 letters long" })
+    .url({ message: "Must be a valid url" }),
+});
+
+const urlCustomSchema = urlSchema
+  .pick({
+    url: true,
+  })
+  .and(
+    z.object({
+      customUrl: z
+        .string()
+        .trim()
+        .min(4, { message: "Alias must be at least 4 letters long" }),
+    })
+  );
 
 function Shortener() {
-  const [form, setform] = useState({ longUrl: "", customUrl: "" });
-  const [formError, setFormError] = useState<Record<string, string>>({});
+  const [form, setForm] = useState({ longUrl: "", customUrl: "" });
+  const [formError, setFormError] = useState<UrlErrorResponse["errors"]>({});
   const [loading, setLoading] = useState(false);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (formError.url || formError.customUrl) {
@@ -15,7 +40,7 @@ function Shortener() {
     }
     const id = e.currentTarget.id;
     const value = e.currentTarget.value;
-    setform((prev) => {
+    setForm((prev) => {
       return {
         ...prev,
         [id]: value,
@@ -25,29 +50,33 @@ function Shortener() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formError);
-    if (Object.keys(formError).length > 0) {
+    if (Object.keys(formError).length > 0 || !form.longUrl) {
       return;
     }
     setLoading(true);
-
-    if (form.customUrl && form.customUrl.trim() !== "") {
-      const res = await generateCustomShortUrl(form);
-      setLoading(false);
-      console.log(res);
-      return;
+    if (formError.customUrl) {
+      const result = urlCustomSchema.safeParse(formError);
+      if (result.success) {
+        const res = await generateCustomShortUrl(form);
+      } else {
+        const errors = result.error.errors.reduce((p, i) => {
+          p[i.path.toString()] = i.message;
+          return p;
+        }, {} as Record<string, string>);
+        setFormError(errors);
+      }
+    } else {
+      const result = urlCustomSchema.safeParse(form);
+      if (result.success) {
+        const res = await generateShortUrl(form.longUrl);
+      } else {
+        const errors = result.error.errors.reduce((p, i) => {
+          p[i.path.toString()] = i.message;
+          return p;
+        }, {} as Record<string, string>);
+        setFormError(errors);
+      }
     }
-    const res = await generateShortUrl(form.longUrl);
-    setLoading(false);
-    console.log(res.shortUrl);
-
-    if (axios.isAxiosError(err)) {
-      console.log("yes");
-      setFormError(err.response?.data.errors || { url: "Internal Error" });
-    }
-    setLoading(false);
-    setFormError({ url: "Internal Error" });
-    console.error(err.response?.data, "hihihihi");
   };
 
   return (
@@ -64,6 +93,7 @@ function Shortener() {
           className={`shortener-input ${formError.url && "__err"}`}
           value={form.longUrl}
           onChange={handleChange}
+          required
           placeholder="Enter long url"
         />
         <div className="shortener-err-div">{formError.url}</div>
