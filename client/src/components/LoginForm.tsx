@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { signIn } from "../redux/user/user";
+import { resetError, signIn } from "../redux/user/user";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
-import { z } from "zod";
+import { ZodError, z } from "zod";
 import { type LoginForm } from "../services/auth";
+import { formError } from "../redux/user/user";
+import { serializeZodError } from "../utils/errorparser";
 
 const formLoginSchema = z.object({
   username: z
@@ -24,13 +26,14 @@ function LoginForm() {
     username: "",
     password: "",
   });
-  const [formErrors, setFormErrors] = useState<Partial<typeof formData>>({});
   const [inputType, setInputType] = useState("password");
   const loading = useAppSelector((state) => state.user.loading);
-  const error = useAppSelector((state) => state.user.error);
+  const username = useAppSelector((state) => state.user.error.username);
+  const password = useAppSelector((state) => state.user.error.password);
   const dispatch = useAppDispatch();
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    dispatch(resetError());
     const value = e.currentTarget.value;
     const id = e.currentTarget.id;
     setFormData((prev) => ({
@@ -41,11 +44,15 @@ function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (Object.keys(formErrors).length > 0) return;
 
     const result = formLoginSchema.safeParse(formData);
+
     if (result.success) {
       await dispatch(signIn(result.data));
+    } else {
+      const errors = serializeZodError<typeof formData>(result.error);
+      console.log(errors);
+      dispatch(formError(errors));
     }
   };
 
@@ -66,9 +73,10 @@ function LoginForm() {
             name="username"
             value={formData.username}
             onChange={handleChange}
-            className="login-form-input"
+            className={`login-form-input ${username && "__err"}`}
             required
           />
+          <div className="shortener-err-div">{username}</div>
           <label htmlFor="password" className="login-form-label">
             Password
           </label>
@@ -79,7 +87,7 @@ function LoginForm() {
               name="password"
               value={formData.password}
               onChange={handleChange}
-              className="login-form-input"
+              className={`login-form-input ${password && "__err"}`}
               required
             />
             {inputType === "text" ? (
@@ -94,6 +102,7 @@ function LoginForm() {
               />
             )}
           </div>
+          <div className="shortener-err-div">{password}</div>
           <div>
             <p className="feat-text">
               Don't have an account?

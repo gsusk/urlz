@@ -68,13 +68,6 @@
   animation: linear 10s infinite lightx;
 }
 
-.shortener-err-div {
-  overflow: hidden;
-  font-size: 0.8rem;
-  min-height: 1.2rem;
-  color: var(--main-pink-color);
-}
-
 @keyframes lightx {
   0%,
   92% {

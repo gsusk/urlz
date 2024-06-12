@@ -96,7 +96,7 @@ function Shortener() {
           type="text"
           name="url"
           id="url"
-          className={`shortener-input ${formError && "__err"}`}
+          className={`shortener-input ${formError.url && "__err"}`}
           value={form.url}
           onChange={handleChange}
           placeholder="Enter long url"

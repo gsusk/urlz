@@ -66,6 +66,9 @@
   background-color: var(--main-darkest-color);
   border: 0.1rem solid var(--main-white-color);
   color: var(--main-white-color);
+  &.__err {
+    border-color: var(--main-pink-color);
+  }
 }
 
 .login-form-label {

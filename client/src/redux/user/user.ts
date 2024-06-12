@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {
   type LoginForm,
   type RegisterForm,
@@ -30,16 +30,19 @@ export const signIn = createAsyncThunk<
   { rejectValue: User["error"] }
 >("user/signin", async (credentials, api) => {
   const data = await login(credentials);
-  if (!data) {
-    return api.rejectWithValue("errorr");
+  if ("errors" in data) {
+    return api.rejectWithValue(data.errors);
   }
   return data;
 });
 
 export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
   "user/signup",
-  async (credentials) => {
+  async (credentials, api) => {
     const data = await register(credentials);
+    if ("errors" in data) {
+      return api.rejectWithValue(data.errors);
+    }
     return data;
   }
 );
@@ -47,15 +50,22 @@ export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
 const authSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    formError(state, action: PayloadAction<User["error"]>) {
+      state.error = action.payload;
+    },
+    resetError(state) {
+      state.error = {};
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(signIn.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.error = {};
     });
     builder.addCase(signIn.pending, (state) => {
       state.loading = true;
+      state.error = {};
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.loading = false;
@@ -64,10 +74,10 @@ const authSlice = createSlice({
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.error = {};
     });
     builder.addCase(signUp.pending, (state) => {
       state.loading = true;
+      state.error = {};
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
@@ -77,3 +87,4 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
+export const { formError, resetError } = authSlice.actions;
