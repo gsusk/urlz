@@ -1,11 +1,12 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
-import { signUp } from "../redux/user/user";
+import { formError, resetError, signUp } from "../redux/user/user";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
 import { type RegisterForm } from "../services/auth";
 import { z } from "zod";
+import { serializeZodError } from "../utils/errorparser";
 
 const registerFormSchema = z
   .object({
@@ -54,6 +55,7 @@ function RegisterForm() {
   const [inputType, setInputType] = useState("password");
   const dispatch = useAppDispatch();
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+    dispatch(resetError());
     const value = e.currentTarget.value;
     const id = e.currentTarget.id;
     setFormData((prev) => ({
@@ -75,10 +77,16 @@ function RegisterForm() {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      console.log("dododo");
+      dispatch(resetError());
+    };
+  }, []);
+
   if (loading) {
     return <div>Loading</div>;
   }
-
   return (
     <>
       <div className="bmt">
@@ -150,6 +158,7 @@ function RegisterForm() {
             autoComplete="new-password"
             required
           />
+          <div className="shortener-err-div">{confirmPassword}</div>
           <div>
             <p className="feat-text">
               Already have an account?
@@ -158,7 +167,6 @@ function RegisterForm() {
               </Link>
             </p>
           </div>
-          <div className="shortener-err-div">{confirmPassword}</div>
           <div className="sign-form-cont">
             <button className="sign-form-button button __vmc">Sign Up</button>
           </div>
