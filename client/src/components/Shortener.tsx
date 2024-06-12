@@ -6,6 +6,7 @@ import {
   type UrlErrorResponse,
   generateCustomShortUrl,
   generateShortUrl,
+  UrlSuccessResponse,
 } from "../services/shorten";
 import { z } from "zod";
 
@@ -31,7 +32,7 @@ const urlCustomSchema = urlSchema
   );
 
 function Shortener() {
-  const [form, setForm] = useState({ longUrl: "", customUrl: "" });
+  const [form, setForm] = useState({ url: "", customUrl: "" });
   const [formError, setFormError] = useState<UrlErrorResponse["errors"]>({});
   const [loading, setLoading] = useState(false);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,48 +51,55 @@ function Shortener() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (Object.keys(formError).length > 0 || !form.longUrl) {
+    if (Object.keys(formError).length > 0 || form.url.trim() === "") {
       return;
     }
     setLoading(true);
-    if (formError.customUrl) {
-      const result = urlCustomSchema.safeParse(formError);
-      if (result.success) {
-        const res = await generateCustomShortUrl(form);
-      } else {
-        const errors = result.error.errors.reduce((p, i) => {
-          p[i.path.toString()] = i.message;
-          return p;
+    try {
+      const schema = form.customUrl ? urlCustomSchema : urlSchema;
+      const result = schema.safeParse(form);
+
+      if (!result.success) {
+        const errors = result.error.errors.reduce((acc, err) => {
+          acc[err.path[0]] = err.message;
+          return acc;
         }, {} as Record<string, string>);
+
         setFormError(errors);
+        return;
       }
-    } else {
-      const result = urlCustomSchema.safeParse(form);
-      if (result.success) {
-        const res = await generateShortUrl(form.longUrl);
+
+      const data = form.customUrl
+        ? await generateCustomShortUrl(
+            result.data as { url: string; customUrl: string }
+          )
+        : await generateShortUrl(result.data.url);
+
+      if ("errors" in data) {
+        setFormError(data.errors);
       } else {
-        const errors = result.error.errors.reduce((p, i) => {
-          p[i.path.toString()] = i.message;
-          return p;
-        }, {} as Record<string, string>);
-        setFormError(errors);
+        console.log("Shortened URL:", data.shortenedUrl); // Handle success
       }
+    } catch (error) {
+      console.error("Submission error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <section className="outer-shortener-container">
       <form className="shortener-container" onSubmit={handleSubmit}>
-        <label htmlFor="longUrl" className="shortener-label">
+        <label htmlFor="url" className="shortener-label">
           <FaLink className="icon-label-shortener" />
           <span>Shorten a long URL</span>
         </label>
         <input
           type="text"
-          name="longUrl"
-          id="longUrl"
-          className={`shortener-input ${formError.url && "__err"}`}
-          value={form.longUrl}
+          name="url"
+          id="url"
+          className={`shortener-input ${formError && "__err"}`}
+          value={form.url}
           onChange={handleChange}
           required
           placeholder="Enter long url"

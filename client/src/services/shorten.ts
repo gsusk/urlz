@@ -40,10 +40,10 @@ export async function generateShortUrl(
 }
 
 export async function generateCustomShortUrl({
-  longUrl: url,
+  url,
   customUrl,
 }: {
-  longUrl: string;
+  url: string;
   customUrl: string;
 }) {
   try {
