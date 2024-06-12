@@ -72,17 +72,15 @@ function RegisterForm() {
       await dispatch(signUp(result.data));
     } else {
       const errors = serializeZodError<typeof formData>(result.error);
-      console.log(errors);
       dispatch(formError(errors));
     }
   };
 
   useEffect(() => {
     return () => {
-      console.log("dododo");
       dispatch(resetError());
     };
-  }, []);
+  }, [dispatch]);
 
   if (loading) {
     return <div>Loading</div>;

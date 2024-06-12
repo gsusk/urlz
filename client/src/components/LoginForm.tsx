@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { resetError, signIn } from "../redux/user/user";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
@@ -51,10 +51,15 @@ function LoginForm() {
       await dispatch(signIn(result.data));
     } else {
       const errors = serializeZodError<typeof formData>(result.error);
-      console.log(errors);
       dispatch(formError(errors));
     }
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetError());
+    };
+  }, [dispatch]);
 
   if (loading) {
     return <div>Loading...</div>;
