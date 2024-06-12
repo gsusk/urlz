@@ -1,4 +1,4 @@
-import client from "./axios";
+import client, { isAxiosError } from "./axios";
 
 export type AuthenticatedData = {
   email: string;
@@ -17,21 +17,41 @@ export type RegisterForm = {
   confirmPassword: string;
 };
 
+type AuthRejectResponse = {
+  message: string;
+  errors: Record<string, string>;
+};
+
+const defaultError: AuthRejectResponse = {
+  message: "Unexpected Error",
+  errors: {
+    username: "Unexpected Error, try again.",
+  },
+};
+
 export async function login({ username, password }: LoginForm) {
-  const response = await client.post<AuthenticatedData>(
-    "/auth/signin",
-    {
-      username,
-      password,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const response = await client.post<AuthenticatedData>(
+      "/auth/signin",
+      {
+        username,
+        password,
       },
-      __retry: false,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        __retry: false,
+      }
+    );
+    return response.data;
+  } catch (err) {
+    if (isAxiosError<AuthRejectResponse>(err) && err.response) {
+      return err.response.data;
+    } else {
+      return defaultError;
     }
-  );
-  return response.data;
+  }
 }
 
 export async function register({
@@ -40,20 +60,28 @@ export async function register({
   password,
   confirmPassword,
 }: RegisterForm) {
-  const response = await client.post<AuthenticatedData>(
-    "/auth/signup",
-    {
-      email,
-      password,
-      confirmPassword,
-      username,
-    },
-    {
-      headers: {
-        "Content-Type": "application/json",
+  try {
+    const response = await client.post<AuthenticatedData>(
+      "/auth/signup",
+      {
+        email,
+        password,
+        confirmPassword,
+        username,
       },
-      __retry: false,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        __retry: false,
+      }
+    );
+    return response.data;
+  } catch (err) {
+    if (isAxiosError<AuthRejectResponse>(err) && err.response) {
+      return err.response.data;
+    } else {
+      return defaultError;
     }
-  );
-  return response.data;
+  }
 }

@@ -10,19 +10,24 @@ import {
 type User = {
   user: AuthenticatedData | null;
   loading: boolean;
-  error: string | null;
+  error: {
+    email?: string;
+    username?: string;
+    password?: string;
+    confirmPassword?: string;
+  };
 };
 
 const initialState: User = {
   user: JSON.parse(localStorage.getItem("user") as string),
   loading: false,
-  error: null,
+  error: {},
 };
 
 export const signIn = createAsyncThunk<
   AuthenticatedData,
   LoginForm,
-  { rejectValue: string }
+  { rejectValue: User["error"] }
 >("user/signin", async (credentials, api) => {
   const data = await login(credentials);
   if (!data) {
@@ -47,26 +52,26 @@ const authSlice = createSlice({
     builder.addCase(signIn.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.error = null;
+      state.error = {};
     });
     builder.addCase(signIn.pending, (state) => {
       state.loading = true;
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.error.message as string;
+      state.error = action.payload || {};
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
       state.user = action.payload;
-      state.error = null;
+      state.error = {};
     });
     builder.addCase(signUp.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(signUp.rejected, (state) => {
+    builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
-      state.error = "Temporal error";
+      state.error = action.payload || {};
     });
   },
 });

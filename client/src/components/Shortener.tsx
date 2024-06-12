@@ -6,7 +6,6 @@ import {
   type UrlErrorResponse,
   generateCustomShortUrl,
   generateShortUrl,
-  UrlSuccessResponse,
 } from "../services/shorten";
 import { z } from "zod";
 
@@ -51,9 +50,8 @@ function Shortener() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (Object.keys(formError).length > 0 || form.url.trim() === "") {
-      return;
-    }
+    if (Object.keys(formError).length > 0) return;
+
     setLoading(true);
     try {
       const schema = form.customUrl ? urlCustomSchema : urlSchema;
@@ -101,7 +99,6 @@ function Shortener() {
           className={`shortener-input ${formError && "__err"}`}
           value={form.url}
           onChange={handleChange}
-          required
           placeholder="Enter long url"
         />
         <div className="shortener-err-div">{formError.url}</div>
