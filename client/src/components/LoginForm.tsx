@@ -103,7 +103,7 @@ function LoginForm() {
               />
             )}
           </div>
-          <div className="shortener-err-div">{password}</div>
+          <div className="shortener-err-div scroller">{password}</div>
           <div>
             <p className="feat-text">
               Don't have an account?

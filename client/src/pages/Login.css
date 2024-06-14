@@ -7,6 +7,7 @@
   height: 100%;
   background-color: var(--main-darkest-color);
   box-shadow: 0 0 0.5rem var(--main-darkest-color);
+  z-index: 9999;
 }
 
 .lat-bar-icontainer {
@@ -25,6 +26,7 @@
   right: 0;
   background-color: rgba(0, 0, 0, 0.3);
   cursor: default;
+  z-index: 9998;
 }
 
 .lb-i-cont {
