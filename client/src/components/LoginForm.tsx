@@ -61,10 +61,6 @@ function LoginForm() {
     };
   }, [dispatch]);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <>
       <div className="bmt">
@@ -81,7 +77,7 @@ function LoginForm() {
             className={`login-form-input ${username && "__err"}`}
             required
           />
-          <div className="shortener-err-div">{username}</div>
+          <div className="shortener-err-div scroller">{username}</div>
           <label htmlFor="password" className="login-form-label">
             Password
           </label>
@@ -117,7 +113,12 @@ function LoginForm() {
             </p>
           </div>
           <div className="sign-form-cont">
-            <button className="sign-form-button button __vmc">Login</button>
+            <button
+              className="sign-form-button button __vmc"
+              disabled={loading}
+            >
+              Login
+            </button>
           </div>
         </form>
       </div>

@@ -30,7 +30,9 @@ export const signIn = createAsyncThunk<
   { rejectValue: User["error"] }
 >("user/signin", async (credentials, api) => {
   const data = await login(credentials);
+  console.log("before the t", data);
   if ("errors" in data) {
+    console.log("aboyt to trow", data);
     return api.rejectWithValue(data.errors);
   }
   return data;
@@ -40,7 +42,9 @@ export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
   "user/signup",
   async (credentials, api) => {
     const data = await register(credentials);
+    console.log("before the t", data);
     if ("errors" in data) {
+      console.log("aboyt to trow", data);
       return api.rejectWithValue(data.errors);
     }
     return data;

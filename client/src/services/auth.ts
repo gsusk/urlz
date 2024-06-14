@@ -46,6 +46,7 @@ export async function login({ username, password }: LoginForm) {
     );
     return response.data;
   } catch (err) {
+    console.log("is error?", err);
     if (isAxiosError<AuthRejectResponse>(err) && err.response) {
       return err.response.data;
     } else {
@@ -78,6 +79,7 @@ export async function register({
     );
     return response.data;
   } catch (err) {
+    console.log("is error?", err);
     if (isAxiosError<AuthRejectResponse>(err) && err.response) {
       return err.response.data;
     } else {
