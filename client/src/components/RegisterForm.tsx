@@ -82,9 +82,6 @@ function RegisterForm() {
     };
   }, [dispatch]);
 
-  if (loading) {
-    return <div>Loading</div>;
-  }
   return (
     <>
       <div className="bmt">
@@ -166,7 +163,12 @@ function RegisterForm() {
             </p>
           </div>
           <div className="sign-form-cont">
-            <button className="sign-form-button button __vmc">Sign Up</button>
+            <button
+              disabled={loading}
+              className="sign-form-button button __vmc"
+            >
+              Sign Up
+            </button>
           </div>
         </form>
       </div>

@@ -2,6 +2,7 @@ import { FaLink } from "react-icons/fa";
 import { LuBrush } from "react-icons/lu";
 import "./shortener.css";
 import { useState } from "react";
+import { FaWandMagicSparkles } from "react-icons/fa6";
 import {
   type UrlErrorResponse,
   generateCustomShortUrl,
@@ -34,6 +35,7 @@ function Shortener() {
   const [form, setForm] = useState({ url: "", customUrl: "" });
   const [formError, setFormError] = useState<UrlErrorResponse["errors"]>({});
   const [loading, setLoading] = useState(false);
+  const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (formError.url || formError.customUrl) {
       setFormError({});
@@ -76,7 +78,7 @@ function Shortener() {
       if ("errors" in data) {
         setFormError(data.errors);
       } else {
-        console.log("Shortened URL:", data.shortenedUrl); // Handle success
+        setShortenedUrl(data.shortenedUrl);
       }
     } catch (error) {
       console.error("Submission error:", error);
@@ -87,43 +89,62 @@ function Shortener() {
 
   return (
     <section className="outer-shortener-container">
-      <form className="shortener-container" onSubmit={handleSubmit}>
-        <label htmlFor="url" className="shortener-label">
-          <FaLink className="icon-label-shortener" />
-          <span>Shorten a long URL</span>
-        </label>
-        <input
-          type="text"
-          name="url"
-          id="url"
-          className={`shortener-input ${formError.url && "__err"}`}
-          value={form.url}
-          onChange={handleChange}
-          placeholder="Enter long url"
-        />
-        <div className="shortener-err-div">{formError.url}</div>
-        <label htmlFor="customUrl" className="shortener-label">
-          <LuBrush className="icon-label-shortener" />
-          <span>Custom URL</span>
-        </label>
-        <input
-          type="text"
-          name="customUrl"
-          id="customUrl"
-          className={`shortener-input ${formError.customUrl && "__err"}`}
-          value={form.customUrl}
-          onChange={handleChange}
-          placeholder="Enter Custom Alias"
-        />
-        <div className="shortener-err-div">{formError.customUrl}</div>
-        <button
-          type="submit"
-          className="button __vmc shortener-submit"
-          disabled={loading}
-        >
-          {loading ? <div className="loader"> </div> : "Shorten"}
-        </button>
-      </form>
+      {shortenedUrl ? (
+        <div className="shortener-container">
+          <div>
+            <label htmlFor="url" className="shortener-label">
+              <FaLink className="icon-label-shortener" />
+              <span>Original Url</span>
+            </label>
+          </div>
+          <input type="text" readOnly value={form.url} />
+          <div>
+            <label htmlFor="url" className="shortener-label">
+              <FaWandMagicSparkles className="icon-label-shortener" />
+              <span>Short Url</span>
+            </label>
+          </div>
+          <input type="text" value={shortenedUrl} readOnly />
+        </div>
+      ) : (
+        <form className="shortener-container" onSubmit={handleSubmit}>
+          <label htmlFor="url" className="shortener-label">
+            <FaLink className="icon-label-shortener" />
+            <span>Shorten a long URL</span>
+          </label>
+          <input
+            type="text"
+            name="url"
+            id="url"
+            className={`shortener-input ${formError.url && "__err"}`}
+            value={form.url}
+            onChange={handleChange}
+            placeholder="Enter long url"
+          />
+          <div className="shortener-err-div">{formError.url}</div>
+          <label htmlFor="customUrl" className="shortener-label">
+            <LuBrush className="icon-label-shortener" />
+            <span>Custom URL</span>
+          </label>
+          <input
+            type="text"
+            name="customUrl"
+            id="customUrl"
+            className={`shortener-input ${formError.customUrl && "__err"}`}
+            value={form.customUrl}
+            onChange={handleChange}
+            placeholder="Enter Custom Alias"
+          />
+          <div className="shortener-err-div">{formError.customUrl}</div>
+          <button
+            type="submit"
+            className="button __vmc shortener-submit"
+            disabled={loading}
+          >
+            {loading ? <div className="loader"> </div> : "Shorten"}
+          </button>
+        </form>
+      )}
     </section>
   );
 }
