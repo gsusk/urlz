@@ -5,7 +5,7 @@ import {
 } from '../validations/schemas';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { CustomError, ValidationError } from '../utils/customErrors';
+import { ValidationError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
 
@@ -28,14 +28,28 @@ export const signIn = async (
     });
     if (!user) {
       return next(
-        new CustomError('Invalid Username or Password', HttpStatus.NOT_FOUND),
+        new ValidationError(
+          'Invalid Username or Password',
+          HttpStatus.NOT_FOUND,
+          {
+            username:
+              'The username and password combination is wrong o doesnt exists.',
+          },
+        ),
       );
     }
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return next(
-        new ValidationError('Invalid User or Password', HttpStatus.NOT_FOUND),
+        new ValidationError(
+          'Invalid Username or Password',
+          HttpStatus.NOT_FOUND,
+          {
+            username:
+              'The username and password combination is wrong o doesnt exists.',
+          },
+        ),
       );
     }
 

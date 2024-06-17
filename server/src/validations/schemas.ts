@@ -1,4 +1,5 @@
 import z from 'zod';
+import isURL from 'validator/es/lib/isURL';
 
 const baseAuthSchema = z.object({
   username: z.string().trim().min(4).max(64),
@@ -18,36 +19,41 @@ export const SignInSchema = baseAuthSchema.pick({
 });
 
 export const UrlSchema = z.object({
-  url: z
-    .string()
-    .trim()
-    .min(5)
-    .url({ message: 'Invalid Url' })
-    .superRefine(notOwnDomain),
+  url: z.string().trim().min(5).max(2083).transform(validURL),
 });
 
-export const CustomUrlSchema = z.object({
-  url: z
-    .string()
-    .trim()
-    .min(5)
-    .url({ message: 'Invalid Url' })
-    .superRefine(notOwnDomain),
-  customUrl: z.string().trim().min(4),
-});
+export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
+  z.object({
+    customUrl: z
+      .string()
+      .trim()
+      .min(4)
+      .max(18, { message: 'Too many characters (18 max)' }),
+  }),
+);
 
-function notOwnDomain(arg: string, ctx: z.RefinementCtx) {
-  try {
-    const parsedUrl = new URL(arg);
-    const domain = parsedUrl.hostname;
-    if (domain.includes('localhost.com')) {
-      ctx.addIssue({
+function validURL(arg: string, ctx: z.RefinementCtx) {
+  if (!isURL(arg, { require_valid_protocol: true })) {
+    if (new URL(arg).host.includes('localhost')) {
+      return ctx.addIssue({
         code: 'custom',
-        message: 'Banned Domain',
+        message: 'Invalid URL',
       });
     }
-  } catch (err) {
-    return;
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Invalid URL.',
+    });
+  }
+  return 's';
+}
+
+function notOwnDomain(arg: string, ctx: z.RefinementCtx) {
+  if (arg.includes('localhost:8081') || arg.match('')) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Banned Domain',
+    });
   }
 }
 

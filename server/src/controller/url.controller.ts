@@ -51,7 +51,7 @@ export const shortenUrl = async (
       },
     });
     return response.status(201).json({
-      shortenUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
+      shortenedUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
   } catch (err) {
     return next(err);
@@ -80,8 +80,13 @@ export const createCustomUrl = async (
         shortUrl: customUrl,
         original: url,
       },
+      select: {
+        shortUrl: true,
+      },
     });
-    return response.status(201).json(newUrl);
+    return response.status(201).json({
+      shortenedUrl: `${request.protocol}://${request.get('host')}/${newUrl.shortUrl}`,
+    });
   } catch (err) {
     next(err);
   }
@@ -94,6 +99,7 @@ export const redirectUrl = async (
 ) => {
   try {
     const { url } = request.params;
+    console.log(url);
     const shortUrl = await prisma.url.findUnique({
       select: {
         original: true,
@@ -102,6 +108,7 @@ export const redirectUrl = async (
         shortUrl: url,
       },
     });
+    console.log(shortUrl, '--');
     if (!shortUrl?.original) {
       return next(new CustomError('Not Found', HttpStatus.NOT_FOUND));
     }
