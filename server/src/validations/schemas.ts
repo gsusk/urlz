@@ -32,29 +32,31 @@ export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
   }),
 );
 
-function validURL(arg: string, ctx: z.RefinementCtx) {
-  if (!isURL(arg, { require_valid_protocol: true })) {
-    if (new URL(arg).host.includes('localhost')) {
-      return ctx.addIssue({
+function validURL(url: string, ctx: z.RefinementCtx) {
+  if (!isURL(url)) {
+    console.log('not url');
+    if (new URL(url).host.includes('localhost')) {
+      console.log('localhost included');
+      ctx.addIssue({
         code: 'custom',
-        message: 'Invalid URL',
+        message: 'Banned Domain',
+      });
+    } else {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Invalid URL.',
       });
     }
-    ctx.addIssue({
-      code: 'custom',
-      message: 'Invalid URL.',
-    });
+    return z.NEVER;
   }
-  return 's';
-}
+  console.log('url, parsing...');
+  let parsed: string | undefined;
+  if (!url.startsWith('http:') && !url.startsWith('https:')) {
+    console.log('missing potocol...');
+    parsed = 'http://' + url;
+  }
 
-function notOwnDomain(arg: string, ctx: z.RefinementCtx) {
-  if (arg.includes('localhost:8081') || arg.match('')) {
-    ctx.addIssue({
-      code: 'custom',
-      message: 'Banned Domain',
-    });
-  }
+  return parsed ?? url;
 }
 
 export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
