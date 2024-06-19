@@ -1,5 +1,5 @@
 import z from 'zod';
-import isURL from 'validator/es/lib/isURL';
+import isURL from 'validator/lib/isURL';
 
 const baseAuthSchema = z.object({
   username: z.string().trim().min(4).max(64),
@@ -33,20 +33,21 @@ export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
 );
 
 function validURL(url: string, ctx: z.RefinementCtx) {
-  if (!isURL(url)) {
+  if (!isURL(url, { host_blacklist: ['localhost'], require_tld: false })) {
     console.log('not url');
-    if (new URL(url).host.includes('localhost')) {
-      console.log('localhost included');
+    if (url.includes('localhost')) {
+      console.log('local host included');
       ctx.addIssue({
         code: 'custom',
         message: 'Banned Domain',
       });
-    } else {
-      ctx.addIssue({
-        code: 'custom',
-        message: 'Invalid URL.',
-      });
+      return z.NEVER;
     }
+
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Invalid URL.',
+    });
     return z.NEVER;
   }
   console.log('url, parsing...');
