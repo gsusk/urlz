@@ -101,7 +101,7 @@ export const redirectUrl = async (
   try {
     const { url } = request.params;
     console.log(url);
-    const shortUrl = await prisma.url.findUnique({
+    const shortUrl = await prisma.customUrl.findUnique({
       select: {
         original: true,
       },
