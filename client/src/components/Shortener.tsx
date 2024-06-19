@@ -1,8 +1,9 @@
 import { FaLink } from "react-icons/fa";
 import { LuBrush } from "react-icons/lu";
 import "./shortener.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaWandMagicSparkles } from "react-icons/fa6";
+import { IoMdOpen } from "react-icons/io";
 import {
   type UrlErrorResponse,
   generateCustomShortUrl,
@@ -14,8 +15,7 @@ const urlSchema = z.object({
   url: z
     .string()
     .trim()
-    .min(5, { message: "Url must be at least 5 letters long" })
-    .url({ message: "Must be a valid url" }),
+    .min(5, { message: "Url must be at least 5 letters long" }),
 });
 
 const urlCustomSchema = urlSchema
@@ -27,7 +27,8 @@ const urlCustomSchema = urlSchema
       customUrl: z
         .string()
         .trim()
-        .min(4, { message: "Alias must be at least 4 letters long" }),
+        .min(4, { message: "Alias must be at least 4 letters long" })
+        .max(18, { message: "Too many characters (18 max)" }),
     })
   );
 
@@ -87,24 +88,59 @@ function Shortener() {
     }
   };
 
+  useEffect(() => {
+    return () => {
+      setShortenedUrl(null);
+    };
+  }, []);
+
   return (
     <section className="outer-shortener-container">
       {shortenedUrl ? (
         <div className="shortener-container">
           <div>
-            <label htmlFor="url" className="shortener-label">
+            <label htmlFor="original" className="shortener-label">
               <FaLink className="icon-label-shortener" />
               <span>Original Url</span>
             </label>
           </div>
-          <input type="text" readOnly value={form.url} />
+          <input
+            id="original"
+            type="text"
+            readOnly
+            value={form.url}
+            className={`shortener-input`}
+          />
+          <div className="shortener-err-div">{formError.customUrl}</div>
           <div>
-            <label htmlFor="url" className="shortener-label">
+            <label htmlFor="short-url-response" className="shortener-label">
               <FaWandMagicSparkles className="icon-label-shortener" />
               <span>Short Url</span>
             </label>
           </div>
-          <input type="text" value={shortenedUrl} readOnly />
+          <input
+            id="short-url-response"
+            type="text"
+            value={shortenedUrl}
+            readOnly
+            className={`shortener-input`}
+          />
+          <div className="shortener-err-div">{formError.customUrl}</div>
+          <div className="utils-url">
+            <a
+              className="shortener-label __bg"
+              href={shortenedUrl}
+              target="_blank"
+            >
+              <IoMdOpen />
+            </a>
+            <button
+              className="button __vmc"
+              onClick={() => setShortenedUrl(null)}
+            >
+              Back
+            </button>
+          </div>
         </div>
       ) : (
         <form className="shortener-container" onSubmit={handleSubmit}>

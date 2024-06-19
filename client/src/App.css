@@ -73,6 +73,7 @@ small {
 
 .button {
   border-radius: 0.25rem;
+  height: 2.3rem;
   padding: 0.5rem 1.6rem;
   cursor: pointer;
   text-decoration: none;
