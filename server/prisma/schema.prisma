@@ -25,7 +25,8 @@ model User {
   email       String    @unique @db.Text
   password    String    @db.Text
   createdAt   DateTime  @default(now())
-  urls        Url[]     // One-to-many relationship with Url
+  url        Url[]     // One-to-many relationship with Url
+  customUrl CustomUrl[]
 
   @@index([id])
   @@index([username])
@@ -40,5 +41,16 @@ model Url {
   
   @@index([id])
   @@index([shortUrl])
+}
+
+model CustomUrl {
+  id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  shortUrl String? @unique
+  userId String? @db.Uuid
+  original String?
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([id])
+  @@index(shortUrl)
 }
 
