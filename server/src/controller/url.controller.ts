@@ -100,7 +100,7 @@ export const redirectUrl = async (
 ) => {
   try {
     const { url } = request.params;
-    console.log(url);
+
     const shortUrl = await prisma.url.findFirst({
       select: {
         original: true,
@@ -116,7 +116,7 @@ export const redirectUrl = async (
         ],
       },
     });
-    console.log(shortUrl, '--');
+
     if (!shortUrl?.original) {
       return next(new CustomError('Not Found', HttpStatus.NOT_FOUND));
     }

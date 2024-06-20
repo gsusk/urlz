@@ -5,7 +5,7 @@ import {
 } from '../validations/schemas';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { ValidationError } from '../utils/customErrors';
+import { AuthenticationError, ValidationError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
 
@@ -53,9 +53,23 @@ export const signIn = async (
       );
     }
 
-    const aToken = generateAccessToken(user, response);
-    const rToken = generateRefreshToken(user, response);
-    await Promise.all([rToken, aToken]);
+    const [access, refresh] = await Promise.all([
+      generateAccessToken(user, response),
+      generateRefreshToken(user, response),
+    ]);
+
+    if (!access || !refresh) {
+      response.clearCookie('x-refresh-token');
+      response.clearCookie('x-access-token');
+      return next(
+        new AuthenticationError(
+          'Token Error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          'Unexpected error',
+        ),
+      );
+    }
+
     return response
       .status(200)
       .json({ username: user.username, email: user.email });
@@ -105,9 +119,24 @@ export const signUp = async (
         email: true,
       },
     });
-    const aToken = generateAccessToken(user, response);
-    const rToken = generateRefreshToken(user, response);
-    await Promise.all([rToken, aToken]);
+
+    const [access, refresh] = await Promise.all([
+      generateAccessToken(user, response),
+      generateRefreshToken(user, response),
+    ]);
+
+    if (!access || !refresh) {
+      response.clearCookie('x-refresh-token');
+      response.clearCookie('x-access-token');
+      return next(
+        new AuthenticationError(
+          'Token Error',
+          HttpStatus.INTERNAL_SERVER_ERROR,
+          'Unexpected error',
+        ),
+      );
+    }
+
     response.status(201).json({ ...user });
   } catch (err) {
     return next(err);

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { AuthenticationError } from './customErrors';
+import { AuthenticationError, CustomError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { CookieOptions } from 'express';
 
@@ -35,7 +35,7 @@ export const generateAccessToken = (
   { username, email }: { username: string; email: string },
   res: Response,
 ) => {
-  return new Promise<void>((resolve, rej) => {
+  return new Promise<true | void>((resolve) => {
     jwt.sign(
       { email: email },
       ACCESS_TOKEN_SECRET,
@@ -47,10 +47,10 @@ export const generateAccessToken = (
       (err, payload) => {
         if (err) {
           console.error(err);
-          return rej(err);
+          return resolve();
         }
         res.cookie(access_cookie, payload, ACCESS_COOKIE_CONFIG);
-        resolve();
+        resolve(true);
       },
     );
   });
@@ -66,7 +66,7 @@ export const generateRefreshToken = (
   },
   res: Response,
 ) => {
-  return new Promise<void>((resolve, rej) => {
+  return new Promise<true | void>((resolve) => {
     jwt.sign(
       { email: email },
       REFRESH_TOKEN_SECRET,
@@ -74,7 +74,7 @@ export const generateRefreshToken = (
       (err, payload) => {
         if (err) {
           console.error(err);
-          return rej(err);
+          return;
         }
         res.cookie(refresh_cookie, payload, REFRESH_COOKIE_CONFIG);
         resolve();
@@ -139,7 +139,11 @@ export const refreshTokenHandler = async (
       );
     }
 
-    await generateAccessToken(decoded as IRequest['user'], res);
+    if (!(await generateAccessToken(decoded as IRequest['user'], res)))
+      return next(
+        new CustomError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR),
+      );
+
     return res.status(200).end();
   });
 };
