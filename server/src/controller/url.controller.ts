@@ -67,7 +67,7 @@ export const createCustomUrl = async (
   try {
     const { url, customUrl } = request.body;
     const exists = await prisma.url.findUnique({
-      where: { shortUrl: customUrl },
+      where: { custom: customUrl },
     });
     if (exists) {
       return next(
@@ -78,15 +78,15 @@ export const createCustomUrl = async (
     }
     const newUrl = await prisma.url.create({
       data: {
-        shortUrl: customUrl,
+        custom: customUrl,
         original: url,
       },
       select: {
-        shortUrl: true,
+        custom: true,
       },
     });
     return response.status(201).json({
-      shortenedUrl: `${request.protocol}://${request.get('host')}/${newUrl.shortUrl}`,
+      shortenedUrl: `${request.protocol}://${request.get('host')}/${newUrl.custom}`,
     });
   } catch (err) {
     next(err);
@@ -101,12 +101,19 @@ export const redirectUrl = async (
   try {
     const { url } = request.params;
     console.log(url);
-    const shortUrl = await prisma.customUrl.findUnique({
+    const shortUrl = await prisma.url.findFirst({
       select: {
         original: true,
       },
       where: {
-        shortUrl: url,
+        OR: [
+          {
+            shortUrl: url,
+          },
+          {
+            custom: url,
+          },
+        ],
       },
     });
     console.log(shortUrl, '--');
