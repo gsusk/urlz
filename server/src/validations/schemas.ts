@@ -1,6 +1,5 @@
 import z from 'zod';
 import isURL from 'validator/lib/isURL';
-import { PerformanceObserver } from 'perf_hooks';
 
 const baseAuthSchema = z.object({
   username: z.string().trim().min(4).max(64),
@@ -28,7 +27,7 @@ export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
     customUrl: z
       .string()
       .trim()
-      .min(4)
+      .min(4, { message: 'Must be at least 4 characters long' })
       .max(18, { message: 'Too many characters (18 max)' }),
   }),
 );

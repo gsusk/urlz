@@ -5,9 +5,10 @@ import {
 } from '../validations/schemas';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { AuthenticationError, ValidationError } from '../utils/customErrors';
+import { ValidationError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
+import transporter from '../utils/tokenSender';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchemaType>,
@@ -57,16 +58,14 @@ export const signIn = async (
       generateAccessToken(user, response),
       generateRefreshToken(user, response),
     ]);
-
+    console.log('checking tokens', access, refresh);
     if (!access || !refresh) {
       response.clearCookie('x-refresh-token');
       response.clearCookie('x-access-token');
       return next(
-        new AuthenticationError(
-          'Token Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          'Unexpected error',
-        ),
+        new ValidationError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, {
+          username: 'Unexpected Error, please try again.',
+        }),
       );
     }
 
@@ -129,14 +128,27 @@ export const signUp = async (
       response.clearCookie('x-refresh-token');
       response.clearCookie('x-access-token');
       return next(
-        new AuthenticationError(
-          'Token Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          'Unexpected error',
-        ),
+        new ValidationError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, {
+          username: 'Unexpected Error, please try again.',
+        }),
       );
     }
 
+    const info = await transporter.sendMail({
+      from: `"URLzy" <santiagoxgames@gmail.com>`, // sender address
+      to: 'santiagoxgames@gmail.com', // list of receivers
+      subject: 'Your verification is almost complete!', // Subject line
+      text: 'Click here to verify your account!: ', // plain text body
+      html: `
+      <h1>Verify your account</h1>
+      <div>
+        <p>Click here to verify your account!: </p>
+        <a>'s'</a>
+      </div>
+      `, // html body
+    });
+
+    console.log('Message sent: %s', info);
     response.status(201).json({ ...user });
   } catch (err) {
     return next(err);

@@ -15,6 +15,7 @@ const ACCESS_COOKIE_CONFIG = {
   httpOnly: true,
   secure: false,
   sameSite: 'lax',
+  path: '/',
 } as CookieOptions;
 
 const REFRESH_COOKIE_CONFIG = {
@@ -77,7 +78,7 @@ export const generateRefreshToken = (
           return;
         }
         res.cookie(refresh_cookie, payload, REFRESH_COOKIE_CONFIG);
-        resolve();
+        resolve(true);
       },
     );
   });
