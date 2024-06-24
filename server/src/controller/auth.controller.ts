@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt';
 import { ValidationError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
-import transporter from '../utils/tokenSender';
+import { mailVerification } from '../utils/tokenSender';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchemaType>,
@@ -133,22 +133,7 @@ export const signUp = async (
         }),
       );
     }
-
-    const info = await transporter.sendMail({
-      from: `"URLzy" <santiagoxgames@gmail.com>`, // sender address
-      to: 'santiagoxgames@gmail.com', // list of receivers
-      subject: 'Your verification is almost complete!', // Subject line
-      text: 'Click here to verify your account!: ', // plain text body
-      html: `
-      <h1>Verify your account</h1>
-      <div>
-        <p>Click here to verify your account!: </p>
-        <a>'s'</a>
-      </div>
-      `, // html body
-    });
-
-    console.log('Message sent: %s', info);
+    mailVerification(user);
     response.status(201).json({ ...user });
   } catch (err) {
     return next(err);
