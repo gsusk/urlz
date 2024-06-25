@@ -10,12 +10,12 @@ function Navbar() {
       </div>
       <div className="grow-end-c">
         {!user && (
-          <Link to="/login">
+          <Link to="/register">
             <button className="button __vsc">Sign Up</button>
           </Link>
         )}
         {!user && (
-          <Link to="/register">
+          <Link to="/login">
             <button className="button __vsc">Sign In</button>
           </Link>
         )}

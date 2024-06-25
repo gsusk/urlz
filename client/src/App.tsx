@@ -6,6 +6,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Guest from "./components/Guest";
+import Verify from "./pages/Verify";
+import Authenticated from "./components/Authenticated";
 
 function App() {
   return (
@@ -15,8 +17,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />}>
             <Route element={<Guest />}>
-              <Route path="register" element={<Register />} />
-              <Route path="login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+            </Route>
+            <Route element={<Authenticated />}>
+              <Route path="/verify-email" element={<Verify />}></Route>
             </Route>
           </Route>
         </Routes>

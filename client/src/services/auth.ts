@@ -3,6 +3,7 @@ import client, { isAxiosError } from "./axios";
 export type AuthenticatedData = {
   email: string;
   username: string;
+  isVerified: boolean;
 };
 
 export type LoginForm = {
@@ -78,7 +79,32 @@ export async function register({
     );
     return response.data;
   } catch (err) {
-    if (isAxiosError<AuthRejectResponse>(err) && err.response) {
+    console.error("errrrr");
+    if (
+      isAxiosError<AuthRejectResponse>(err) &&
+      err.response &&
+      err.response.data.errors
+    ) {
+      return err.response.data;
+    } else {
+      return defaultError;
+    }
+  }
+}
+
+export async function verifyAccount(token: string) {
+  try {
+    const response = await client.post<Pick<AuthenticatedData, "isVerified">>(
+      "/auth/verify-email"
+    );
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    if (
+      isAxiosError<AuthRejectResponse>(err) &&
+      err.response &&
+      err.response.data.errors
+    ) {
       return err.response.data;
     } else {
       return defaultError;

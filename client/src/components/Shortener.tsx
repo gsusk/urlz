@@ -111,7 +111,7 @@ function Shortener() {
             value={form.url}
             className={`shortener-input`}
           />
-          <div className="shortener-err-div">{formError.customUrl}</div>
+          <div className="shortener-err-div"></div>
           <div>
             <label htmlFor="short-url-response" className="shortener-label">
               <FaWandMagicSparkles className="icon-label-shortener" />
@@ -125,7 +125,7 @@ function Shortener() {
             readOnly
             className={`shortener-input`}
           />
-          <div className="shortener-err-div">{formError.customUrl}</div>
+          <div className="shortener-err-div"></div>
           <div className="utils-url">
             <a
               className="shortener-label __bg"
