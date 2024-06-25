@@ -95,11 +95,14 @@ export async function register({
 export async function verifyAccount(token: string) {
   try {
     const response = await client.post<Pick<AuthenticatedData, "isVerified">>(
-      "/auth/verify-email"
+      "/auth/verify-email",
+      {
+        etoken: token,
+      }
     );
     return response.data;
   } catch (err) {
-    console.error(err);
+    console.error(err, "verifyyyyyy");
     if (
       isAxiosError<AuthRejectResponse>(err) &&
       err.response &&

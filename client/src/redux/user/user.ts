@@ -52,19 +52,6 @@ export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
   }
 );
 
-export const verify = createAsyncThunk<
-  Pick<AuthenticatedData, "isVerified">,
-  string
->("user/signup", async (credentials, api) => {
-  const data = await verifyAccount(credentials);
-  console.log("tttt--- verify", data);
-  if ("errors" in data) {
-    console.log("aboyt to trow", data);
-    return api.rejectWithValue(data.errors);
-  }
-  return data;
-});
-
 const authSlice = createSlice({
   name: "user",
   initialState,
@@ -74,6 +61,11 @@ const authSlice = createSlice({
     },
     resetError(state) {
       state.error = {};
+    },
+    successfulVerification(state) {
+      if (state.user) {
+        state.user.isVerified = true;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -105,4 +97,5 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { formError, resetError } = authSlice.actions;
+export const { formError, resetError, successfulVerification } =
+  authSlice.actions;

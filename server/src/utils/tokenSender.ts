@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 export const mailVerification = (user: Partial<User>) => {
   const mailOptions: Mail.Options = {
     from: `"URLzy" <santiagoxgames@gmail.com>`,
-    to: `santiagoxgames@gmail.com`,
+    to: user.email,
     subject: 'Your verification is almost complete!',
     text: `Welcome ${user.username ?? ''}! Your account verification is almost complete! Click here to verify: http://localhost.es`,
     html: `
@@ -39,7 +39,7 @@ export const mailVerification = (user: Partial<User>) => {
       {
         cid: 'header_urlzy_logo',
         filename: 'logomd.png',
-        path: path.join(path.relative('.', 'public'), 'logomd.png'),
+        path: path.relative('.', path.join('public', 'logomd.png')),
       },
     ],
   };
@@ -52,3 +52,4 @@ export const mailVerification = (user: Partial<User>) => {
     console.log(info, 'success, email sent');
   });
 };
+console.log();

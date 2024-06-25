@@ -1,29 +1,45 @@
-import { Link, Navigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { GrClose } from "react-icons/gr";
 import "./Login.css";
-import { useAppSelector } from "../hooks/appSelector";
+import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { useEffect, useState } from "react";
+import { verifyAccount } from "../services/auth";
+import { successfulVerification } from "../redux/user/user";
 
 function Verify() {
   const [query] = useSearchParams();
   const isVerified = useAppSelector((state) => state.user.user?.isVerified);
   const [error, setError] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     console.log("triggerrrrrs....");
     if (!loading) setLoading(true);
-    const verifyAccount = async () => {
+    const verify = async () => {
       try {
-        await  
+        const res = await verifyAccount(query.get("etoken") as string);
+        if ("errors" in res) {
+          return setError({ meesage: res.message });
+        }
+        dispatch(successfulVerification());
       } catch (err) {
-
+        if (err instanceof Error && "message" in err) {
+          setError({ message: err.message });
+        } else {
+          setError({ message: "Unexpected Error, try later." });
+        }
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    verify();
   }, []);
 
   if (!query.get("etoken") || isVerified) {
-    return <Navigate to={"/register"}></Navigate>;
+    return (
+      <Navigate to={"/register"} state={{ verification: "success" }}></Navigate>
+    );
   }
 
   return (
