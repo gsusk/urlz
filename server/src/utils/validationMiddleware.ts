@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { AppError, ValidationError } from './customErrors';
+import { AppError } from './customErrors';
 import z from 'zod';
 import { HttpStatus } from '../constants/httpStatus';
 

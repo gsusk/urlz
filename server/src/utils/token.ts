@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { AuthenticationError, CustomError } from './customErrors';
+import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { CookieOptions } from 'express';
 
@@ -92,21 +92,13 @@ export const verifyToken = (
   const token = req.cookies[access_cookie] as string | undefined;
 
   if (!token) {
-    return next(
-      new AuthenticationError('TokenError', HttpStatus.UNAUTHORIZED, [
-        'Missing Token',
-      ]),
-    );
+    return next(new AppError('Token missing', HttpStatus.UNAUTHORIZED));
   }
 
   jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
       console.error(err);
-      return next(
-        new AuthenticationError('JWTokenError', HttpStatus.UNAUTHORIZED, [
-          err.message,
-        ]),
-      );
+      return next(new AppError('Invalid Token', HttpStatus.UNAUTHORIZED));
     }
     req.user = decoded as IRequest['user'];
     return next();
@@ -121,11 +113,7 @@ export const refreshTokenHandler = async (
   const token = req.cookies[refresh_cookie] as string | undefined;
   if (!token) {
     res.clearCookie(access_cookie);
-    return next(
-      new AuthenticationError('JWTokenError', HttpStatus.UNAUTHORIZED, [
-        'Token Missing',
-      ]),
-    );
+    return next(new AppError('Token Missing', HttpStatus.UNAUTHORIZED));
   }
 
   jwt.verify(token, REFRESH_TOKEN_SECRET, async (err, decoded) => {
@@ -133,16 +121,12 @@ export const refreshTokenHandler = async (
       console.error(err);
       res.clearCookie(access_cookie);
       res.clearCookie(refresh_cookie);
-      return next(
-        new AuthenticationError('JWTokenError', HttpStatus.UNAUTHORIZED, [
-          err.message,
-        ]),
-      );
+      return next(new AppError('Invalid Token', HttpStatus.UNAUTHORIZED));
     }
 
     if (!(await generateAccessToken(decoded as IRequest['user'], res)))
       return next(
-        new CustomError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR),
+        new AppError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR),
       );
 
     return res.status(200).end();

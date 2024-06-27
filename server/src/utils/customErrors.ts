@@ -6,7 +6,11 @@ export class AppError extends Error {
   public errors?: Record<string, string>[];
   public timestamp: string;
 
-  constructor(message: string, statusCode: HttpStatus, errors?: []) {
+  constructor(
+    message: string,
+    statusCode: HttpStatus,
+    errors?: Record<string, string>[],
+  ) {
     super(message);
     this.name = 'AppError';
     this.statusCode = statusCode;
@@ -28,6 +32,8 @@ export class AppError extends Error {
     return {
       message: this.message,
       ...(this.errors && { errors: this.errors }),
+      ...(process.env.NODE_ENV !== 'production' &&
+        this.stack && { stack: this.stack }),
     };
   }
 }

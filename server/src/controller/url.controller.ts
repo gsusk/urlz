@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { prisma } from '../db';
 import { HttpStatus } from '../constants/httpStatus';
-import { CustomError, ValidationError } from '../utils/customErrors';
+import { AppError } from '../utils/customErrors';
 import {
   type CustomUrlSchemaType,
   type UrlSchemaType,
@@ -70,9 +70,9 @@ export const createCustomUrl = async (
     });
     if (exists) {
       return next(
-        new ValidationError('Url not available.', HttpStatus.CONFLICT, {
-          customUrl: 'Url not available',
-        }),
+        new AppError('Url not available.', HttpStatus.CONFLICT, [
+          { customUrl: 'Url not available.' },
+        ]),
       );
     }
     const newUrl = await prisma.url.create({
@@ -117,7 +117,7 @@ export const redirectUrl = async (
     });
 
     if (!shortUrl?.original) {
-      return next(new CustomError('Not Found', HttpStatus.NOT_FOUND));
+      return next(new AppError('Not Found', HttpStatus.NOT_FOUND));
     }
     return response.redirect(301, shortUrl.original);
   } catch (err) {

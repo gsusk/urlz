@@ -9,19 +9,14 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
-  // default HTTP status code and error message
-  let error;
-
   // if the error is a custom defined error
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    error = handlePrismaError(err);
+    err = handlePrismaError(err);
   } else if (
     err.name === 'JsonWebTokenError' ||
     err.name === 'TokenExpiredError'
   ) {
-    error = new AppError('Invalid Token', HttpStatus.BAD_REQUEST);
-  } else {
-    error = {};
+    err = new AppError('Invalid Token', HttpStatus.BAD_REQUEST);
   }
 
   console.error(err, 'on error handler...');

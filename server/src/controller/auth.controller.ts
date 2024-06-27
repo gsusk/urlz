@@ -5,7 +5,7 @@ import {
 } from '../validations/schemas';
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
-import { ValidationError } from '../utils/customErrors';
+import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
 import { mailVerification } from '../utils/tokenSender';
@@ -29,28 +29,24 @@ export const signIn = async (
     });
     if (!user) {
       return next(
-        new ValidationError(
-          'Invalid Username or Password',
-          HttpStatus.NOT_FOUND,
+        new AppError('Invalid Username or Password', HttpStatus.NOT_FOUND, [
           {
             username:
               'The username and password combination is wrong o doesnt exists.',
           },
-        ),
+        ]),
       );
     }
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
       return next(
-        new ValidationError(
-          'Invalid Username or Password',
-          HttpStatus.NOT_FOUND,
+        new AppError('Invalid Username or Password', HttpStatus.NOT_FOUND, [
           {
             username:
               'The username and password combination is wrong o doesnt exists.',
           },
-        ),
+        ]),
       );
     }
 
@@ -63,9 +59,11 @@ export const signIn = async (
       response.clearCookie('x-refresh-token');
       response.clearCookie('x-access-token');
       return next(
-        new ValidationError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, {
-          username: 'Unexpected Error, please try again.',
-        }),
+        new AppError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, [
+          {
+            username: 'Unexpected Error, please try again.',
+          },
+        ]),
       );
     }
 
@@ -93,16 +91,19 @@ export const signUp = async (
     });
 
     if (exists) {
-      const errors = {} as Record<string, unknown>;
+      const errors = new AppError('Conflict', HttpStatus.CONFLICT);
 
       if (exists.username === username) {
-        errors['username'] = 'An account with that username already exists.';
+        errors.addError(
+          'username',
+          'An account with that username already exists.',
+        );
       }
 
       if (exists.email === email) {
-        errors['email'] = 'An account with that email already exists.';
+        errors.addError('email', 'An account with that email already exists.');
       }
-      return next(new ValidationError('Conflict', HttpStatus.CONFLICT, errors));
+      return next(errors);
     }
 
     const salt = await bcrypt.genSalt(10);
@@ -128,9 +129,11 @@ export const signUp = async (
       response.clearCookie('x-refresh-token');
       response.clearCookie('x-access-token');
       return next(
-        new ValidationError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, {
-          username: 'Unexpected Error, please try again.',
-        }),
+        new AppError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, [
+          {
+            username: 'Unexpected Error, please try again.',
+          },
+        ]),
       );
     }
     mailVerification(user);

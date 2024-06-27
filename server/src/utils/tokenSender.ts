@@ -52,4 +52,3 @@ export const mailVerification = (user: Partial<User>) => {
     console.log(info, 'success, email sent');
   });
 };
-console.log();
