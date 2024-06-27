@@ -46,7 +46,7 @@ export const mailVerification = (user: Partial<User>) => {
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error(error, 'ocurred an error');
+      console.error(error, 'ocurred an error on email sent');
       return;
     }
     console.log(info, 'success, email sent');

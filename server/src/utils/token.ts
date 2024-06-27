@@ -3,11 +3,8 @@ import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '@/config/token';
-import {
-  ACCESS_COOKIE_CONFIG,
-  REFRESH_COOKIE_CONFIG,
-} from '../constants/cookies';
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../constants/jwt';
+import { ACCESS_COOKIE_CONFIG, REFRESH_COOKIE_CONFIG } from '../config/cookies';
 
 const refresh_cookie = 'x-refresh-token' as const;
 const access_cookie = 'x-access-token' as const;
@@ -33,11 +30,7 @@ export const generateAccessToken = (
     jwt.sign(
       { email, isVerified },
       ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: '1h',
-        algorithm: JWT_ALGORITHM,
-        subject: username,
-      },
+      { expiresIn: '1h', algorithm: JWT_ALGORITHM, subject: username },
       (err, payload) => {
         if (err) {
           console.error(err);

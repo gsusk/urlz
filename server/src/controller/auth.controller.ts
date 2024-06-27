@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { generateAccessToken, generateRefreshToken } from '../utils/token';
-import { mailVerification } from '../utils/tokenSender';
+import { mailVerification } from '../utils/mail';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchemaType>,
