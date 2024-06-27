@@ -6,7 +6,6 @@ import {
   type CustomUrlSchemaType,
   type UrlSchemaType,
 } from '@/validations/schemas';
-import { PrismaClientValidationError } from '@prisma/client/runtime/library';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

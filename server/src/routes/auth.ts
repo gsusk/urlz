@@ -4,7 +4,7 @@ import { Router } from 'express';
 import { SignInSchema, SignUpSchema } from '../validations/schemas';
 const router = Router();
 
-router.post('/signin', validation(SignInSchema, 'body'), signIn);
-router.post('/signup', validation(SignUpSchema, 'body'), signUp);
+router.post('/signin', validation(SignInSchema), signIn);
+router.post('/signup', validation(SignUpSchema), signUp);
 
 export default router;

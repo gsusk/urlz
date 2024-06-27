@@ -5,7 +5,7 @@ import { CustomUrlSchema, UrlSchema } from '../validations/schemas';
 
 const router = Router();
 
-router.post('/create', validation(UrlSchema, 'body'), shortenUrl);
-router.post('/custom', validation(CustomUrlSchema, 'body'), createCustomUrl);
+router.post('/create', validation(UrlSchema), shortenUrl);
+router.post('/custom', validation(CustomUrlSchema), createCustomUrl);
 
 export default router;
