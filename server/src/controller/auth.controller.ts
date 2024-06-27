@@ -120,25 +120,16 @@ export const signUp = async (
       },
     });
 
-    const [access, refresh] = await Promise.all([
+    await Promise.all([
       generateAccessToken(user, response),
       generateRefreshToken(user, response),
     ]);
 
-    if (!access || !refresh) {
-      response.clearCookie('x-refresh-token');
-      response.clearCookie('x-access-token');
-      return next(
-        new AppError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, [
-          {
-            username: 'Unexpected Error, please try again.',
-          },
-        ]),
-      );
-    }
     mailVerification(user);
     response.status(201).json({ ...user });
   } catch (err) {
+    response.clearCookie('x-refresh-token');
+    response.clearCookie('x-access-token');
     return next(err);
   }
 };

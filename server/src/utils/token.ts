@@ -36,7 +36,7 @@ export const generateAccessToken = (
   { username, email }: { username: string; email: string },
   res: Response,
 ) => {
-  return new Promise<true | void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     jwt.sign(
       { email: email },
       ACCESS_TOKEN_SECRET,
@@ -48,10 +48,10 @@ export const generateAccessToken = (
       (err, payload) => {
         if (err) {
           console.error(err);
-          return resolve();
+          return reject(err);
         }
         res.cookie(access_cookie, payload, ACCESS_COOKIE_CONFIG);
-        resolve(true);
+        resolve();
       },
     );
   });
@@ -67,7 +67,7 @@ export const generateRefreshToken = (
   },
   res: Response,
 ) => {
-  return new Promise<true | void>((resolve) => {
+  return new Promise<void>((resolve, reject) => {
     jwt.sign(
       { email: email },
       REFRESH_TOKEN_SECRET,
@@ -75,10 +75,10 @@ export const generateRefreshToken = (
       (err, payload) => {
         if (err) {
           console.error(err);
-          return;
+          return reject(err);
         }
         res.cookie(refresh_cookie, payload, REFRESH_COOKIE_CONFIG);
-        resolve(true);
+        resolve();
       },
     );
   });
@@ -123,12 +123,13 @@ export const refreshTokenHandler = async (
       res.clearCookie(refresh_cookie);
       return next(new AppError('Invalid Token', HttpStatus.UNAUTHORIZED));
     }
-
-    if (!(await generateAccessToken(decoded as IRequest['user'], res)))
-      return next(
-        new AppError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR),
-      );
-
-    return res.status(200).end();
+    try {
+      await generateAccessToken(decoded as IRequest['user'], res);
+      res.status(200).end();
+    } catch (err) {
+      res.clearCookie(access_cookie);
+      res.clearCookie(refresh_cookie);
+      next(err);
+    }
   });
 };
