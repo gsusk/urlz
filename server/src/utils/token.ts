@@ -3,42 +3,35 @@ import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { CookieOptions } from 'express';
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '@/config/token';
+import {
+  ACCESS_COOKIE_CONFIG,
+  REFRESH_COOKIE_CONFIG,
+} from '../constants/cookies';
 
-const ACCESS_TOKEN_SECRET = process.env.ACCESS_SECRET as string;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_SECRET as string;
 const refresh_cookie = 'x-refresh-token' as const;
 const access_cookie = 'x-access-token' as const;
 const JWT_ALGORITHM = 'HS256' as const;
-
-const ACCESS_COOKIE_CONFIG = {
-  httpOnly: true,
-  secure: false,
-  sameSite: 'lax',
-  path: '/',
-} as CookieOptions;
-
-const REFRESH_COOKIE_CONFIG = {
-  httpOnly: true,
-  secure: false,
-  sameSite: 'lax',
-  path: '/api/auth/refresh',
-} as CookieOptions;
 
 interface IRequest extends Request {
   user: {
     username: string;
     email: string;
+    isVerified: boolean;
   };
 }
 
 export const generateAccessToken = (
-  { username, email }: { username: string; email: string },
+  {
+    username,
+    email,
+    isVerified,
+  }: { username: string; email: string; isVerified: boolean },
   res: Response,
 ) => {
   return new Promise<void>((resolve, reject) => {
     jwt.sign(
-      { email: email },
+      { email, isVerified },
       ACCESS_TOKEN_SECRET,
       {
         expiresIn: '1h',
@@ -61,15 +54,17 @@ export const generateRefreshToken = (
   {
     username,
     email,
+    isVerified,
   }: {
     username: string;
     email: string;
+    isVerified: boolean;
   },
   res: Response,
 ) => {
   return new Promise<void>((resolve, reject) => {
     jwt.sign(
-      { email: email },
+      { email, isVerified },
       REFRESH_TOKEN_SECRET,
       { subject: username, algorithm: JWT_ALGORITHM, expiresIn: '12 days' },
       (err, payload) => {

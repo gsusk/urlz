@@ -22,6 +22,7 @@ export const signIn = async (
         password: true,
         username: true,
         email: true,
+        isVerified: true,
       },
       where: {
         username: username,
@@ -49,28 +50,19 @@ export const signIn = async (
         ]),
       );
     }
+    const { password: p, ...rest } = user;
 
-    const [access, refresh] = await Promise.all([
-      generateAccessToken(user, response),
-      generateRefreshToken(user, response),
+    await Promise.all([
+      generateAccessToken(rest, response),
+      generateRefreshToken(rest, response),
     ]);
-    console.log('checking tokens', access, refresh);
-    if (!access || !refresh) {
-      response.clearCookie('x-refresh-token');
-      response.clearCookie('x-access-token');
-      return next(
-        new AppError('Token Error', HttpStatus.INTERNAL_SERVER_ERROR, [
-          {
-            username: 'Unexpected Error, please try again.',
-          },
-        ]),
-      );
-    }
 
     return response
       .status(200)
       .json({ username: user.username, email: user.email });
   } catch (err) {
+    response.clearCookie('x-refresh-token');
+    response.clearCookie('x-access-token');
     next(err);
   }
 };
@@ -117,6 +109,7 @@ export const signUp = async (
       select: {
         username: true,
         email: true,
+        isVerified: true,
       },
     });
 
