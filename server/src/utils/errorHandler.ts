@@ -9,7 +9,6 @@ export function errorHandler(
   res: Response,
   _next: NextFunction,
 ) {
-  // if the error is a custom defined error
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     err = handlePrismaError(err);
   } else if (
@@ -21,14 +20,13 @@ export function errorHandler(
 
   console.error(err, 'on error handler...');
 
-  // return the standard error response
-  return sendError(err, req, res);
+  sendError(err, req, res);
 }
 
 function handlePrismaError(
   err: Prisma.PrismaClientKnownRequestError,
 ): AppError {
-  console.error(err);
+  console.error(err, 'prishhhma');
   switch (err.code) {
     case 'P2002':
       return new AppError('Duplicate field value', HttpStatus.BAD_REQUEST);

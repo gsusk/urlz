@@ -3,7 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import apiRoutes from './routes/api';
 import { redirectUrl } from './controller/url.controller';
-import { errorHandler } from './utils/error';
+import { errorHandler } from './utils/errorHandler';
 import morgan from 'morgan';
 
 process
