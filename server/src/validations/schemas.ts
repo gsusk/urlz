@@ -60,7 +60,14 @@ function validURL(url: string, ctx: z.RefinementCtx) {
   return parsed ?? url;
 }
 
+export const verificationTokenValidation = z.object({
+  token: z.string().trim().min(1, { message: 'Required' }),
+});
+
 export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 export type SignInSchemaType = z.infer<typeof SignInSchema>;
 export type UrlSchemaType = z.infer<typeof UrlSchema>;
 export type CustomUrlSchemaType = z.infer<typeof CustomUrlSchema>;
+export type verificationTokenValidation = z.infer<
+  typeof verificationTokenValidation
+>;

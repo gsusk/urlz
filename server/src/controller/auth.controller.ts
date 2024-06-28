@@ -57,9 +57,7 @@ export const signIn = async (
       generateRefreshToken(rest, response),
     ]);
 
-    return response
-      .status(200)
-      .json({ username: user.username, email: user.email });
+    return response.status(200).json({ ...rest });
   } catch (err) {
     response.clearCookie('x-refresh-token');
     response.clearCookie('x-access-token');
@@ -113,16 +111,28 @@ export const signUp = async (
       },
     });
 
+    mailVerification(user);
     await Promise.all([
       generateAccessToken(user, response),
       generateRefreshToken(user, response),
     ]);
 
-    mailVerification(user);
     response.status(201).json({ ...user });
   } catch (err) {
     response.clearCookie('x-refresh-token');
     response.clearCookie('x-access-token');
     return next(err);
+  }
+};
+
+const verifyAccount = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+  } catch (err) {
+    console.error(err);
+    next(err);
   }
 };

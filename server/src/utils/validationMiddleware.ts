@@ -3,7 +3,7 @@ import { AppError } from './customErrors';
 import z from 'zod';
 import { HttpStatus } from '../constants/httpStatus';
 
-type optionType = 'params' | 'body';
+type optionType = 'params' | 'body' | 'query';
 
 export const validation = (
   validator: z.Schema,
