@@ -157,8 +157,7 @@ export const signUp = async (
         refresh,
         REFRESH_TOKEN_CONFIG.cookie.options,
       );
-
-    response.status(201).json({ ...user });
+    response.status(201).json({ user });
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
       response.clearCookie(ACCESS_TOKEN_CONFIG.cookie.name);

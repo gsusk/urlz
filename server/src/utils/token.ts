@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { NextFunction, Request, Response } from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
@@ -34,7 +34,7 @@ export const verifyAccessToken = (
 
     const decoded = jwt.verify(token, ACCESS_TOKEN_CONFIG.secret, {
       algorithms: [ACCESS_TOKEN_CONFIG.algorithm],
-    }) as { isVerified: boolean; username: string; email: string };
+    }) as IRequest['user'];
     req.user = decoded;
     next();
   } catch (err) {

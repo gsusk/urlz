@@ -25,7 +25,8 @@ model User {
   email       String    @unique @db.Text
   password    String    @db.Text
   createdAt   DateTime  @default(now())
-  isVerified Boolean   @default(false)
+  isVerified Boolean    @default(false)
+  profilePic String?     @db.Text
   url        Url[]     // One-to-many relationship with Url
 
   @@index([id])
