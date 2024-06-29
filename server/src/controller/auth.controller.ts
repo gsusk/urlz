@@ -7,10 +7,14 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { generateToken } from '../utils/token';
+import { UserPayload, generateToken } from '../utils/token';
 import { mailVerification } from '../utils/mail';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { ACCESS_TOKEN_CONFIG, REFRESH_TOKEN_CONFIG } from '../constants/jwt';
+import {
+  ACCESS_TOKEN_CONFIG,
+  EMAIL_TOKEN_CONFIG,
+  REFRESH_TOKEN_CONFIG,
+} from '../constants/jwt';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchemaType>,
@@ -95,7 +99,6 @@ export const signUp = async (
 ) => {
   try {
     const { username, email, password } = request.body;
-
     const exists = await prisma.user.findFirst({
       where: {
         OR: [{ username }, { email }],
@@ -171,14 +174,17 @@ export const verifyAccount = async (
   next: NextFunction,
 ) => {
   try {
-    const { token } = request.query as { token: string };
-    const decodedToken = jwt.verify(token, 'DSADAS', {
-      algorithms: ['HS256'],
-    }) as JwtPayload;
+    const { token } = request.body as { token: string };
+
+    const decodedToken = jwt.verify(token, EMAIL_TOKEN_CONFIG.secret, {
+      algorithms: [EMAIL_TOKEN_CONFIG.algorithm],
+    }) as UserPayload['user'];
+
     const user = await prisma.user.update({
       where: { username: decodedToken.sub },
       data: { isVerified: true },
     });
+
     response.json({ user: { isVerified: user.isVerified } });
   } catch (err) {
     console.error(err);
@@ -191,11 +197,31 @@ export const refreshTokenHandler = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies[REFRESH_TOKEN_CONFIG] as string | undefined;
-  if (!token) {
-    res.clearCookie(access_cookie);
-    return next(new AppError('Token Missing', HttpStatus.UNAUTHORIZED));
-  }
+  try {
+    const token = req.cookies[REFRESH_TOKEN_CONFIG.cookie.name] as
+      | string
+      | undefined;
 
-  jwt.verify(token, REFRESH_TOKEN_SECRET);
+    if (!token) {
+      res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
+      return next(new AppError('Token Missing', HttpStatus.UNAUTHORIZED));
+    }
+
+    const decodedData = jwt.verify(token, REFRESH_TOKEN_CONFIG.secret, {
+      algorithms: [REFRESH_TOKEN_CONFIG.algorithm],
+    }) as UserPayload['user'];
+
+    res.cookie(
+      ACCESS_TOKEN_CONFIG.cookie.name,
+      generateToken(decodedData, ACCESS_TOKEN_CONFIG.secret, {
+        algorithm: ACCESS_TOKEN_CONFIG.algorithm,
+        subject: decodedData.username,
+        expiresIn: '1min',
+      }),
+    );
+    res.status(HttpStatus.OK).end();
+  } catch (err) {
+    res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
+    next(err);
+  }
 };

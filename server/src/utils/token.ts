@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
 import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
 import { ACCESS_TOKEN_CONFIG } from '../constants/jwt';
 
-interface UserPayload extends Request {
-  user: Pick<User, 'username' | 'email' | 'isVerified'>;
+export interface UserPayload extends Request {
+  user: Pick<User, 'username' | 'email' | 'isVerified'> & JwtPayload;
 }
 
 export const generateToken = (

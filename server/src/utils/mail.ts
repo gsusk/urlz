@@ -21,6 +21,7 @@ export const mailVerification = (user: Partial<User>) => {
     EMAIL_TOKEN_CONFIG.secret,
     { algorithm: EMAIL_TOKEN_CONFIG.algorithm },
   );
+
   const mailOptions: Mail.Options = {
     from: `"URLzy" <santiagoxgames@gmail.com>`,
     to: user.email,
