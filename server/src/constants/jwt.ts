@@ -1,6 +1,6 @@
 import { CookieOptions } from 'express';
 type cookie_type = { name: string; options: CookieOptions };
-export type JWTPayload = {};
+
 export const ACCESS_TOKEN_CONFIG = {
   secret: process.env.ACCESS_SECRET as string,
   algorithm: 'HS256' as const,

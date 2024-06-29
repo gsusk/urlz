@@ -6,12 +6,12 @@ import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
 import { ACCESS_TOKEN_CONFIG } from '../constants/jwt';
 
-interface IRequest extends Request {
+interface UserPayload extends Request {
   user: Pick<User, 'username' | 'email' | 'isVerified'>;
 }
 
 export const generateToken = (
-  { username, email, isVerified }: IRequest['user'],
+  { username, email, isVerified }: UserPayload['user'],
   secret: string,
   config: jwt.SignOptions,
 ) => {
@@ -19,7 +19,7 @@ export const generateToken = (
 };
 
 export const verifyAccessToken = (
-  req: IRequest,
+  req: UserPayload,
   _res: Response,
   next: NextFunction,
 ) => {
@@ -34,7 +34,7 @@ export const verifyAccessToken = (
 
     const decoded = jwt.verify(token, ACCESS_TOKEN_CONFIG.secret, {
       algorithms: [ACCESS_TOKEN_CONFIG.algorithm],
-    }) as IRequest['user'];
+    }) as UserPayload['user'];
     req.user = decoded;
     next();
   } catch (err) {

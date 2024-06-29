@@ -25,6 +25,7 @@ export const signIn = async (
         username: true,
         email: true,
         isVerified: true,
+        profilePic: true,
       },
       where: {
         username: username,
@@ -77,7 +78,7 @@ export const signIn = async (
         REFRESH_TOKEN_CONFIG.cookie.options,
       );
 
-    return response.status(200).json({ ...rest });
+    return response.status(200).json({ user: rest });
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
       response.clearCookie('x-refresh-token');
@@ -130,6 +131,7 @@ export const signUp = async (
         username: true,
         email: true,
         isVerified: true,
+        profilePic: true,
       },
     });
 

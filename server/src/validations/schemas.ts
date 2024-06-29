@@ -35,7 +35,7 @@ export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
 function validURL(url: string, ctx: z.RefinementCtx) {
   if (!isURL(url, { host_blacklist: ['localhost'], require_tld: false })) {
     console.log('not url');
-    if (url.includes('localhost')) {
+    if (url.includes('localhost.com')) {
       console.log('local host included');
       ctx.addIssue({
         code: 'custom',
