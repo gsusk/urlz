@@ -7,8 +7,20 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { generateAccessToken, generateRefreshToken } from '../utils/token';
+import {
+  generateAccessToken,
+  generateRefreshToken,
+  generateToken,
+} from '../utils/token';
 import { mailVerification } from '../utils/mail';
+import jwt, { JwtPayload } from 'jsonwebtoken';
+import {
+  ACCESS_TOKEN_SECRET,
+  JWT_ALGORITHM,
+  REFRESH_TOKEN_SECRET,
+} from '@/constants/jwt';
+import type { User } from '@prisma/client';
+import { ACCESS_COOKIE_CONFIG, REFRESH_COOKIE_CONFIG } from '@/config/cookies';
 
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchemaType>,
@@ -52,15 +64,31 @@ export const signIn = async (
     }
     const { password: p, ...rest } = user;
 
-    await Promise.all([
-      generateAccessToken(rest, response),
-      generateRefreshToken(rest, response),
-    ]);
+    const access = generateToken(rest, ACCESS_TOKEN_SECRET, {
+      algorithm: JWT_ALGORITHM,
+      subject: rest.username,
+      expiresIn: '1min',
+    });
+    const refresh = generateToken(rest, REFRESH_TOKEN_SECRET, {
+      algorithm: JWT_ALGORITHM,
+      subject: rest.username,
+      expiresIn: '3min',
+    });
+
+    response
+      .cookie(ACCESS_COOKIE_CONFIG.name, access, ACCESS_COOKIE_CONFIG.options)
+      .cookie(
+        REFRESH_COOKIE_CONFIG.name,
+        refresh,
+        REFRESH_COOKIE_CONFIG.options,
+      );
 
     return response.status(200).json({ ...rest });
   } catch (err) {
-    response.clearCookie('x-refresh-token');
-    response.clearCookie('x-access-token');
+    if (err instanceof jwt.JsonWebTokenError) {
+      response.clearCookie('x-refresh-token');
+      response.clearCookie('x-access-token');
+    }
     next(err);
   }
 };
@@ -112,27 +140,60 @@ export const signUp = async (
     });
 
     mailVerification(user);
-    await Promise.all([
-      generateAccessToken(user, response),
-      generateRefreshToken(user, response),
-    ]);
+    const access = generateToken(user, ACCESS_TOKEN_SECRET, {
+      algorithm: JWT_ALGORITHM,
+      subject: user.username,
+      expiresIn: '1min',
+    });
+
+    const refresh = generateToken(user, REFRESH_TOKEN_SECRET, {
+      algorithm: JWT_ALGORITHM,
+      subject: user.username,
+      expiresIn: '1min',
+    });
+
+    response
+      .cookie(ACCESS_COOKIE_CONFIG.name, access, ACCESS_COOKIE_CONFIG.options)
+      .cookie(
+        REFRESH_COOKIE_CONFIG.name,
+        refresh,
+        REFRESH_COOKIE_CONFIG.options,
+      );
 
     response.status(201).json({ ...user });
   } catch (err) {
-    response.clearCookie('x-refresh-token');
-    response.clearCookie('x-access-token');
+    if (err instanceof jwt.JsonWebTokenError) {
+      response.clearCookie('x-refresh-token');
+      response.clearCookie('x-access-token');
+    }
     return next(err);
   }
 };
 
-const verifyAccount = async (
+export const verifyAccount = async (
   request: Request,
   response: Response,
   next: NextFunction,
 ) => {
   try {
+    const { token } = request.query as { token: string };
+    const data = jwt.verify(token);
   } catch (err) {
     console.error(err);
     next(err);
   }
+};
+
+export const refreshTokenHandler = async (
+  req: Request & { user: JwtPayload },
+  res: Response,
+  next: NextFunction,
+) => {
+  const token = req.cookies[refresh_cookie] as string | undefined;
+  if (!token) {
+    res.clearCookie(access_cookie);
+    return next(new AppError('Token Missing', HttpStatus.UNAUTHORIZED));
+  }
+
+  jwt.verify(token, REFRESH_TOKEN_SECRET);
 };
