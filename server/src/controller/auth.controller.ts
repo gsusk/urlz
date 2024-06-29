@@ -135,30 +135,26 @@ export const signUp = async (
       },
     });
 
-    mailVerification(user);
-    const access = generateToken(user, ACCESS_TOKEN_CONFIG.secret, {
-      algorithm: ACCESS_TOKEN_CONFIG.algorithm,
-      subject: user.username,
-      expiresIn: '30s',
-    });
-
-    const refresh = generateToken(user, REFRESH_TOKEN_CONFIG.secret, {
-      algorithm: REFRESH_TOKEN_CONFIG.algorithm,
-      subject: user.username,
-      expiresIn: '1min',
-    });
-
     response
       .cookie(
         ACCESS_TOKEN_CONFIG.cookie.name,
-        access,
+        generateToken(user, ACCESS_TOKEN_CONFIG.secret, {
+          algorithm: ACCESS_TOKEN_CONFIG.algorithm,
+          subject: user.username,
+          expiresIn: '30s',
+        }),
         ACCESS_TOKEN_CONFIG.cookie.options,
       )
       .cookie(
         REFRESH_TOKEN_CONFIG.cookie.name,
-        refresh,
+        generateToken(user, REFRESH_TOKEN_CONFIG.secret, {
+          algorithm: REFRESH_TOKEN_CONFIG.algorithm,
+          subject: user.username,
+          expiresIn: '1min',
+        }),
         REFRESH_TOKEN_CONFIG.cookie.options,
       );
+    mailVerification(user);
     response.status(201).json({ user });
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
@@ -176,7 +172,14 @@ export const verifyAccount = async (
 ) => {
   try {
     const { token } = request.query as { token: string };
-    const data = jwt.verify(token);
+    const decodedToken = jwt.verify(token, 'DSADAS', {
+      algorithms: ['HS256'],
+    }) as JwtPayload;
+    const user = await prisma.user.update({
+      where: { username: decodedToken.sub },
+      data: { isVerified: true },
+    });
+    response.json({ user: { isVerified: user.isVerified } });
   } catch (err) {
     console.error(err);
     next(err);
@@ -188,7 +191,7 @@ export const refreshTokenHandler = async (
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies[refresh_cookie] as string | undefined;
+  const token = req.cookies[REFRESH_TOKEN_CONFIG] as string | undefined;
   if (!token) {
     res.clearCookie(access_cookie);
     return next(new AppError('Token Missing', HttpStatus.UNAUTHORIZED));

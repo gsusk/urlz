@@ -2,6 +2,8 @@ import { User } from '@prisma/client';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import path from 'path';
+import jwt from 'jsonwebtoken';
+import { EMAIL_TOKEN_CONFIG } from '@/constants/jwt';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp-relay.sendinblue.com',
@@ -14,6 +16,11 @@ const transporter = nodemailer.createTransport({
 });
 
 export const mailVerification = (user: Partial<User>) => {
+  const token = jwt.sign(
+    { username: user.username },
+    EMAIL_TOKEN_CONFIG.secret,
+    { algorithm: EMAIL_TOKEN_CONFIG.algorithm },
+  );
   const mailOptions: Mail.Options = {
     from: `"URLzy" <santiagoxgames@gmail.com>`,
     to: user.email,
@@ -30,7 +37,7 @@ export const mailVerification = (user: Partial<User>) => {
         Your account verification is almost complete! 
         </p>
         <br/>
-        <p>Click <a href="http://localhost.es">here</a> to verify it!</p>
+        <p>Click <a href="http://localhost:5173/verify?token=${token}">here</a> to verify it!</p>
       </div>
       <br/>
       <div><small>If you didnt expect this email, you can safely ignore it.</small></div>
