@@ -3,8 +3,8 @@ import { NextFunction, Request, Response } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from '../constants/jwt';
 import type { User } from '@prisma/client';
+import { ACCESS_TOKEN_CONFIG } from '../constants/jwt';
 
 interface IRequest extends Request {
   user: Pick<User, 'username' | 'email' | 'isVerified'>;
@@ -23,18 +23,21 @@ export const verifyAccessToken = (
   _res: Response,
   next: NextFunction,
 ) => {
-  const token = req.cookies[access_cookie] as string | undefined;
+  try {
+    const token = req.cookies[ACCESS_TOKEN_CONFIG.cookie.name] as
+      | string
+      | undefined;
 
-  if (!token) {
-    return next(new AppError('Token missing', HttpStatus.UNAUTHORIZED));
-  }
-
-  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, decoded) => {
-    if (err) {
-      console.error(err);
-      return next(new AppError('Invalid Token', HttpStatus.UNAUTHORIZED));
+    if (!token) {
+      return next(new AppError('Token missing', HttpStatus.UNAUTHORIZED));
     }
-    req.user = decoded as IRequest['user'];
-    return next();
-  });
+
+    const decoded = jwt.verify(token, ACCESS_TOKEN_CONFIG.secret, {
+      algorithms: [ACCESS_TOKEN_CONFIG.algorithm],
+    }) as { isVerified: boolean; username: string; email: string };
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return next(err);
+  }
 };
