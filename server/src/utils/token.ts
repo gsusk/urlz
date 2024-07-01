@@ -1,17 +1,18 @@
 /* eslint-disable @typescript-eslint/consistent-type-definitions */
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Response, Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import type { User } from '@prisma/client';
 import { ACCESS_TOKEN_CONFIG, REFRESH_TOKEN_CONFIG } from '../constants/jwt';
+import type { User } from '@prisma/client';
 
-export interface UserPayload extends Request {
-  user: Pick<User, 'username' | 'email' | 'isVerified'> & JwtPayload;
-}
+export type userDataPayload = Pick<User, 'username' | 'email' | 'isVerified'> &
+  JwtPayload;
+
+export type payloadData = { user?: userDataPayload };
 
 export const generateToken = (
-  { username, email, isVerified }: UserPayload['user'],
+  { username, email, isVerified }: userDataPayload,
   secret: string,
   config: jwt.SignOptions,
 ) => {
@@ -19,7 +20,7 @@ export const generateToken = (
 };
 
 export const verifyAccessToken = (
-  req: UserPayload,
+  req: Request & payloadData,
   _res: Response,
   next: NextFunction,
 ) => {
@@ -34,7 +35,7 @@ export const verifyAccessToken = (
 
     const decoded = jwt.verify(token, ACCESS_TOKEN_CONFIG.secret, {
       algorithms: [ACCESS_TOKEN_CONFIG.algorithm],
-    }) as UserPayload['user'];
+    }) as userDataPayload;
     req.user = decoded;
     next();
   } catch (err) {
@@ -46,7 +47,7 @@ export const getAuthTokens = ({
   username,
   email,
   isVerified,
-}: UserPayload['user']) => {
+}: userDataPayload) => {
   const payload = { username, email, isVerified };
   const access = generateToken(payload, ACCESS_TOKEN_CONFIG.secret, {
     algorithm: ACCESS_TOKEN_CONFIG.algorithm,

@@ -1,5 +1,6 @@
 import { prisma } from '../db';
 import {
+  verificationTokenValidation,
   type SignInSchemaType,
   type SignUpSchemaType,
 } from '../validations/schemas';
@@ -7,7 +8,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { UserPayload, generateToken, getAuthTokens } from '../utils/token';
+import { generateToken, getAuthTokens, userDataPayload } from '../utils/token';
 import { mailVerification } from '../utils/mail';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import {
@@ -142,8 +143,9 @@ export const signUp = async (
         refresh,
         REFRESH_TOKEN_CONFIG.cookie.options,
       );
-    mailVerification(user);
+
     response.status(201).json({ user });
+    mailVerification(user);
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
       response.clearCookie(ACCESS_TOKEN_CONFIG.cookie.name);
@@ -154,16 +156,16 @@ export const signUp = async (
 };
 
 export const verifyAccount = async (
-  request: Request,
+  request: Request<unknown, unknown, unknown, verificationTokenValidation>,
   response: Response,
   next: NextFunction,
 ) => {
   try {
-    const { token } = request.body as { token: string };
+    const { token } = request.query;
 
     const decodedToken = jwt.verify(token, EMAIL_TOKEN_CONFIG.secret, {
       algorithms: [EMAIL_TOKEN_CONFIG.algorithm],
-    }) as UserPayload['user'];
+    }) as userDataPayload;
 
     const user = await prisma.user.update({
       where: { username: decodedToken.sub },
@@ -174,6 +176,20 @@ export const verifyAccount = async (
         email: true,
       },
     });
+
+    const [access, refresh] = getAuthTokens(user);
+
+    response
+      .cookie(
+        ACCESS_TOKEN_CONFIG.cookie.name,
+        access,
+        ACCESS_TOKEN_CONFIG.cookie.options,
+      )
+      .cookie(
+        REFRESH_TOKEN_CONFIG.cookie.name,
+        refresh,
+        REFRESH_TOKEN_CONFIG.cookie.options,
+      );
 
     response.json({ user: { isVerified: user.isVerified } });
   } catch (err) {
@@ -199,7 +215,7 @@ export const refreshTokenHandler = async (
 
     const decodedData = jwt.verify(token, REFRESH_TOKEN_CONFIG.secret, {
       algorithms: [REFRESH_TOKEN_CONFIG.algorithm],
-    }) as UserPayload['user'];
+    }) as userDataPayload;
 
     const access = generateToken(decodedData, ACCESS_TOKEN_CONFIG.secret, {
       algorithm: ACCESS_TOKEN_CONFIG.algorithm,
@@ -207,7 +223,11 @@ export const refreshTokenHandler = async (
       expiresIn: '30s',
     });
 
-    res.cookie(ACCESS_TOKEN_CONFIG.cookie.name, access);
+    res.cookie(
+      ACCESS_TOKEN_CONFIG.cookie.name,
+      access,
+      ACCESS_TOKEN_CONFIG.cookie.options,
+    );
     res.status(HttpStatus.OK).end();
   } catch (err) {
     res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);

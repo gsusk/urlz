@@ -2,7 +2,6 @@ import { User } from '@prisma/client';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import path from 'path';
-import jwt from 'jsonwebtoken';
 import { EMAIL_TOKEN_CONFIG } from '@/constants/jwt';
 import { generateToken } from './token';
 
@@ -16,7 +15,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const mailVerification = (user: User) => {
+export const mailVerification = (
+  user: Pick<User, 'username' | 'email' | 'isVerified'>,
+) => {
   const token = generateToken(
     { username: user.username, email: user.email, isVerified: user.isVerified },
     EMAIL_TOKEN_CONFIG.secret,
