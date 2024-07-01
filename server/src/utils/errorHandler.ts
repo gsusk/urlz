@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client';
 import { NextFunction, Request, Response } from 'express';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { JsonWebTokenError } from 'jsonwebtoken';
+import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 
 export function errorHandler(
   err: Error | AppError,
@@ -14,7 +14,11 @@ export function errorHandler(
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     err = handlePrismaError(err);
   } else if (err instanceof JsonWebTokenError) {
-    err = new AppError('Invalid Token', HttpStatus.BAD_REQUEST);
+    if (err instanceof TokenExpiredError) {
+      err = new AppError('Expired Token', HttpStatus.UNAUTHORIZED);
+    } else {
+      err = new AppError('Invalid Token', HttpStatus.UNAUTHORIZED);
+    }
   }
   console.error(err, 'on error handler...');
 

@@ -4,7 +4,7 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
-import { ACCESS_TOKEN_CONFIG } from '../constants/jwt';
+import { ACCESS_TOKEN_CONFIG, REFRESH_TOKEN_CONFIG } from '../constants/jwt';
 
 export interface UserPayload extends Request {
   user: Pick<User, 'username' | 'email' | 'isVerified'> & JwtPayload;
@@ -40,4 +40,25 @@ export const verifyAccessToken = (
   } catch (err) {
     return next(err);
   }
+};
+
+export const getAuthTokens = ({
+  username,
+  email,
+  isVerified,
+}: UserPayload['user']) => {
+  const payload = { username, email, isVerified };
+  const access = generateToken(payload, ACCESS_TOKEN_CONFIG.secret, {
+    algorithm: ACCESS_TOKEN_CONFIG.algorithm,
+    subject: username,
+    expiresIn: '30s',
+  });
+
+  const refresh = generateToken(payload, REFRESH_TOKEN_CONFIG.secret, {
+    algorithm: REFRESH_TOKEN_CONFIG.algorithm,
+    subject: username,
+    expiresIn: '1min',
+  });
+
+  return [refresh, access];
 };

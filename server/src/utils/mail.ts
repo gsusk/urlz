@@ -4,6 +4,7 @@ import Mail from 'nodemailer/lib/mailer';
 import path from 'path';
 import jwt from 'jsonwebtoken';
 import { EMAIL_TOKEN_CONFIG } from '@/constants/jwt';
+import { generateToken } from './token';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp-relay.sendinblue.com',
@@ -15,9 +16,9 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export const mailVerification = (user: Partial<User>) => {
-  const token = jwt.sign(
-    { username: user.username },
+export const mailVerification = (user: User) => {
+  const token = generateToken(
+    { username: user.username, email: user.email, isVerified: user.isVerified },
     EMAIL_TOKEN_CONFIG.secret,
     { algorithm: EMAIL_TOKEN_CONFIG.algorithm },
   );

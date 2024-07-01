@@ -7,7 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { UserPayload, generateToken } from '../utils/token';
+import { UserPayload, generateToken, getAuthTokens } from '../utils/token';
 import { mailVerification } from '../utils/mail';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import {
@@ -59,16 +59,7 @@ export const signIn = async (
     }
     const { password: p, ...rest } = user;
 
-    const access = generateToken(rest, ACCESS_TOKEN_CONFIG.secret, {
-      algorithm: ACCESS_TOKEN_CONFIG.algorithm,
-      subject: rest.username,
-      expiresIn: '30s',
-    });
-    const refresh = generateToken(rest, REFRESH_TOKEN_CONFIG.secret, {
-      algorithm: REFRESH_TOKEN_CONFIG.algorithm,
-      subject: rest.username,
-      expiresIn: '1min',
-    });
+    const [access, refresh] = getAuthTokens(user);
 
     response
       .cookie(
@@ -138,23 +129,17 @@ export const signUp = async (
       },
     });
 
+    const [access, refresh] = getAuthTokens(user);
+
     response
       .cookie(
         ACCESS_TOKEN_CONFIG.cookie.name,
-        generateToken(user, ACCESS_TOKEN_CONFIG.secret, {
-          algorithm: ACCESS_TOKEN_CONFIG.algorithm,
-          subject: user.username,
-          expiresIn: '30s',
-        }),
+        access,
         ACCESS_TOKEN_CONFIG.cookie.options,
       )
       .cookie(
         REFRESH_TOKEN_CONFIG.cookie.name,
-        generateToken(user, REFRESH_TOKEN_CONFIG.secret, {
-          algorithm: REFRESH_TOKEN_CONFIG.algorithm,
-          subject: user.username,
-          expiresIn: '1min',
-        }),
+        refresh,
         REFRESH_TOKEN_CONFIG.cookie.options,
       );
     mailVerification(user);
@@ -183,6 +168,11 @@ export const verifyAccount = async (
     const user = await prisma.user.update({
       where: { username: decodedToken.sub },
       data: { isVerified: true },
+      select: {
+        isVerified: true,
+        username: true,
+        email: true,
+      },
     });
 
     response.json({ user: { isVerified: user.isVerified } });
@@ -211,14 +201,13 @@ export const refreshTokenHandler = async (
       algorithms: [REFRESH_TOKEN_CONFIG.algorithm],
     }) as UserPayload['user'];
 
-    res.cookie(
-      ACCESS_TOKEN_CONFIG.cookie.name,
-      generateToken(decodedData, ACCESS_TOKEN_CONFIG.secret, {
-        algorithm: ACCESS_TOKEN_CONFIG.algorithm,
-        subject: decodedData.username,
-        expiresIn: '1min',
-      }),
-    );
+    const access = generateToken(decodedData, ACCESS_TOKEN_CONFIG.secret, {
+      algorithm: ACCESS_TOKEN_CONFIG.algorithm,
+      subject: decodedData.username,
+      expiresIn: '30s',
+    });
+
+    res.cookie(ACCESS_TOKEN_CONFIG.cookie.name, access);
     res.status(HttpStatus.OK).end();
   } catch (err) {
     res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
