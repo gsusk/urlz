@@ -167,6 +167,10 @@ export const verifyAccount = async (
       algorithms: [EMAIL_TOKEN_CONFIG.algorithm],
     }) as userDataPayload;
 
+    if (decodedToken.isVerified) {
+      return response.json({ user: { isVerified: true } });
+    }
+
     const user = await prisma.user.update({
       where: { username: decodedToken.sub },
       data: { isVerified: true },
