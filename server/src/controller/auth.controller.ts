@@ -8,9 +8,9 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { generateToken, getAuthTokens, userDataPayload } from '../utils/token';
+import { getAuthTokens, userDataPayload } from '../utils/token';
 import { mailVerification } from '../utils/mail';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import {
   ACCESS_TOKEN_CONFIG,
   EMAIL_TOKEN_CONFIG,
@@ -195,46 +195,9 @@ export const verifyAccount = async (
         REFRESH_TOKEN_CONFIG.cookie.options,
       );
 
-    response.json({ user: { isVerified: user.isVerified } });
+    return response.json({ user: { isVerified: user.isVerified } });
   } catch (err) {
     console.error(err);
-    next(err);
-  }
-};
-
-export const refreshTokenHandler = async (
-  req: Request & { user: JwtPayload },
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const token = req.cookies[REFRESH_TOKEN_CONFIG.cookie.name] as
-      | string
-      | undefined;
-
-    if (!token) {
-      res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
-      return next(new AppError('Token Missing', HttpStatus.UNAUTHORIZED));
-    }
-
-    const decodedData = jwt.verify(token, REFRESH_TOKEN_CONFIG.secret, {
-      algorithms: [REFRESH_TOKEN_CONFIG.algorithm],
-    }) as userDataPayload;
-
-    const access = generateToken(decodedData, ACCESS_TOKEN_CONFIG.secret, {
-      algorithm: ACCESS_TOKEN_CONFIG.algorithm,
-      subject: decodedData.username,
-      expiresIn: '30s',
-    });
-
-    res.cookie(
-      ACCESS_TOKEN_CONFIG.cookie.name,
-      access,
-      ACCESS_TOKEN_CONFIG.cookie.options,
-    );
-    res.status(HttpStatus.OK).end();
-  } catch (err) {
-    res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
-    next(err);
+    return next(err);
   }
 };
