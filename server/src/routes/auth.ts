@@ -1,4 +1,4 @@
-import { validation } from '../utils/validationMiddleware';
+import { validation } from '../middlewares/validationMiddleware';
 import { signIn, signUp, verifyAccount } from '../controller/auth.controller';
 import { Router } from 'express';
 import {

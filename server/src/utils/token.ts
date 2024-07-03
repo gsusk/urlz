@@ -3,7 +3,11 @@ import { NextFunction, Response, Request } from 'express';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { AppError } from './customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { ACCESS_TOKEN_CONFIG, REFRESH_TOKEN_CONFIG } from '../constants/jwt';
+import {
+  ACCESS_COOKIE,
+  ACCESS_TOKEN_CONFIG,
+  REFRESH_TOKEN_CONFIG,
+} from '../constants/jwt';
 import type { User } from '@prisma/client';
 
 export type userDataPayload = Pick<User, 'username' | 'email' | 'isVerified'> &
@@ -25,9 +29,7 @@ export const verifyAccessToken = (
   next: NextFunction,
 ) => {
   try {
-    const token = req.cookies[ACCESS_TOKEN_CONFIG.cookie.name] as
-      | string
-      | undefined;
+    const token = req.cookies[ACCESS_COOKIE.name] as string | undefined;
 
     if (!token) {
       return next(new AppError('Token missing', HttpStatus.UNAUTHORIZED));
@@ -62,41 +64,4 @@ export const getAuthTokens = ({
   });
 
   return [refresh, access];
-};
-
-export const refreshTokenHandler = async (
-  req: Request & { user: JwtPayload },
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const token = req.cookies[REFRESH_TOKEN_CONFIG.cookie.name] as
-      | string
-      | undefined;
-
-    if (!token) {
-      res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
-      return next(new AppError('Token Missing', HttpStatus.UNAUTHORIZED));
-    }
-
-    const decodedData = jwt.verify(token, REFRESH_TOKEN_CONFIG.secret, {
-      algorithms: [REFRESH_TOKEN_CONFIG.algorithm],
-    }) as userDataPayload;
-
-    const access = generateToken(decodedData, ACCESS_TOKEN_CONFIG.secret, {
-      algorithm: ACCESS_TOKEN_CONFIG.algorithm,
-      subject: decodedData.username,
-      expiresIn: '30s',
-    });
-
-    res.cookie(
-      ACCESS_TOKEN_CONFIG.cookie.name,
-      access,
-      ACCESS_TOKEN_CONFIG.cookie.options,
-    );
-    res.status(HttpStatus.OK).end();
-  } catch (err) {
-    res.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
-    next(err);
-  }
 };

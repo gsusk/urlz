@@ -12,9 +12,9 @@ import { getAuthTokens, userDataPayload } from '../utils/token';
 import { mailVerification } from '../utils/mail';
 import jwt from 'jsonwebtoken';
 import {
-  ACCESS_TOKEN_CONFIG,
+  ACCESS_COOKIE,
   EMAIL_TOKEN_CONFIG,
-  REFRESH_TOKEN_CONFIG,
+  REFRESH_COOKIE,
 } from '../constants/jwt';
 
 export const signIn = async (
@@ -63,16 +63,8 @@ export const signIn = async (
     const [access, refresh] = getAuthTokens(user);
 
     response
-      .cookie(
-        ACCESS_TOKEN_CONFIG.cookie.name,
-        access,
-        ACCESS_TOKEN_CONFIG.cookie.options,
-      )
-      .cookie(
-        REFRESH_TOKEN_CONFIG.cookie.name,
-        refresh,
-        REFRESH_TOKEN_CONFIG.cookie.options,
-      );
+      .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
+      .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
     return response.status(200).json({ user: rest });
   } catch (err) {
@@ -133,23 +125,15 @@ export const signUp = async (
     const [access, refresh] = getAuthTokens(user);
 
     response
-      .cookie(
-        ACCESS_TOKEN_CONFIG.cookie.name,
-        access,
-        ACCESS_TOKEN_CONFIG.cookie.options,
-      )
-      .cookie(
-        REFRESH_TOKEN_CONFIG.cookie.name,
-        refresh,
-        REFRESH_TOKEN_CONFIG.cookie.options,
-      );
+      .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
+      .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
     response.status(201).json({ user });
     mailVerification(user);
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
-      response.clearCookie(ACCESS_TOKEN_CONFIG.cookie.name);
-      response.clearCookie(REFRESH_TOKEN_CONFIG.cookie.name);
+      response.clearCookie(ACCESS_COOKIE.name);
+      response.clearCookie(REFRESH_COOKIE.name);
     }
     return next(err);
   }
@@ -181,21 +165,20 @@ export const verifyAccount = async (
       },
     });
 
+    const isLogged = !request.cookies['x-access-token'];
+
+    if (isLogged) {
+      response.clearCookie(ACCESS_COOKIE.name).clearCookie(REFRESH_COOKIE.name);
+      return response.status(HttpStatus.OK).json({ message: 'Success.' });
+    }
+
     const [access, refresh] = getAuthTokens(user);
 
     response
-      .cookie(
-        ACCESS_TOKEN_CONFIG.cookie.name,
-        access,
-        ACCESS_TOKEN_CONFIG.cookie.options,
-      )
-      .cookie(
-        REFRESH_TOKEN_CONFIG.cookie.name,
-        refresh,
-        REFRESH_TOKEN_CONFIG.cookie.options,
-      );
+      .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
+      .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
-    return response.json({ user: { isVerified: user.isVerified } });
+    return response.status(HttpStatus.OK).json({ message: 'Success.' });
   } catch (err) {
     console.error(err);
     return next(err);
