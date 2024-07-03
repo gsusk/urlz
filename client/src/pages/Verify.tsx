@@ -1,4 +1,4 @@
-import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useSearchParams } from "react-router-dom";
 import { GrClose } from "react-icons/gr";
 import "./Login.css";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
@@ -14,7 +14,6 @@ function Verify() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log("triggerrrrrs....");
     if (!loading) setLoading(true);
     const verify = async () => {
       try {
@@ -34,6 +33,7 @@ function Verify() {
       }
     };
     verify();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (!query.get("etoken") || isVerified) {
@@ -54,24 +54,17 @@ function Verify() {
           </Link>
         </div>
         <div className="lat-bar-icontainer">
-          {loading ? (
-            <div>Loading...</div>
-          ) : Object.values(error).length > 0 ? (
+          {loading && <div>Loading...</div>}{" "}
+          {Object.values(error).length > 0 && (
             <div>
               <h2>An error ocurred verifying your account:</h2>
               <p>{error.message ?? "Unexpected Error"}</p>
               <p>
-                Please try later or{" "}
+                Please try later or
                 <span>
-                  <b>send a verification email.</b>
+                  <b> send a new verification code.</b>
                 </span>
               </p>
-            </div>
-          ) : (
-            <div>
-              <h2>Your verification is complete!</h2>
-              <p>Now you can access all the features you couldnt before!</p>
-              <Link to={"/"}>Start</Link>
             </div>
           )}
           <div className="bmt"></div>

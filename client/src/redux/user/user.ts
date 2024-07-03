@@ -5,7 +5,6 @@ import {
   type AuthenticatedData,
   login,
   register,
-  verifyAccount,
 } from "../../services/auth";
 
 type User = {
