@@ -3,8 +3,7 @@ import { GrClose } from "react-icons/gr";
 import "./Login.css";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { useEffect, useState } from "react";
-import { verifyAccount } from "../services/auth";
-import { successfulVerification } from "../redux/user/user";
+import { successfulVerification, verify } from "../redux/user/user";
 import { errorHandler } from "../utils/errorparser";
 
 function Verify() {
@@ -16,18 +15,23 @@ function Verify() {
 
   useEffect(() => {
     if (!loading) setLoading(true);
-    const verify = async () => {
+    const verifyAccount = async () => {
       try {
-        const res = await verifyAccount(query.get("etoken") as string);
+        const currQuery = query.get("etoken");
+        if (!currQuery) return setError({ message: "Token Required." });
+        const res = await dispatch(verify(currQuery));
+        if (res.payload && "message" in res.payload) {
+          return setError(res.payload);
+        }
         dispatch(successfulVerification());
       } catch (err) {
-        const { errors, message } = errorHandler(err);
+        const { errors, message } = errorHandler(err as Error);
         setError({ ...(errors || {}), message });
       } finally {
         setLoading(false);
       }
     };
-    verify();
+    verifyAccount();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

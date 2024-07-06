@@ -45,7 +45,7 @@ function Shortener() {
     });
   };
 
-  const handleShortenReq = async ({
+  const handleShortenRequest = async ({
     url,
     customUrl,
   }: {
@@ -71,7 +71,7 @@ function Shortener() {
         return;
       }
 
-      const data = await handleShortenReq(result.data);
+      const data = await handleShortenRequest(result.data);
       setShortenedUrl(data.shortenedUrl);
     } catch (error) {
       const { errors } = errorHandler<UrlErrorResponse["errors"]>(
