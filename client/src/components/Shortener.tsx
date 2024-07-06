@@ -10,7 +10,7 @@ import {
   generateShortUrl,
 } from "../services/shorten";
 import { z } from "zod";
-import { serializeZodError } from "../utils/errorparser";
+import { errorHandler, serializeZodError } from "../utils/errorparser";
 
 const urlSchema = z.object({
   url: z
@@ -30,6 +30,7 @@ function Shortener() {
   const [formError, setFormError] = useState<UrlErrorResponse["errors"]>({});
   const [loading, setLoading] = useState(false);
   const [shortenedUrl, setShortenedUrl] = useState<string | null>(null);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (formError.url || formError.customUrl) {
       setFormError({});
@@ -44,6 +45,20 @@ function Shortener() {
     });
   };
 
+  const handleShortenReq = async ({
+    url,
+    customUrl,
+  }: {
+    url: string;
+    customUrl?: string;
+  }) => {
+    if (customUrl) {
+      return await generateCustomShortUrl({ url, customUrl });
+    } else {
+      return await generateShortUrl(url);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (Object.keys(formError).length > 0) return;
@@ -56,19 +71,13 @@ function Shortener() {
         return;
       }
 
-      const data = form.customUrl
-        ? await generateCustomShortUrl(
-            result.data as { url: string; customUrl: string }
-          )
-        : await generateShortUrl(result.data.url);
-
-      if ("errors" in data) {
-        setFormError(data.errors);
-      } else {
-        setShortenedUrl(data.shortenedUrl);
-      }
+      const data = await handleShortenReq(result.data);
+      setShortenedUrl(data.shortenedUrl);
     } catch (error) {
-      console.error("Submission error:", error);
+      const { errors } = errorHandler<UrlErrorResponse["errors"]>(
+        error as Error
+      );
+      setFormError(errors);
     } finally {
       setLoading(false);
     }

@@ -19,7 +19,7 @@ export type RegisterForm = {
   confirmPassword: string;
 };
 
-type AuthRejectResponse = {
+export type AuthRejectResponse = {
   message: string;
   errors?: Record<string, string>[];
 };

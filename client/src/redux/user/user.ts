@@ -119,6 +119,9 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload!;
     });
+    builder.addCase(verify.pending, (state) => {
+      state.loading = true;
+    });
   },
 });
 
