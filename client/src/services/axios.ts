@@ -34,10 +34,12 @@ client.interceptors.response.use(
         .catch((e) => {
           console.log("erroror from refreshAuthToken 2nd nested catch");
           console.log("md");
-          return Promise.reject({ ...e, details: "Lol erroror" });
+          return Promise.reject(new Error("e.message"));
         });
     }
-    console.log("mc");
+    if (!error.response) {
+      return Promise.reject(new Error("Error connecting to server."));
+    }
     return Promise.reject(error);
   }
 );

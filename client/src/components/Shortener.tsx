@@ -10,27 +10,20 @@ import {
   generateShortUrl,
 } from "../services/shorten";
 import { z } from "zod";
+import { serializeZodError } from "../utils/errorparser";
 
 const urlSchema = z.object({
   url: z
     .string()
     .trim()
     .min(5, { message: "Url must be at least 5 letters long" }),
+  customUrl: z
+    .string()
+    .trim()
+    .min(4, { message: "Alias must be at least 4 letters long" })
+    .max(18, { message: "Too many characters (18 max)" })
+    .optional(),
 });
-
-const urlCustomSchema = urlSchema
-  .pick({
-    url: true,
-  })
-  .and(
-    z.object({
-      customUrl: z
-        .string()
-        .trim()
-        .min(4, { message: "Alias must be at least 4 letters long" })
-        .max(18, { message: "Too many characters (18 max)" }),
-    })
-  );
 
 function Shortener() {
   const [form, setForm] = useState({ url: "", customUrl: "" });
@@ -54,18 +47,11 @@ function Shortener() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (Object.keys(formError).length > 0) return;
-
     setLoading(true);
     try {
-      const schema = form.customUrl ? urlCustomSchema : urlSchema;
-      const result = schema.safeParse(form);
-
+      const result = urlSchema.safeParse(form);
       if (!result.success) {
-        const errors = result.error.errors.reduce((acc, err) => {
-          acc[err.path[0]] = err.message;
-          return acc;
-        }, {} as Record<string, string>);
-
+        const errors = serializeZodError(result.error);
         setFormError(errors);
         return;
       }

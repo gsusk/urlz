@@ -23,6 +23,7 @@ export async function generateShortUrl(
     );
     return response.data;
   } catch (err) {
+    console.error(err, "sss");
     if (
       isAxiosError<UrlErrorResponse & Partial<UrlErrorResponse["errors"]>>(
         err
@@ -33,7 +34,7 @@ export async function generateShortUrl(
     } else {
       return {
         errors: { url: "Something went wrong" },
-        message: "Something went wrong",
+        message: (err as Error).message,
       };
     }
   }

@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import client, { isAxiosError } from "./axios";
 
 export type AuthenticatedData = {
@@ -20,39 +21,23 @@ export type RegisterForm = {
 
 type AuthRejectResponse = {
   message: string;
-  errors: Record<string, string>;
-};
-
-const defaultError: AuthRejectResponse = {
-  message: "Unexpected Error",
-  errors: {
-    username: "Unexpected Error, try again.",
-  },
+  errors?: Record<string, string>[];
 };
 
 export async function login({ username, password }: LoginForm) {
-  try {
-    const response = await client.post<AuthenticatedData>(
-      "/auth/signin",
-      {
-        username,
-        password,
+  return await client.post<AuthenticatedData>(
+    "/auth/signin",
+    {
+      username,
+      password,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        __retry: false,
-      }
-    );
-    return response.data;
-  } catch (err) {
-    if (isAxiosError<AuthRejectResponse>(err) && err.response) {
-      return err.response.data;
-    } else {
-      return defaultError;
+      __retry: false,
     }
-  }
+  );
 }
 
 export async function register({
@@ -61,56 +46,25 @@ export async function register({
   password,
   confirmPassword,
 }: RegisterForm) {
-  try {
-    const response = await client.post<AuthenticatedData>(
-      "/auth/signup",
-      {
-        email,
-        password,
-        confirmPassword,
-        username,
+  return await client.post<AuthenticatedData>(
+    "/auth/signup",
+    {
+      email,
+      password,
+      confirmPassword,
+      username,
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        __retry: false,
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error("errrrr");
-    if (
-      isAxiosError<AuthRejectResponse>(err) &&
-      err.response &&
-      err.response.data.errors
-    ) {
-      return err.response.data;
-    } else {
-      return defaultError;
+      __retry: false,
     }
-  }
+  );
 }
 
 export async function verifyAccount(token: string) {
-  try {
-    const response = await client.post<Pick<AuthenticatedData, "isVerified">>(
-      "/auth/verify-email",
-      {
-        etoken: token,
-      }
-    );
-    return response.data;
-  } catch (err) {
-    console.error(err, "verifyyyyyy");
-    if (
-      isAxiosError<AuthRejectResponse>(err) &&
-      err.response &&
-      err.response.data.errors
-    ) {
-      return err.response.data;
-    } else {
-      return defaultError;
-    }
-  }
+  return await client.post<Pick<AuthenticatedData, "isVerified">>(
+    `/auth/verify?etoken=${token}`
+  );
 }

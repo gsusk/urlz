@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { useEffect, useState } from "react";
 import { verifyAccount } from "../services/auth";
 import { successfulVerification } from "../redux/user/user";
+import { errorHandler } from "../utils/errorparser";
 
 function Verify() {
   const [query] = useSearchParams();
@@ -18,16 +19,10 @@ function Verify() {
     const verify = async () => {
       try {
         const res = await verifyAccount(query.get("etoken") as string);
-        if ("errors" in res) {
-          return setError({ meesage: res.message });
-        }
         dispatch(successfulVerification());
       } catch (err) {
-        if (err instanceof Error && "message" in err) {
-          setError({ message: err.message });
-        } else {
-          setError({ message: "Unexpected Error, try later." });
-        }
+        const { errors, message } = errorHandler(err);
+        setError({ ...(errors || {}), message });
       } finally {
         setLoading(false);
       }
@@ -37,9 +32,7 @@ function Verify() {
   }, []);
 
   if (!query.get("etoken") || isVerified) {
-    return (
-      <Navigate to={"/register"} state={{ verification: "success" }}></Navigate>
-    );
+    return <Navigate to={"/"} state={{ verified: true }}></Navigate>;
   }
 
   return (
@@ -54,7 +47,7 @@ function Verify() {
           </Link>
         </div>
         <div className="lat-bar-icontainer">
-          {loading && <div>Loading...</div>}{" "}
+          {loading && <div>Loading...</div>}
           {Object.values(error).length > 0 && (
             <div>
               <h2>An error ocurred verifying your account:</h2>

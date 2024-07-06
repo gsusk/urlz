@@ -5,16 +5,21 @@ import {
   type AuthenticatedData,
   login,
   register,
+  verifyAccount,
 } from "../../services/auth";
+import { errorHandler } from "../../utils/errorparser";
 
 type User = {
   user: AuthenticatedData | null;
   loading: boolean;
   error: {
-    email?: string;
-    username?: string;
-    password?: string;
-    confirmPassword?: string;
+    message?: string;
+    errors?: {
+      email: string;
+      username: string;
+      password: string;
+      confirmPassword: string;
+    };
   };
 };
 
@@ -29,27 +34,39 @@ export const signIn = createAsyncThunk<
   LoginForm,
   { rejectValue: User["error"] }
 >("user/signin", async (credentials, api) => {
-  const data = await login(credentials);
-  console.log("before the t", data);
-  if ("errors" in data) {
-    console.log("aboyt to trow", data);
-    return api.rejectWithValue(data.errors);
+  try {
+    const res = await login(credentials);
+    return res.data;
+  } catch (err) {
+    return api.rejectWithValue(errorHandler(err as Error));
   }
-  return data;
 });
 
-export const signUp = createAsyncThunk<AuthenticatedData, RegisterForm>(
-  "user/signup",
-  async (credentials, api) => {
-    const data = await register(credentials);
-    console.log("before the t", data);
-    if ("errors" in data) {
-      console.log("aboyt to trow", data);
-      return api.rejectWithValue(data.errors);
-    }
-    return data;
+export const signUp = createAsyncThunk<
+  AuthenticatedData,
+  RegisterForm,
+  { rejectValue: User["error"] }
+>("user/signup", async (credentials, api) => {
+  try {
+    const res = await register(credentials);
+    return res.data;
+  } catch (err) {
+    return api.rejectWithValue(errorHandler(err as Error));
   }
-);
+});
+
+export const verify = createAsyncThunk<
+  Pick<AuthenticatedData, "isVerified">,
+  string,
+  { rejectValue: Pick<User["error"], "message"> }
+>("user/verify", async (token, api) => {
+  try {
+    const res = await verifyAccount(token);
+    return res.data;
+  } catch (err) {
+    return api.rejectWithValue(errorHandler(err as Error));
+  }
+});
 
 const authSlice = createSlice({
   name: "user",
@@ -91,6 +108,16 @@ const authSlice = createSlice({
     builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload || {};
+    });
+    builder.addCase(verify.fulfilled, (state, action) => {
+      state.loading = false;
+      if (state.user?.isVerified) {
+        state.user.isVerified = action.payload.isVerified;
+      }
+    });
+    builder.addCase(verify.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload!;
     });
   },
 });
