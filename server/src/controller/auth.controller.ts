@@ -10,7 +10,7 @@ import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
 import { getAuthTokens, userDataPayload } from '../utils/token';
 import { mailVerification } from '../utils/mail';
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import {
   ACCESS_COOKIE,
   EMAIL_TOKEN_CONFIG,
@@ -145,9 +145,9 @@ export const verifyAccount = async (
   next: NextFunction,
 ) => {
   try {
-    const { token } = request.query;
+    const { etoken } = request.query;
 
-    const decodedToken = jwt.verify(token, EMAIL_TOKEN_CONFIG.secret, {
+    const decodedToken = jwt.verify(etoken, EMAIL_TOKEN_CONFIG.secret, {
       algorithms: [EMAIL_TOKEN_CONFIG.algorithm],
     }) as userDataPayload;
 
@@ -165,7 +165,7 @@ export const verifyAccount = async (
       },
     });
 
-    const isLogged = !request.cookies['x-access-token'];
+    const isLogged = !request.cookies[ACCESS_COOKIE.name];
 
     if (isLogged) {
       response.clearCookie(ACCESS_COOKIE.name).clearCookie(REFRESH_COOKIE.name);
@@ -180,7 +180,13 @@ export const verifyAccount = async (
 
     return response.status(HttpStatus.OK).json({ message: 'Success.' });
   } catch (err) {
-    console.error(err);
+    if (err instanceof JsonWebTokenError) {
+      return next(
+        new AppError('Bad Request', HttpStatus.FORBIDDEN, [
+          { etoken: 'Invalid Token' },
+        ]),
+      );
+    }
     return next(err);
   }
 };

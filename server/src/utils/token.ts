@@ -15,14 +15,6 @@ export type userDataPayload = Pick<User, 'username' | 'email' | 'isVerified'> &
 
 export type payloadData = { user?: userDataPayload };
 
-export const generateToken = (
-  { username, email, isVerified }: userDataPayload,
-  secret: string,
-  config: jwt.SignOptions,
-) => {
-  return jwt.sign({ email, isVerified, username }, secret, config);
-};
-
 export const verifyAccessToken = (
   req: Request & payloadData,
   _res: Response,
@@ -51,13 +43,13 @@ export const getAuthTokens = ({
   isVerified,
 }: userDataPayload) => {
   const payload = { username, email, isVerified };
-  const access = generateToken(payload, ACCESS_TOKEN_CONFIG.secret, {
+  const access = jwt.sign(payload, ACCESS_TOKEN_CONFIG.secret, {
     algorithm: ACCESS_TOKEN_CONFIG.algorithm,
     subject: username,
     expiresIn: '30s',
   });
 
-  const refresh = generateToken(payload, REFRESH_TOKEN_CONFIG.secret, {
+  const refresh = jwt.sign(payload, REFRESH_TOKEN_CONFIG.secret, {
     algorithm: REFRESH_TOKEN_CONFIG.algorithm,
     subject: username,
     expiresIn: '1min',

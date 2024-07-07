@@ -15,7 +15,7 @@ export const validation = (
     );
     console.log(error, data, success);
     if (!success) {
-      const errors = new AppError('Invalid Input', HttpStatus.BAD_REQUEST);
+      const errors = new AppError('Bad Request', HttpStatus.BAD_REQUEST);
       error.issues.forEach((issue) => {
         errors.addError(issue.path[0] as string, issue.message);
       });

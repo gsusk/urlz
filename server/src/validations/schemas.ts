@@ -61,7 +61,7 @@ function validURL(url: string, ctx: z.RefinementCtx) {
 }
 
 export const verificationTokenValidation = z.object({
-  token: z.string().trim().min(1, { message: 'Required' }),
+  etoken: z.string().trim().min(1, { message: 'Verification token required.' }),
 });
 
 export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
