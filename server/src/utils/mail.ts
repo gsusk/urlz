@@ -21,7 +21,7 @@ export const mailVerification = (
   const token = sign(
     { username: user.username, email: user.email, isVerified: user.isVerified },
     EMAIL_TOKEN_CONFIG.secret,
-    { algorithm: EMAIL_TOKEN_CONFIG.algorithm },
+    { algorithm: EMAIL_TOKEN_CONFIG.algorithm, subject: user.username },
   );
 
   const mailOptions: Mail.Options = {
@@ -40,7 +40,7 @@ export const mailVerification = (
         Your account verification is almost complete! 
         </p>
         <br/>
-        <p>Click <a href="http://localhost:5173/verify?token=${token}">here</a> to verify it!</p>
+        <p>Click <a href="http://localhost:5173/verify-email?etoken=${token}">here</a> to verify it!</p>
       </div>
       <br/>
       <div><small>If you didnt expect this email, you can safely ignore it.</small></div>

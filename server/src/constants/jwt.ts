@@ -34,6 +34,6 @@ export const REFRESH_COOKIE = {
     httpOnly: true,
     secure: false,
     sameSite: 'lax',
-    path: '/api/auth/refresh',
+    path: '/api/auth',
   },
 } as cookie_type;

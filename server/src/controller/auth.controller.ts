@@ -66,7 +66,7 @@ export const signIn = async (
       .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
       .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
-    return response.status(200).json({ user: rest });
+    return response.status(200).json({ ...rest });
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
       response.clearCookie('x-refresh-token');
@@ -128,7 +128,7 @@ export const signUp = async (
       .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
       .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
-    response.status(201).json({ user });
+    response.status(201).json({ ...user });
     mailVerification(user);
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
@@ -152,7 +152,7 @@ export const verifyAccount = async (
     }) as userDataPayload;
 
     if (decodedToken.isVerified) {
-      return response.json({ user: { isVerified: true } });
+      return response.json({ isVerified: true });
     }
 
     const user = await prisma.user.update({
@@ -165,11 +165,12 @@ export const verifyAccount = async (
       },
     });
 
-    const isLogged = !request.cookies[ACCESS_COOKIE.name];
+    const isLogged = !!request.cookies[ACCESS_COOKIE.name];
 
     if (isLogged) {
-      response.clearCookie(ACCESS_COOKIE.name).clearCookie(REFRESH_COOKIE.name);
-      return response.status(HttpStatus.OK).json({ message: 'Success.' });
+      response.clearCookie(ACCESS_COOKIE.name, ACCESS_COOKIE.options);
+      response.clearCookie(REFRESH_COOKIE.name, REFRESH_COOKIE.options);
+      return response.status(HttpStatus.OK).json({ isVerified: true });
     }
 
     const [access, refresh] = getAuthTokens(user);
@@ -178,7 +179,7 @@ export const verifyAccount = async (
       .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
       .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
-    return response.status(HttpStatus.OK).json({ message: 'Success.' });
+    return response.status(HttpStatus.OK).json({ isVerified: true });
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
       return next(
