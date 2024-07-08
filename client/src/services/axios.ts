@@ -24,7 +24,7 @@ client.interceptors.response.use(
     ) {
       error.config.__retry = true;
       return client
-        .post("/api/auth/refresh")
+        .post("/auth/refresh")
         .then((r) => {
           console.log(r);
           console.log("refresh from auth first nested");
@@ -34,7 +34,9 @@ client.interceptors.response.use(
         .catch((e) => {
           console.log("erroror from refreshAuthToken 2nd nested catch");
           console.log("md");
-          return Promise.reject(new Error("e.message"));
+          return Promise.reject(
+            new Error(e.response?.data?.message || "Unexpected Error.")
+          );
         });
     }
     if (!error.response) {

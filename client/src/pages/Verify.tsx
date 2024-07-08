@@ -1,42 +1,23 @@
-import { Link, Navigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { GrClose } from "react-icons/gr";
 import "./Login.css";
-import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
-import { useEffect, useState } from "react";
-import { successfulVerification, verify } from "../redux/user/user";
-import { errorHandler } from "../utils/errorparser";
+import { useAppSelector } from "../hooks/appSelector";
+import { getNewVerificationEmail } from "../services/auth";
 
 function Verify() {
-  const [query] = useSearchParams();
-  const isVerified = useAppSelector((state) => state.user.user?.isVerified);
-  const [error, setError] = useState<Record<string, string>>({});
-  const [loading, setLoading] = useState(true);
-  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user.user);
 
-  useEffect(() => {
-    if (!loading) setLoading(true);
-    const verifyAccount = async () => {
-      try {
-        const currQuery = query.get("etoken");
-        if (!currQuery) return setError({ message: "Token Required." });
-        const res = await dispatch(verify(currQuery));
-        if (res.payload && "message" in res.payload) {
-          return setError(res.payload);
-        }
-        dispatch(successfulVerification());
-      } catch (err) {
-        const { errors, message } = errorHandler(err as Error);
-        setError({ ...(errors || {}), message });
-      } finally {
-        setLoading(false);
-      }
-    };
-    verifyAccount();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const handleClick = async (e: React.FormEvent<HTMLSpanElement>) => {
+    e.preventDefault();
+    try {
+      const res = await getNewVerificationEmail();
+    } catch (err) {
+      ("");
+    }
+  };
 
-  if (!query.get("etoken") || isVerified) {
-    return <Navigate to={"/"} state={{ verified: true }}></Navigate>;
+  if (!user || user.isVerified) {
+    return <Navigate to={"/"} replace={true}></Navigate>;
   }
 
   return (
@@ -51,21 +32,15 @@ function Verify() {
           </Link>
         </div>
         <div className="lat-bar-icontainer">
-          {loading && <div>Loading...</div>}
-          {Object.values(error).length > 0 && (
-            <div>
-              <h2>An error ocurred verifying your account:</h2>
-              <p>{error.message ?? "Unexpected Error"}</p>
-              <p>
-                Please try later or
-                <span>
-                  <b> send a new verification code.</b>
-                </span>
-              </p>
-            </div>
-          )}
-          <div className="bmt"></div>
+          <div>
+            <h2>A Verification request has been sent to {user.email}.</h2>
+            <p>
+              If you didnt received an email or need a new one click{" "}
+              <span onClick={handleClick}>here</span>.
+            </p>
+          </div>
         </div>
+        <div className="bmt"></div>
       </section>
     </>
   );

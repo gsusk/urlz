@@ -1,5 +1,4 @@
-import { AxiosError } from "axios";
-import client, { isAxiosError } from "./axios";
+import client from "./axios";
 
 export type AuthenticatedData = {
   email: string;
@@ -67,4 +66,8 @@ export async function verifyAccount(token: string) {
   return await client.post<Pick<AuthenticatedData, "isVerified">>(
     `/auth/verify?etoken=${token}`
   );
+}
+
+export async function getNewVerificationEmail() {
+  return await client.post("/auth/refresh-verify", {});
 }

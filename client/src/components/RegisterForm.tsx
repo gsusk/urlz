@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { formError, resetError, signUp } from "../redux/user/user";
 import { FaRegEye } from "react-icons/fa";
@@ -39,11 +39,12 @@ const registerFormSchema = z
 
 function RegisterForm() {
   const loading = useAppSelector((state) => state.user.loading);
-  const username = useAppSelector((state) => state.user.error.username);
-  const email = useAppSelector((state) => state.user.error.email);
-  const password = useAppSelector((state) => state.user.error.password);
+  const username = useAppSelector((state) => state.user.error.errors?.username);
+  const email = useAppSelector((state) => state.user.error.errors?.email);
+  const password = useAppSelector((state) => state.user.error.errors?.password);
+  const message = useAppSelector((state) => state.user.error.message);
   const confirmPassword = useAppSelector(
-    (state) => state.user.error.confirmPassword
+    (state) => state.user.error.errors?.confirmPassword
   );
   const passwordRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<RegisterForm>({
@@ -54,8 +55,11 @@ function RegisterForm() {
   });
   const [inputType, setInputType] = useState("password");
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
-    dispatch(resetError());
+    if (username || email || password || message || confirmPassword)
+      dispatch(resetError());
     const value = e.currentTarget.value;
     const id = e.currentTarget.id;
     setFormData((prev) => ({
@@ -63,16 +67,23 @@ function RegisterForm() {
       [id]: value,
     }));
   };
+  console.error(username, email, password, confirmPassword);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const result = registerFormSchema.safeParse(formData);
 
     if (result.success) {
-      await dispatch(signUp(result.data));
+      try {
+        await dispatch(signUp(result.data)).unwrap();
+        return navigate("/email/verify");
+      } catch (err) {
+        console.error(err);
+      }
     } else {
+      console.error(result, "errrr");
       const errors = serializeZodError<typeof formData>(result.error);
-      dispatch(formError(errors));
+      dispatch(formError({ errors }));
     }
   };
 
@@ -169,6 +180,9 @@ function RegisterForm() {
             >
               Sign Up
             </button>
+          </div>
+          <div className="shortener-err-div">
+            {message?.toLocaleUpperCase()}
           </div>
         </form>
       </div>

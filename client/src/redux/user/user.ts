@@ -19,6 +19,7 @@ type User = {
       username: string;
       password: string;
       confirmPassword: string;
+      etoken?: string;
     };
   };
 };
@@ -83,6 +84,9 @@ const authSlice = createSlice({
         state.user.isVerified = true;
       }
     },
+    logout(state) {
+      state = { user: null, error: {}, loading: false };
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(signIn.fulfilled, (state, action) => {
@@ -111,13 +115,13 @@ const authSlice = createSlice({
     });
     builder.addCase(verify.fulfilled, (state, action) => {
       state.loading = false;
-      if (state.user?.isVerified) {
+      if (state.user) {
         state.user.isVerified = action.payload.isVerified;
       }
     });
     builder.addCase(verify.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload!;
+      state.error = action.payload! || {};
     });
     builder.addCase(verify.pending, (state) => {
       state.loading = true;
@@ -126,5 +130,5 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { formError, resetError, successfulVerification } =
+export const { formError, resetError, successfulVerification, logout } =
   authSlice.actions;
