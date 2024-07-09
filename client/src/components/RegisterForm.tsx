@@ -67,7 +67,6 @@ function RegisterForm() {
       [id]: value,
     }));
   };
-  console.error(username, email, password, confirmPassword);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

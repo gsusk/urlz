@@ -69,5 +69,5 @@ export async function verifyAccount(token: string) {
 }
 
 export async function getNewVerificationEmail() {
-  return await client.post("/auth/refresh-verify", {});
+  return await client.post("/auth/refresh-verify");
 }

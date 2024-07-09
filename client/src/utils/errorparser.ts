@@ -28,7 +28,7 @@ function normalizeError<T>(err: T[]): T {
 export function errorHandler<T>(err: Error) {
   if (isAxiosError<{ message: string; errors?: T[] }>(err) && err.response) {
     return {
-      message: err.response.data.message,
+      message: err.response.data.message || "Unexpected Error.",
       errors: normalizeError<T>(err.response.data.errors!),
     };
   }
