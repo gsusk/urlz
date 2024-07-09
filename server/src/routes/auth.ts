@@ -16,4 +16,8 @@ router.post(
   verifyAccount,
 );
 
+router.post('/refresh-verify', (req, res, next) => {
+  return res.status(201).end();
+});
+
 export default router;
