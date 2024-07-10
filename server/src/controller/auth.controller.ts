@@ -8,7 +8,7 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { getAuthTokens, userDataPayload } from '../utils/token';
+import { getAuthTokens, payloadData, userDataPayload } from '../utils/token';
 import { mailVerification } from '../utils/mail';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import {
@@ -185,6 +185,27 @@ export const verifyAccount = async (
       return next(
         new AppError('Bad Request', HttpStatus.FORBIDDEN, [
           { etoken: 'Invalid Token' },
+        ]),
+      );
+    }
+    return next(err);
+  }
+};
+
+export const sendNewVerificationEmail = (
+  request: Request & payloadData,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { username, email, isVerified } = request.user!;
+    mailVerification({ username, email, isVerified });
+    return response.status(200).end();
+  } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      return next(
+        new AppError('Bad Request', HttpStatus.FORBIDDEN, [
+          { etoken: 'TokenError' },
         ]),
       );
     }

@@ -1,5 +1,11 @@
 import { validation } from '../middlewares/validationMiddleware';
-import { signIn, signUp, verifyAccount } from '../controller/auth.controller';
+import {
+  sendNewVerificationEmail,
+  signIn,
+  signUp,
+  verifyAccount,
+} from '../controller/auth.controller';
+import { verifyAccessToken } from '../middlewares/token';
 import { Router } from 'express';
 import {
   SignInSchema,
@@ -16,8 +22,6 @@ router.post(
   verifyAccount,
 );
 
-router.post('/refresh-verify', (req, res, next) => {
-  return res.status(201).end();
-});
+router.post('/refresh-verify', verifyAccessToken, sendNewVerificationEmail);
 
 export default router;
