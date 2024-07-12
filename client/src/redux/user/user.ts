@@ -25,7 +25,7 @@ type User = {
 };
 
 const initialState: User = {
-  user: JSON.parse(localStorage.getItem("user") as string),
+  user: null,
   loading: false,
   error: {},
 };
@@ -84,8 +84,8 @@ const authSlice = createSlice({
         state.user.isVerified = true;
       }
     },
-    logout(state) {
-      state = { user: null, error: {}, loading: false };
+    logout(_state) {
+      _state = { user: null, error: {}, loading: false };
     },
   },
   extraReducers: (builder) => {

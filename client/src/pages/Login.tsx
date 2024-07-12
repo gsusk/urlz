@@ -3,13 +3,18 @@ import LoginForm from "../components/LoginForm";
 import { GrClose } from "react-icons/gr";
 import "./Login.css";
 import { useEffect, useState } from "react";
-import { string } from "zod";
 
 function Login() {
   const location: Location<string | undefined> = useLocation();
   const [locationState, setLocationState] = useState<string | undefined>(
     location.state
   );
+
+  useEffect(() => {
+    return () => {
+      setLocationState(undefined);
+    };
+  });
 
   return (
     <>

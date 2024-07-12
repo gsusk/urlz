@@ -1,4 +1,9 @@
-import { Navigate, useLocation, useSearchParams } from "react-router-dom";
+import {
+  Navigate,
+  useLocation,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { useEffect, useState } from "react";
 import { formError, logout, verify } from "../redux/user/user";
@@ -7,15 +12,12 @@ function EmailVerification() {
   const location = useLocation();
   const [query] = useSearchParams();
   const isVerified = useAppSelector((state) => state.user.user?.isVerified);
-  const [isSuccess, setIsSuccess] = useState(false);
   const message = useAppSelector((state) => state.user.error.message);
   const [loading, setLoading] = useState(true);
   const dispatch = useAppDispatch();
-
-  console.log(isVerified, isSuccess, loading, message);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    console.log("outsideeeeeee");
     if (!isVerified) {
       const token = query.get("etoken")?.trim();
 
@@ -28,34 +30,23 @@ function EmailVerification() {
       const verificationWrapper = async () => {
         try {
           await dispatch(verify(token)).unwrap();
-          setIsSuccess(true);
+          dispatch(logout());
+          return navigate("/login", {
+            state: "Succesfully verified",
+            replace: true,
+          });
         } catch (err) {
-          console.error(err, "after unwrap");
+          console.error(err);
         } finally {
           setLoading(false);
         }
       };
       verificationWrapper();
+    } else {
+      navigate("/", { replace: true });
     }
-
-    return () => {
-      console.log("heeeeere");
-      if (isVerified && isSuccess) {
-        dispatch(logout());
-      }
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location]);
-
-  if (isSuccess) {
-    return (
-      <Navigate to={"/login"} state={"Email verified successfully!"}></Navigate>
-    );
-  }
-
-  if (isVerified) {
-    return <Navigate to={"/"}></Navigate>;
-  }
 
   if (loading) return <div>Loading...</div>;
 

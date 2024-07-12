@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { resetError, signIn } from "../redux/user/user";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { FaRegEyeSlash } from "react-icons/fa";
@@ -30,6 +30,7 @@ function LoginForm() {
   const loading = useAppSelector((state) => state.user.loading);
   const username = useAppSelector((state) => state.user.error.errors?.username);
   const password = useAppSelector((state) => state.user.error.errors?.email);
+  const message = useAppSelector((state) => state.user.error.message);
   const dispatch = useAppDispatch();
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -119,6 +120,12 @@ function LoginForm() {
             >
               Login
             </button>
+          </div>
+          <div className="shortener-err-div">
+            {message &&
+              !username &&
+              !password &&
+              `Error: ${message?.toLocaleUpperCase()}`}
           </div>
         </form>
       </div>

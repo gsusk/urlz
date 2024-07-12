@@ -181,7 +181,12 @@ function RegisterForm() {
             </button>
           </div>
           <div className="shortener-err-div">
-            {message?.toLocaleUpperCase()}
+            {message &&
+              !username &&
+              !email &&
+              !password &&
+              !confirmPassword &&
+              `Error: ${message?.toLocaleUpperCase()}`}
           </div>
         </form>
       </div>
