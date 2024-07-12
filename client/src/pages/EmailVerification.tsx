@@ -12,7 +12,10 @@ function EmailVerification() {
   const [loading, setLoading] = useState(true);
   const dispatch = useAppDispatch();
 
+  console.log(isVerified, isSuccess, loading, message);
+
   useEffect(() => {
+    console.log("outsideeeeeee");
     if (!isVerified) {
       const token = query.get("etoken")?.trim();
 
@@ -26,15 +29,17 @@ function EmailVerification() {
         try {
           await dispatch(verify(token)).unwrap();
           setIsSuccess(true);
-          setLoading(false);
         } catch (err) {
-          console.error(err);
+          console.error(err, "after unwrap");
+        } finally {
+          setLoading(false);
         }
       };
       verificationWrapper();
     }
 
     return () => {
+      console.log("heeeeere");
       if (isVerified && isSuccess) {
         dispatch(logout());
       }
@@ -44,7 +49,7 @@ function EmailVerification() {
 
   if (isSuccess) {
     return (
-      <Navigate to={"/login"} state={"Email verified succesfully!"}></Navigate>
+      <Navigate to={"/login"} state={"Email verified successfully!"}></Navigate>
     );
   }
 

@@ -23,8 +23,8 @@ function App() {
             </Route>
             <Route element={<Authenticated />}>
               <Route path="/email/verify" element={<Verify />}></Route>
-              <Route path="/verify" element={<EmailVerification />}></Route>
             </Route>
+            <Route path="/verify-email" element={<EmailVerification />}></Route>
           </Route>
         </Routes>
       </main>

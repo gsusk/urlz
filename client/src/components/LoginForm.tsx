@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { resetError, signIn } from "../redux/user/user";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { FaRegEyeSlash } from "react-icons/fa";
@@ -28,8 +28,8 @@ function LoginForm() {
   });
   const [inputType, setInputType] = useState("password");
   const loading = useAppSelector((state) => state.user.loading);
-  const username = useAppSelector((state) => state.user.error.username);
-  const password = useAppSelector((state) => state.user.error.password);
+  const username = useAppSelector((state) => state.user.error.errors?.username);
+  const password = useAppSelector((state) => state.user.error.errors?.email);
   const dispatch = useAppDispatch();
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
@@ -51,7 +51,7 @@ function LoginForm() {
       await dispatch(signIn(result.data));
     } else {
       const errors = serializeZodError<typeof formData>(result.error);
-      dispatch(formError(errors));
+      dispatch(formError({ message: "", ...errors }));
     }
   };
 

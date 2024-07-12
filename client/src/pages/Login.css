@@ -12,7 +12,7 @@
 
 .lat-bar-icontainer {
   width: 100%;
-  padding: 1rem 2.5rem;
+  padding: 1.6rem 2.5rem;
   overflow-wrap: break-word;
   overflow: hidden;
   text-align: start;
@@ -101,6 +101,28 @@
   justify-content: center;
   align-content: center;
   margin: 2rem 0;
+}
+
+.info-pop-up {
+  position: absolute;
+  z-index: 9999;
+  background-color: rgb(119, 247, 151);
+  opacity: 55%;
+  color: var(--main-darkest-color);
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.info-pop-up-close {
+  position: absolute;
+  right: 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 input:-webkit-autofill,

@@ -1,9 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, Location, useLocation } from "react-router-dom";
 import LoginForm from "../components/LoginForm";
 import { GrClose } from "react-icons/gr";
 import "./Login.css";
+import { useEffect, useState } from "react";
+import { string } from "zod";
 
 function Login() {
+  const location: Location<string | undefined> = useLocation();
+  const [locationState, setLocationState] = useState<string | undefined>(
+    location.state
+  );
+
   return (
     <>
       <Link to={"/"} className="modal"></Link>
@@ -15,6 +22,17 @@ function Login() {
             </button>
           </Link>
         </div>
+        {locationState && (
+          <div className="info-pop-up">
+            {locationState}
+            <span
+              className="info-pop-up-close"
+              onClick={() => setLocationState(undefined)}
+            >
+              <GrClose></GrClose>
+            </span>
+          </div>
+        )}
         <div className="lat-bar-icontainer">
           <div className="lb-i-cont">
             <img
