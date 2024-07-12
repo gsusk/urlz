@@ -57,13 +57,13 @@ export const signUp = createAsyncThunk<
 });
 
 export const verify = createAsyncThunk<
-  Pick<AuthenticatedData, "isVerified">,
+  boolean,
   string,
   { rejectValue: Pick<User["error"], "message"> }
 >("user/verify", async (token, api) => {
   try {
     const res = await verifyAccount(token);
-    return res.data;
+    return res.status === 200;
   } catch (err) {
     return api.rejectWithValue(errorHandler(err as Error));
   }
@@ -116,7 +116,7 @@ const authSlice = createSlice({
     builder.addCase(verify.fulfilled, (state, action) => {
       state.loading = false;
       if (state.user) {
-        state.user.isVerified = action.payload.isVerified;
+        state.user.isVerified = action.payload;
       }
     });
     builder.addCase(verify.rejected, (state, action) => {

@@ -17,7 +17,10 @@ function Verify() {
     try {
       setError("");
       setLoading(true);
-      await getNewVerificationEmail();
+      const res = await getNewVerificationEmail();
+      if (res.status !== 200) {
+        throw new Error("Unexpected Error");
+      }
       setIsSuccessful(true);
     } catch (err) {
       setError(errorHandler(err as Error).message);

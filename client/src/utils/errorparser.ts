@@ -15,11 +15,6 @@ export function serializeZodError<T>(err: ZodError<T>) {
 
 function normalizeError<T>(err: T[]): T {
   if (!err || Object(err).length === 0) return {} as T;
-  console.error(
-    err.reduce((acc, curr) => {
-      return { ...acc, ...curr };
-    }, {} as T)
-  );
   return err.reduce((acc, curr) => {
     return { ...acc, ...curr };
   }, {} as T);

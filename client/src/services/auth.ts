@@ -63,9 +63,7 @@ export async function register({
 }
 
 export async function verifyAccount(token: string) {
-  return await client.post<Pick<AuthenticatedData, "isVerified">>(
-    `/auth/verify?etoken=${token}`
-  );
+  return await client.post(`/auth/verify?etoken=${token}`);
 }
 
 export async function getNewVerificationEmail() {
