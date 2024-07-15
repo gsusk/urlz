@@ -1,9 +1,4 @@
-import {
-  Navigate,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { useEffect, useState } from "react";
 import { formError, logout, verify } from "../redux/user/user";
@@ -18,35 +13,35 @@ function EmailVerification() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isVerified) {
-      const token = query.get("etoken")?.trim();
+    const token = query.get("etoken")?.trim();
 
+    const verificationWrapper = async () => {
+      try {
+        await dispatch(verify(token as string)).unwrap();
+        dispatch(logout());
+        navigate("/login", {
+          state: "Succesfully verified",
+          replace: true,
+        });
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (!isVerified) {
       if (!token) {
         dispatch(formError({ message: "Invalid token." }));
         setLoading(false);
-        return;
+      } else {
+        verificationWrapper();
       }
-
-      const verificationWrapper = async () => {
-        try {
-          await dispatch(verify(token)).unwrap();
-          dispatch(logout());
-          return navigate("/login", {
-            state: "Succesfully verified",
-            replace: true,
-          });
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      verificationWrapper();
     } else {
       navigate("/", { replace: true });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location]);
+  }, [location, isVerified]);
 
   if (loading) return <div>Loading...</div>;
 

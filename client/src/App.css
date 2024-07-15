@@ -96,6 +96,13 @@ small {
     }
   }
 
+  &.__sm {
+    padding: 0.5rem 1.1rem;
+    max-width: 7rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   &:disabled {
     background-color: var(--main-gray-color) !important;
   }
