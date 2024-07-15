@@ -6,6 +6,7 @@ const jwtAlgo = 'HS256' as const;
 export const EMAIL_TOKEN_CONFIG = {
   secret: process.env.EMAIL_TOKEN_SECRET as string,
   algorithm: jwtAlgo,
+  expiresIn: '12h',
 };
 
 export const ACCESS_TOKEN_CONFIG = {

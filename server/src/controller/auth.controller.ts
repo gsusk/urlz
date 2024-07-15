@@ -58,7 +58,7 @@ export const signIn = async (
         ]),
       );
     }
-    const { password: p, ...rest } = user;
+    const { password: p, email, ...rest } = user;
 
     const [access, refresh] = getAuthTokens(user);
 
@@ -123,12 +123,12 @@ export const signUp = async (
     });
 
     const [access, refresh] = getAuthTokens(user);
-
+    const { email: e, ...rest } = user;
     response
       .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
       .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
-    response.status(201).json({ ...user });
+    response.status(201).json({ ...rest });
     mailVerification(user);
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
@@ -170,7 +170,7 @@ export const verifyAccount = async (
     if (isLogged) {
       response.clearCookie(ACCESS_COOKIE.name, ACCESS_COOKIE.options);
       response.clearCookie(REFRESH_COOKIE.name, REFRESH_COOKIE.options);
-      return response.status(HttpStatus.OK).json({ isVerified: true });
+      return response.status(HttpStatus.OK).end();
     }
 
     const [access, refresh] = getAuthTokens(user);
@@ -179,7 +179,7 @@ export const verifyAccount = async (
       .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
       .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
-    return response.status(HttpStatus.OK).json({ isVerified: true });
+    return response.status(HttpStatus.OK).end();
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
       return next(
@@ -192,14 +192,17 @@ export const verifyAccount = async (
   }
 };
 
-export const sendNewVerificationEmail = (
+export const sendNewVerificationEmail = async (
   request: Request & payloadData,
   response: Response,
   next: NextFunction,
 ) => {
   try {
-    const { username, email, isVerified } = request.user!;
-    mailVerification({ username, email, isVerified });
+    const { username, isVerified } = request.user!;
+    const user = await prisma.user.findUniqueOrThrow({
+      where: { username: username },
+    });
+    mailVerification({ username, email: user.email, isVerified });
     return response.status(200).end();
   } catch (err) {
     if (err instanceof JsonWebTokenError) {

@@ -10,12 +10,8 @@ export type userDataPayload = Pick<User, 'username' | 'email' | 'isVerified'> &
 
 export type payloadData = { user?: userDataPayload };
 
-export const getAuthTokens = ({
-  username,
-  email,
-  isVerified,
-}: userDataPayload) => {
-  const payload = { username, email, isVerified };
+export const getAuthTokens = ({ username, isVerified }: userDataPayload) => {
+  const payload = { username, isVerified };
   const access = jwt.sign(payload, ACCESS_TOKEN_CONFIG.secret, {
     algorithm: ACCESS_TOKEN_CONFIG.algorithm,
     subject: username,

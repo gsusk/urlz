@@ -19,9 +19,13 @@ export const mailVerification = (
   user: Pick<User, 'username' | 'email' | 'isVerified'>,
 ) => {
   const token = sign(
-    { username: user.username, email: user.email, isVerified: user.isVerified },
+    { username: user.username, isVerified: user.isVerified },
     EMAIL_TOKEN_CONFIG.secret,
-    { algorithm: EMAIL_TOKEN_CONFIG.algorithm, subject: user.username },
+    {
+      algorithm: EMAIL_TOKEN_CONFIG.algorithm,
+      subject: user.username,
+      expiresIn: EMAIL_TOKEN_CONFIG.expiresIn,
+    },
   );
 
   const mailOptions: Mail.Options = {
