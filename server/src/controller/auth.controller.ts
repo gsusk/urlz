@@ -17,6 +17,8 @@ import {
   REFRESH_COOKIE,
 } from '../constants/jwt';
 
+const imageLocation = 'http://localhost:8081/public/default-profile-photo.jpg';
+
 export const signIn = async (
   request: Request<unknown, unknown, SignInSchemaType>,
   response: Response,
@@ -46,6 +48,7 @@ export const signIn = async (
         ]),
       );
     }
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) {
@@ -58,9 +61,10 @@ export const signIn = async (
         ]),
       );
     }
-    const { password: p, email, ...rest } = user;
 
+    const { password: p, email, ...rest } = user;
     const [access, refresh] = getAuthTokens(user);
+    rest.profilePic = rest.profilePic || imageLocation;
 
     response
       .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
@@ -118,17 +122,17 @@ export const signUp = async (
         username: true,
         email: true,
         isVerified: true,
-        profilePic: true,
       },
     });
 
     const [access, refresh] = getAuthTokens(user);
     const { email: e, ...rest } = user;
+
     response
       .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
       .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
 
-    response.status(201).json({ ...rest });
+    response.status(201).json({ ...rest, profilePic: imageLocation });
     mailVerification(user);
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
@@ -162,7 +166,6 @@ export const verifyAccount = async (
         isVerified: true,
         username: true,
         email: true,
-        profilePic: true,
       },
     });
 
