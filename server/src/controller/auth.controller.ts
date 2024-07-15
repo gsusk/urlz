@@ -152,7 +152,7 @@ export const verifyAccount = async (
     }) as userDataPayload;
 
     if (decodedToken.isVerified) {
-      return response.json({ isVerified: true });
+      return response.status(HttpStatus.OK).end();
     }
 
     const user = await prisma.user.update({
@@ -162,6 +162,7 @@ export const verifyAccount = async (
         isVerified: true,
         username: true,
         email: true,
+        profilePic: true,
       },
     });
 
@@ -201,6 +202,7 @@ export const sendNewVerificationEmail = async (
     const { username, isVerified } = request.user!;
     const user = await prisma.user.findUniqueOrThrow({
       where: { username: username },
+      select: { email: true },
     });
     mailVerification({ username, email: user.email, isVerified });
     return response.status(200).end();
