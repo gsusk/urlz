@@ -8,6 +8,7 @@ import {
   verifyAccount,
 } from "../../services/auth";
 import { errorHandler } from "../../utils/errorparser";
+import { AxiosError } from "axios";
 
 type User = {
   user: AuthenticatedData | null;
@@ -65,7 +66,14 @@ export const verify = createAsyncThunk<
     const res = await verifyAccount(token);
     return res.status === 200;
   } catch (err) {
-    return api.rejectWithValue(errorHandler(err as Error));
+    let error;
+    if (err instanceof AxiosError && err.response?.data) {
+      error = {
+        ...(err as Error),
+        message: err.response.status + " " + err.response.data.message,
+      };
+    }
+    return api.rejectWithValue(errorHandler(error ?? (err as Error)));
   }
 });
 

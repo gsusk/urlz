@@ -20,18 +20,23 @@ function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/manager">
+            <Link to="/manager" className="manager-header-container">
               <button className="button __vsc">MANAGER</button>
             </Link>
-            <Link to="/profile">
-              <button className="button __vsc __sm">PROFILE</button>
-            </Link>
-            <div>
-              <img src={`${user.email}`} alt="" className="pfp-image-header" />
-              <span>{user.username}</span>
+            <div className="profile-header-container">
+              <div className="pfp-image-header-container">
+                <img
+                  src={`${user.profilePic}`}
+                  alt="pic"
+                  className="pfp-image-header"
+                />
+              </div>
+              <div className="username-header-container">
+                <span className="username-header-display">Gsuskre123</span>
+              </div>
             </div>
           </>
-        )}{" "}
+        )}
       </div>
     </div>
   );

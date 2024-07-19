@@ -1,9 +1,9 @@
 import client from "./axios";
 
 export type AuthenticatedData = {
-  email: string;
   username: string;
   isVerified: boolean;
+  profilePic: string;
 };
 
 export type LoginForm = {

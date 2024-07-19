@@ -46,10 +46,12 @@ function EmailVerification() {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div>
-      <h2>An Error ocurred at the verification proccess: </h2>
-      <div>
-        {message ?? "Unexpected Error, please try later or contact support."}
+    <div className="h-container bmt main-container __f">
+      <div className="">
+        <h2>An Error ocurred at the verification proccess: </h2>
+        <div>
+          {message ?? "Unexpected Error, please try later or contact support."}
+        </div>
       </div>
     </div>
   );
