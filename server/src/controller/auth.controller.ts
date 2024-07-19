@@ -208,7 +208,7 @@ export const sendNewVerificationEmail = async (
       select: { email: true },
     });
     mailVerification({ username, email: user.email, isVerified });
-    return response.status(200).end();
+    return response.status(200).end(user);
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
       return next(
