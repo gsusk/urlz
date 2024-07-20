@@ -22,7 +22,6 @@
   font-size: 1rem;
   text-decoration: none;
   color: var(--main-white-color);
-  border-right: 0.2rem solid var(--main-pink-color);
 }
 
 .account_sider_clicked {
