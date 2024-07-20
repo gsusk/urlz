@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
@@ -9,6 +9,8 @@ import Guest from "./components/Guest";
 import Verify from "./pages/Verify";
 import Authenticated from "./components/Authenticated";
 import EmailVerification from "./pages/EmailVerification";
+import Settings from "./pages/Settings";
+import Profile from "./components/Profile";
 
 function App() {
   return (
@@ -23,12 +25,16 @@ function App() {
             </Route>
             <Route element={<Authenticated />}>
               <Route path="/email/verify" element={<Verify />}></Route>
-              <Route path="/settings">
-                {/*<Route path="/profile" element={<Profile />}></Route>*/}
-              </Route>
             </Route>
           </Route>
           <Route path="/verify-email" element={<EmailVerification />}></Route>
+          <Route element={<Authenticated />}>
+            <Route path="/settings" element={<Settings />}>
+              <Route index element={<Navigate to="profile" />} />
+              <Route path="profile" element={<Profile />} />
+            </Route>
+          </Route>
+          {/* <Route path="*" element={<Navigate to="/" />} /> */}
         </Routes>
       </main>
       <Footer />

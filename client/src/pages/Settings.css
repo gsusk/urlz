@@ -1,0 +1,30 @@
+.settings-page-container {
+  display: flex;
+  width: 100%;
+}
+
+.settings-sections {
+  display: flex;
+  padding: 0;
+  margin: 0;
+  width: 8rem;
+}
+
+.settings-sections-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.account_siderbar_button {
+  font-size: 1rem;
+  text-decoration: none;
+  color: var(--main-white-color);
+  border-right: 0.2rem solid var(--main-pink-color);
+}
+
+.account_sider_clicked {
+  border-right: 0.2rem solid var(--main-pink-color);
+}

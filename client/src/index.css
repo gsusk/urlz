@@ -29,6 +29,7 @@ html {
   -webkit-text-size-adjust: 100%; /* 2 */
   background: var(--main-darkest-color);
   box-sizing: border-box;
+  height: 100%;
 }
 
 *,
@@ -50,6 +51,7 @@ body {
   font-size: var(--font-size-var);
   font-weight: 500;
   color: var(--main-white-color);
+  min-height: 100%;
 }
 
 /**

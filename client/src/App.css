@@ -4,6 +4,8 @@
   left: 0;
   right: 0;
   background-color: var(--main-darkest-color);
+  height: 5.5308rem;
+  overflow: hidden;
 }
 
 .nav-container {
@@ -17,10 +19,14 @@
   border-bottom: 0.05rem solid var(--main-gray-color);
 }
 
+.h-container {
+  padding-top: 5.5308rem;
+}
+
 .main-container {
   display: flex;
   justify-content: center;
-  padding-top: 8.5rem;
+  padding-top: 5rem;
   overflow: hidden;
   gap: 1.5rem;
   &.__f {
@@ -107,9 +113,6 @@ small {
   align-items: center;
   justify-content: center;
   object-fit: contain;
-}
-
-.img-logo {
   width: 10.7rem;
   height: 100%;
 }

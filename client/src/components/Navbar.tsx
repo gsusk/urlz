@@ -8,7 +8,13 @@ function Navbar() {
   return (
     <div className="nav-container">
       <div className="img-c-fit">
-        <img className="img-logo" src="/logosm.png" alt="logosmall" />
+        <MyImage
+          src="/logosm.png"
+          alt="logosmall"
+          fetchPriority="high"
+          width="10.7rem"
+          height="100%"
+        />
       </div>
       <div className="grow-end-c">
         {!user ? (
@@ -30,8 +36,7 @@ function Navbar() {
                 <MyImage
                   src={`${user.profilePic}`}
                   alt="pic"
-                  width="2.3rem"
-                  height="2.3rem"
+                  fetchPriority="low"
                 />
               </div>
               <div className="username-header-container">

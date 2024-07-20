@@ -1,24 +1,31 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   src: string;
   alt: string;
   width?: string;
   height?: string;
+  fetchPriority?: "high" | "low" | "auto";
+  className?: string;
 };
 
-function MyImage({ src, alt, width, height }: Props) {
+function MyImage({
+  src,
+  alt,
+  className,
+  fetchPriority,
+  width = "inherit",
+  height = "inherit",
+}: Props) {
   const [loading, setLoading] = useState(true);
 
   const handleLoad = () => setLoading(false);
 
-  const config = useMemo(() => {
-    return {
-      width: width ?? "inherit",
-      height: height ?? "inherit",
-      borderRadius: "inherit",
-    };
-  }, [width, height]);
+  const style = {
+    width,
+    height,
+    borderRadius: "inherit",
+  };
 
   return (
     <>
@@ -27,18 +34,14 @@ function MyImage({ src, alt, width, height }: Props) {
         alt={alt}
         style={{
           display: loading ? "none" : "block",
-          ...config,
+          ...style,
         }}
+        className={className}
+        loading="lazy"
         onLoad={handleLoad}
-        fetchPriority="low"
+        fetchPriority={fetchPriority}
       />
-      <div
-        className="loading-image"
-        style={{
-          ...config,
-          display: loading ? "block" : "inline",
-        }}
-      ></div>
+      {loading && <div className="loading-image" style={style}></div>}
     </>
   );
 }
