@@ -1,13 +1,15 @@
 .settings-page-container {
-  display: flex;
-  width: 100%;
+  display: grid;
+  padding: 1rem;
+  grid-template-columns: 1fr 9fr;
+  grid-row: 1fr;
 }
 
 .settings-sections {
   display: flex;
   padding: 0;
-  margin: 0;
-  width: 8rem;
+  width: 13rem;
+  line-height: 1.9rem;
 }
 
 .settings-sections-nav {
@@ -16,14 +18,25 @@
   width: 100%;
   margin: 0;
   padding: 0;
+  align-items: start;
 }
 
 .account_siderbar_button {
   font-size: 1rem;
   text-decoration: none;
   color: var(--main-white-color);
+  margin-bottom: 0.6rem;
+  width: 100%;
 }
 
 .account_sider_clicked {
   border-right: 0.2rem solid var(--main-pink-color);
+}
+
+.account-sidebar-icon {
+  margin: 0 0.8rem;
+}
+
+.profile-page-section {
+  width: 100%;
 }
