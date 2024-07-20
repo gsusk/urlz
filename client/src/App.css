@@ -1,3 +1,11 @@
+.heading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--main-darkest-color);
+}
+
 .nav-container {
   display: flex;
   justify-content: space-around;
@@ -12,7 +20,7 @@
 .main-container {
   display: flex;
   justify-content: center;
-  padding-top: 1.3rem;
+  padding-top: 8.5rem;
   overflow: hidden;
   gap: 1.5rem;
   &.__f {
@@ -31,15 +39,16 @@
   max-height: 3rem;
 }
 
-.pfp-image-header {
-  height: 100%;
-  width: 100%;
-  border-radius: 100%;
+.loading-image {
+  background-color: var(--main-white-color);
+  border-radius: inherit;
 }
 
 .pfp-image-header-container {
-  width: 3rem;
-  height: 100%;
+  width: 2.3rem;
+  height: 2.3rem;
+  cursor: pointer;
+  border-radius: 100%;
 }
 
 .username-header-container {
@@ -54,6 +63,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .title {
@@ -99,6 +109,11 @@ small {
   object-fit: contain;
 }
 
+.img-logo {
+  width: 10.7rem;
+  height: 100%;
+}
+
 .grow-end-c {
   display: flex;
   flex: 1 0 auto;
@@ -113,7 +128,7 @@ small {
   padding: 0.5rem 1.6rem;
   cursor: pointer;
   text-decoration: none;
-  letter-spacing: 0.1rem;
+  letter-spacing: 0.05rem;
   font-size: 1rem;
   &.__vmc {
     background-color: var(--main-pink-color);
@@ -158,9 +173,6 @@ small {
     padding: 0 0.5rem;
   }
 }
-.bmt {
-  margin-top: 2rem;
-}
 
 .rc {
   position: relative;
@@ -203,4 +215,12 @@ small {
     max-width: var(--scrollbar-width-legacy);
     max-height: var(--scrollbar-width-legacy);
   }
+}
+
+.footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--main-darkest-color);
 }

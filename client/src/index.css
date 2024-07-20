@@ -58,6 +58,7 @@ body {
 
 main {
   display: block;
+  height: 100vh;
 }
 
 /**

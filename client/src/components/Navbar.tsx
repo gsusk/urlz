@@ -1,12 +1,14 @@
 import { Link } from "react-router-dom";
 import { useAppSelector } from "../hooks/appSelector";
+import MyImage from "./MyImage";
 
 function Navbar() {
   const user = useAppSelector((state) => state.user.user);
+  const handleClick = () => {};
   return (
     <div className="nav-container">
       <div className="img-c-fit">
-        <img src="/logosm.png" alt="logosmall" />
+        <img className="img-logo" src="/logosm.png" alt="logosmall" />
       </div>
       <div className="grow-end-c">
         {!user ? (
@@ -23,12 +25,13 @@ function Navbar() {
             <Link to="/manager" className="manager-header-container">
               <button className="button __vsc">MANAGER</button>
             </Link>
-            <div className="profile-header-container">
+            <div className="profile-header-container" onClick={handleClick}>
               <div className="pfp-image-header-container">
-                <img
+                <MyImage
                   src={`${user.profilePic}`}
                   alt="pic"
-                  className="pfp-image-header"
+                  width="2.3rem"
+                  height="2.3rem"
                 />
               </div>
               <div className="username-header-container">
