@@ -11,6 +11,7 @@ import Authenticated from "./components/Authenticated";
 import EmailVerification from "./pages/EmailVerification";
 import Settings from "./pages/Settings";
 import Profile from "./components/Profile";
+import Security from "./components/Security";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
             <Route path="/settings" element={<Settings />}>
               <Route index element={<Navigate to="profile" />} />
               <Route path="profile" element={<Profile />} />
+              <Route path="security" element={<Security />}></Route>
             </Route>
           </Route>
           {/* <Route path="*" element={<Navigate to="/" />} /> */}

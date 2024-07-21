@@ -27,6 +27,10 @@
   color: var(--main-white-color);
   margin-bottom: 0.6rem;
   width: 100%;
+
+  &.active {
+    border-right: 0.2rem solid var(--main-pink-color);
+  }
 }
 
 .account_sider_clicked {
