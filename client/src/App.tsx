@@ -16,30 +16,32 @@ import Security from "./components/Security";
 function App() {
   return (
     <>
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route element={<Guest />}>
-              <Route path="/register" element={<Register />} />
-              <Route path="/login" element={<Login />} />
+      <div className="App">
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />}>
+              <Route element={<Guest />}>
+                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login />} />
+              </Route>
+              <Route element={<Authenticated />}>
+                <Route path="/email/verify" element={<Verify />}></Route>
+              </Route>
             </Route>
+            <Route path="/verify-email" element={<EmailVerification />}></Route>
             <Route element={<Authenticated />}>
-              <Route path="/email/verify" element={<Verify />}></Route>
+              <Route path="/settings" element={<Settings />}>
+                <Route index element={<Navigate to="profile" />} />
+                <Route path="profile" element={<Profile />} />
+                <Route path="security" element={<Security />}></Route>
+              </Route>
             </Route>
-          </Route>
-          <Route path="/verify-email" element={<EmailVerification />}></Route>
-          <Route element={<Authenticated />}>
-            <Route path="/settings" element={<Settings />}>
-              <Route index element={<Navigate to="profile" />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="security" element={<Security />}></Route>
-            </Route>
-          </Route>
-          {/* <Route path="*" element={<Navigate to="/" />} /> */}
-        </Routes>
-      </main>
-      <Footer />
+            {/* <Route path="*" element={<Navigate to="/" />} /> */}
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </>
   );
 }

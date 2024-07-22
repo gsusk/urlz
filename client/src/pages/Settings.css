@@ -1,24 +1,24 @@
 .settings-page-container {
-  display: grid;
-  padding: 1rem;
-  grid-template-columns: 1fr 9fr;
-  grid-row: 1fr;
+  display: flex;
+  height: calc(100vh - 5.5308rem);
+  overflow: hidden; /* Prevent the container from scrolling */
 }
 
 .settings-sections {
+  flex: 0 0 13rem; /* Sidebar has a fixed width */
   display: flex;
+  flex-direction: column;
   padding: 0;
-  width: 13rem;
   line-height: 1.9rem;
+  overflow-y: auto; /* Enable vertical scrolling for sidebar */
 }
 
 .settings-sections-nav {
   display: flex;
   flex-direction: column;
-  width: 100%;
   margin: 0;
   padding: 0;
-  align-items: start;
+  align-items: flex-start;
 }
 
 .account_siderbar_button {
@@ -42,5 +42,10 @@
 }
 
 .profile-page-section {
-  width: 100%;
+  flex-grow: 1; /* Main content takes the remaining space */
+  overflow-y: auto; /* Enable vertical scrolling for main content */
+}
+
+.profile-container {
+  padding: 3rem;
 }

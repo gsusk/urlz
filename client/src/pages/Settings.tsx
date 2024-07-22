@@ -1,18 +1,11 @@
-import {
-  NavLink,
-  Outlet,
-  useLocation,
-  useSearchParams,
-} from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { FaUser, FaLock, FaKey } from "react-icons/fa";
 import { TfiReload } from "react-icons/tfi";
 import { FaFileInvoice } from "react-icons/fa";
 import "./Settings.css";
 
 function Settings() {
-  const location = useLocation();
-  const path = location.pathname.split("/")[2];
-
+  console.log("as");
   return (
     <div className="h-container">
       <div className="settings-page-container">

@@ -1,3 +1,9 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
 .heading {
   position: fixed;
   top: 0;
@@ -21,6 +27,8 @@
 
 .h-container {
   padding-top: 5.5308rem;
+  overflow: hidden;
+  max-height: 100%;
 }
 
 .main-container {
@@ -221,9 +229,11 @@ small {
 }
 
 .footer-container {
+  background-color: /*var(--main-darkest-color)*/ green;
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--main-darkest-color);
+  width: 100%;
+  /*
+    margin-top: 0
+  */
 }
