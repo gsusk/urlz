@@ -91,7 +91,6 @@ function Profile() {
                   type="submit"
                   name="email"
                   id="email_profile"
-                  style={{ width: "100%" }}
                   className="button __vmc"
                 >
                   Update
