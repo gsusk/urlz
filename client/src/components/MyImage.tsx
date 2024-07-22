@@ -34,6 +34,7 @@ function MyImage({
         alt={alt}
         style={{
           display: loading ? "none" : "block",
+          objectFit: "cover",
           ...style,
         }}
         className={className}

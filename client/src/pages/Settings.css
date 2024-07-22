@@ -53,11 +53,12 @@
 .file-hidden-input {
   position: absolute;
   opacity: 0;
+  visibility: hidden;
 }
 
 .profile-image-container {
-  width: 3.2rem;
-  height: 3.2rem;
+  width: 3.4rem;
+  height: 3.4rem;
   border-radius: 100%;
 }
 
@@ -121,8 +122,8 @@
 
 @media (min-width: 768px) {
   .profile-file-container {
-    flex: 0 0 50% !important;
-    max-width: 50% !important;
+    flex: 0 0 50%;
+    max-width: 50%;
     justify-content: flex-start !important;
   }
 }
