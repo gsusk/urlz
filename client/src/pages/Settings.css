@@ -49,3 +49,80 @@
 .profile-container {
   padding: 3rem;
 }
+
+.file-hidden-input {
+  position: absolute;
+  opacity: 0;
+}
+
+.profile-image-container {
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: 100%;
+}
+
+.profile-file-container {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+}
+
+.inner-file-c {
+  width: 100%;
+  position: relative;
+}
+
+.outer-image-box {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.row-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.open-file-button {
+  width: 100% !important;
+  text-transform: none;
+  display: block;
+}
+
+.mw {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+@media (min-width: 1200px) {
+  .outer-image-box {
+    flex: 0 0 25% !important;
+    max-width: 25% !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .outer-image-box {
+    flex: 0 0 33.3333333333% !important;
+    max-width: 33.3333333333% !important;
+    justify-content: flex-end !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .profile-file-container {
+    flex: 0 0 33.3333333333% !important;
+    max-width: 33.3333333333% !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-file-container {
+    flex: 0 0 50% !important;
+    max-width: 50% !important;
+    justify-content: flex-start !important;
+  }
+}

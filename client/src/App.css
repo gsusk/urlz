@@ -229,7 +229,7 @@ small {
 }
 
 .footer-container {
-  background-color: /*var(--main-darkest-color)*/ green;
+  background-color: var(--main-darkest-color);
   position: fixed;
   bottom: 0;
   width: 100%;
