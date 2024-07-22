@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
+  const username = useAppSelector((state) => state.user.user?.username)!;
+  const loading = useState(true);
   const [file, setFile] = useState<File>();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -57,46 +59,55 @@ function Profile() {
         <div className="uw">
           <h3>Contact Information</h3>
           <form role="form row-container">
-            <div className="row-container">
-              <label htmlFor="username_profile" className="outer-image-box">
-                Username
-              </label>
-              <div className="profile-file-container">
-                <input
-                  type="text"
-                  name="username"
-                  id="username_profile"
-                  className="shortener-input"
-                  style={{ width: "100%" }}
-                />
+            {loading ? (
+              <div className="row-container">
+                <div className="button-submit-container">loading</div>
               </div>
-            </div>
-            <div className="row-container">
-              <label htmlFor="email_profile" className="outer-image-box">
-                Email Address
-              </label>
-              <div className="profile-file-container">
-                <input
-                  type="text"
-                  name="email"
-                  id="email_profile"
-                  style={{ width: "100%" }}
-                  className="shortener-input"
-                />
-              </div>
-            </div>
-            <div className="row-container">
-              <div className="button-submit-container">
-                <button
-                  type="submit"
-                  name="email"
-                  id="email_profile"
-                  className="button __vmc"
-                >
-                  Update
-                </button>
-              </div>
-            </div>
+            ) : (
+              <>
+                {" "}
+                <div className="row-container">
+                  <label htmlFor="username_profile" className="outer-image-box">
+                    Username
+                  </label>
+                  <div className="profile-file-container">
+                    <input
+                      type="text"
+                      name="username"
+                      id="username_profile"
+                      className="shortener-input"
+                      style={{ width: "100%" }}
+                    />
+                  </div>
+                </div>
+                <div className="row-container">
+                  <label htmlFor="email_profile" className="outer-image-box">
+                    Email Address
+                  </label>
+                  <div className="profile-file-container">
+                    <input
+                      type="text"
+                      name="email"
+                      id="email_profile"
+                      style={{ width: "100%" }}
+                      className="shortener-input"
+                    />
+                  </div>
+                </div>
+                <div className="row-container">
+                  <div className="button-submit-container">
+                    <button
+                      type="submit"
+                      name="email"
+                      id="email_profile"
+                      className="button __vmc"
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
             <Link to="delete" className="delete-account-button button __vsc">
               Delete Account
             </Link>
