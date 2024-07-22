@@ -13,6 +13,10 @@
   overflow-y: auto; /* Enable vertical scrolling for sidebar */
 }
 
+.settings-sidebar-title {
+  padding: 0.3rem 1rem;
+}
+
 .settings-sections-nav {
   display: flex;
   flex-direction: column;
@@ -38,7 +42,7 @@
 }
 
 .account-sidebar-icon {
-  margin: 0 0.8rem;
+  padding: 0.5rem 1rem;
 }
 
 .profile-page-section {
@@ -94,8 +98,45 @@
 }
 
 .mw {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   text-align: left;
+}
+
+.uw {
+  padding: 1rem 0;
+}
+
+.delete-account-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  float: right;
+  margin: 1.8rem 0;
+}
+
+.button-submit-container > button {
+  display: inline;
+  width: inherit !important;
+  margin-left: 1.12rem;
+}
+
+@media (min-width: 1200px) {
+  .button-submit-container {
+    margin-left: 25%;
+  }
+}
+
+@media (min-width: 992px) {
+  .button-submit-container {
+    flex: 0 0 33.3333333333%;
+    max-width: 33.3333333333%;
+  }
+}
+
+@media (min-width: 768px) {
+  .button-submit-container {
+    margin-left: 33.3333333333%;
+  }
 }
 
 @media (min-width: 1200px) {

@@ -11,7 +11,7 @@ function Settings() {
       <div className="settings-page-container">
         <div className="settings-sections">
           <nav className="settings-sections-nav" aria-details="navbar">
-            <h2>SETTINGS</h2>
+            <h2 className="settings-sidebar-title">SETTINGS</h2>
             <NavLink to={"profile"} className="account_siderbar_button">
               <FaUser className="account-sidebar-icon" />
               Profile
@@ -24,7 +24,7 @@ function Settings() {
               <FaKey className="account-sidebar-icon" />
               API
             </NavLink>
-            <h2>BILLING</h2>
+            <h2 className="settings-sidebar-title">BILLING</h2>
             <NavLink to={"/pricing"} className="account_siderbar_button">
               <TfiReload className="account-sidebar-icon" />
               Subscription
