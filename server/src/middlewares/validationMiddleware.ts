@@ -21,6 +21,7 @@ export const validation = (
       });
       return next(errors);
     }
+    req.body = data;
     return next();
   };
 };
