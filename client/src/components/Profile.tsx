@@ -1,18 +1,31 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppSelector } from "../hooks/appSelector";
 import MyImage from "./MyImage";
 import { Link } from "react-router-dom";
+import { getProfileData } from "../services/user";
 
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
-  const username = useAppSelector((state) => state.user.user?.username)!;
-  const loading = useState(true);
-  const [file, setFile] = useState<File>();
+  const [_username] = useAppSelector((state) => state.user.user?.username)!;
+  const [isLoading, _setIsLoading] = useState(true);
+  const [_file, setFile] = useState<File>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClick = () => {
     inputRef.current?.click();
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getProfileData();
+        console.log(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <div className="profile-container">
@@ -59,7 +72,7 @@ function Profile() {
         <div className="uw">
           <h3>Contact Information</h3>
           <form role="form row-container">
-            {loading ? (
+            {isLoading ? (
               <div className="row-container">
                 <div className="button-submit-container">loading</div>
               </div>

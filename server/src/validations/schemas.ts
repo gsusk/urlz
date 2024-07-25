@@ -32,11 +32,19 @@ export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
   }),
 );
 
+export const ProfileSchema = z
+  .object({
+    username: z.string().trim().min(4).max(64),
+    email: z.string().trim().email().optional(),
+    profilePic: z.string().trim().optional(),
+  })
+  .refine((data) => Object.values(data).some((value) => value !== undefined), {
+    message: 'At least one field is requried.',
+  });
+
 function validURL(url: string, ctx: z.RefinementCtx) {
   if (!isURL(url, { host_blacklist: ['localhost'], require_tld: false })) {
-    console.log('not url');
     if (url.includes('localhost.com')) {
-      console.log('local host included');
       ctx.addIssue({
         code: 'custom',
         message: 'Banned Domain',
@@ -50,10 +58,9 @@ function validURL(url: string, ctx: z.RefinementCtx) {
     });
     return z.NEVER;
   }
-  console.log('url, parsing...');
+
   let parsed: string | undefined;
   if (!url.startsWith('http:') && !url.startsWith('https:')) {
-    console.log('missing potocol...');
     parsed = 'http://' + url;
   }
 

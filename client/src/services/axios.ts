@@ -12,37 +12,53 @@ const client = axios.create({
   __retry: false,
 });
 
-client.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error: AxiosError) => {
-    if (
-      error.response?.status === 401 &&
-      error.config &&
-      !error.config.__retry
-    ) {
-      error.config.__retry = true;
-      return client
-        .post("/auth/refresh")
-        .then((r) => {
-          console.log(r);
-          console.log("refresh from auth first nested");
-          console.log(error.config);
-          return axios(error.config!);
-        })
-        .catch((e) => {
-          console.log("erroror from refreshAuthToken 2nd nested catch");
-          console.log("md");
-          return Promise.reject(
-            new Error(e.response?.data?.message || "Unexpected Error.")
-          );
-        });
+const refreshToken = async (error: AxiosError) => {
+  const originalRequest = error.config;
+  if (
+    error.response?.status === 401 &&
+    originalRequest &&
+    !originalRequest.__retry
+  ) {
+    originalRequest.__retry = true;
+    console.log("first 401");
+    try {
+      await client.post("/auth/refresh", undefined, {
+        __retry: true,
+      });
+      console.log("success on 401");
+      return axios(originalRequest);
+    } catch (e: unknown) {
+      console.log("error on 401");
+      if (e instanceof AxiosError) {
+        console.log("yes");
+      }
+      console.error(e, (e as AxiosError).response);
+      return Promise.reject(
+        (e as AxiosError<{ message?: string }>).response?.data?.message ||
+          e.message ||
+          "Unexpected Error. sss"
+      );
     }
+  }
+  console.log("here is a not retry", originalRequest);
+  if (error.response?.status === 401 && originalRequest?.__retry) {
+    console.log("not retry log out indeed");
+    return Promise.reject(
+      new Error(error.response.data.message ?? "Error auth")
+    );
+  }
+  console.log("none before");
+  return Promise.reject(error);
+};
+
+client.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    console.log("start");
     if (!error.response) {
       return Promise.reject(new Error("Error connecting to server."));
     }
-    return Promise.reject(error);
+    return refreshToken(error);
   }
 );
 

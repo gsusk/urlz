@@ -8,7 +8,13 @@ import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utils/customErrors';
 import { HttpStatus } from '../constants/httpStatus';
-import { getAuthTokens, payloadData, userDataPayload } from '../utils/token';
+import {
+  buildTokens,
+  clearTokens,
+  payloadData,
+  setTokens,
+  UserDataPayload,
+} from '../utils/token.utils';
 import { mailVerification } from '../utils/mail';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import {
@@ -63,12 +69,10 @@ export const signIn = async (
     }
 
     const { password: p, email, ...rest } = user;
-    const [access, refresh] = getAuthTokens(user);
+    const { accessToken, refreshToken } = buildTokens(user);
     rest.profilePic = rest.profilePic || imageLocation;
 
-    response
-      .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
-      .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
+    setTokens(response, accessToken, refreshToken);
 
     return response.status(200).json({ ...rest });
   } catch (err) {
@@ -125,12 +129,10 @@ export const signUp = async (
       },
     });
 
-    const [access, refresh] = getAuthTokens(user);
+    const { accessToken, refreshToken } = buildTokens(user);
     const { email: e, ...rest } = user;
 
-    response
-      .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
-      .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
+    setTokens(response, accessToken, refreshToken);
 
     response.status(201).json({ ...rest, profilePic: imageLocation });
     mailVerification(user);
@@ -153,7 +155,7 @@ export const verifyAccount = async (
 
     const decodedToken = jwt.verify(etoken, EMAIL_TOKEN_CONFIG.secret, {
       algorithms: [EMAIL_TOKEN_CONFIG.algorithm],
-    }) as userDataPayload;
+    }) as UserDataPayload;
 
     if (decodedToken.isVerified) {
       return response.status(HttpStatus.OK).end();
@@ -172,16 +174,12 @@ export const verifyAccount = async (
     const isLogged = !!request.cookies[ACCESS_COOKIE.name];
 
     if (isLogged) {
-      response.clearCookie(ACCESS_COOKIE.name, ACCESS_COOKIE.options);
-      response.clearCookie(REFRESH_COOKIE.name, REFRESH_COOKIE.options);
+      clearTokens(response);
       return response.status(HttpStatus.OK).end();
     }
 
-    const [access, refresh] = getAuthTokens(user);
-
-    response
-      .cookie(ACCESS_COOKIE.name, access, ACCESS_COOKIE.options)
-      .cookie(REFRESH_COOKIE.name, refresh, REFRESH_COOKIE.options);
+    const { accessToken, refreshToken } = buildTokens(user);
+    setTokens(response, accessToken, refreshToken);
 
     return response.status(HttpStatus.OK).end();
   } catch (err) {
@@ -202,13 +200,16 @@ export const sendNewVerificationEmail = async (
   next: NextFunction,
 ) => {
   try {
-    const { username, isVerified } = request.user!;
+    const { username } = request.user!;
+
     const user = await prisma.user.findUniqueOrThrow({
       where: { username: username },
       select: { email: true },
     });
-    mailVerification({ username, email: user.email, isVerified });
-    return response.status(200).end(user);
+
+    mailVerification({ username, email: user.email, isVerified: false });
+
+    return response.status(200).end();
   } catch (err) {
     if (err instanceof JsonWebTokenError) {
       return next(

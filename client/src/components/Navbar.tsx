@@ -8,12 +8,12 @@ function Navbar() {
   return (
     <div className="nav-container">
       <div className="img-c-fit">
-        <MyImage
+        <img
           src="/logosm.png"
           alt="logosmall"
           fetchPriority="high"
-          width="10.7rem"
           height="100%"
+          className="img-logo"
         />
       </div>
       <div className="grow-end-c">

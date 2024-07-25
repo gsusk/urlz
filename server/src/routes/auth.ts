@@ -5,7 +5,7 @@ import {
   signUp,
   verifyAccount,
 } from '../controller/auth.controller';
-import { verifyAccessToken } from '../middlewares/token';
+import { refreshTokenHandler, verifyAccessToken } from '../middlewares/token';
 import { Router } from 'express';
 import {
   SignInSchema,
@@ -21,7 +21,7 @@ router.post(
   validation(verificationTokenValidation, 'query'),
   verifyAccount,
 );
-
+router.post('/refresh', refreshTokenHandler);
 router.post('/refresh-verify', verifyAccessToken, sendNewVerificationEmail);
 
 export default router;

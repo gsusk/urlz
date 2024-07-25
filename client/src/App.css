@@ -11,7 +11,6 @@
   right: 0;
   background-color: var(--main-darkest-color);
   height: 5.5308rem;
-  overflow: hidden;
 }
 
 .nav-container {
@@ -23,6 +22,7 @@
   padding-top: 1rem;
   padding-bottom: 1rem;
   border-bottom: 0.05rem solid var(--main-gray-color);
+  overflow: hidden;
 }
 
 .h-container {
@@ -123,6 +123,11 @@ small {
   object-fit: contain;
   width: 10.7rem;
   height: 100%;
+}
+
+.img-logo {
+  height: 100%;
+  object-fit: contain;
 }
 
 .grow-end-c {

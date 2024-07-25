@@ -1,8 +1,8 @@
-import { AppError } from '@/utils/customErrors';
+import { AppError } from '../utils/customErrors';
 import { prisma } from '../db';
-import type { payloadData } from '../utils/token';
+import type { payloadData } from '../utils/token.utils';
 import type { Request, Response, NextFunction } from 'express';
-import { HttpStatus } from '@/constants/httpStatus';
+import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
 
 export async function getUserProfile(
@@ -11,9 +11,9 @@ export async function getUserProfile(
   next: NextFunction,
 ) {
   try {
-    const { id } = request.user!;
+    const { username } = request.user!;
     const user = await prisma.user.findUnique({
-      where: { id },
+      where: { username },
       select: { username: true, email: true, profilePic: true },
     });
     if (!user)
@@ -35,7 +35,7 @@ export async function updateUserProfile(
   next: NextFunction,
 ) {
   try {
-    const { id } = request.user!;
+    const { username: data } = request.user!;
     const { username, email, profilePic } = request.body;
     const updateData: Partial<User> = {};
 
@@ -44,7 +44,7 @@ export async function updateUserProfile(
     if (profilePic) updateData.profilePic = profilePic;
 
     const user = await prisma.user.update({
-      where: { id },
+      where: { username: data },
       data: updateData,
       select: {
         username: !!username,
