@@ -3,4 +3,5 @@ export const config = {
 
   accessTokenSecret: process.env.ACCESS_SECRET as string,
   refreshTokenSecret: process.env.REFRESH_SECRET as string,
+  emailTokenSecret: process.env.EMAIL_SECRET as string,
 };

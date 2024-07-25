@@ -17,11 +17,7 @@ import {
 } from '../utils/token.utils';
 import { mailVerification } from '../utils/mail';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
-import {
-  ACCESS_COOKIE,
-  EMAIL_TOKEN_CONFIG,
-  REFRESH_COOKIE,
-} from '../constants/jwt';
+import { config } from '@/config/config';
 
 const imageLocation = 'http://localhost:8081/public/default-profile-photo.jpg';
 
@@ -77,8 +73,7 @@ export const signIn = async (
     return response.status(200).json({ ...rest });
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
-      response.clearCookie('x-refresh-token');
-      response.clearCookie('x-access-token');
+      clearTokens(response);
     }
     next(err);
   }
@@ -138,8 +133,7 @@ export const signUp = async (
     mailVerification(user);
   } catch (err) {
     if (err instanceof jwt.JsonWebTokenError) {
-      response.clearCookie(ACCESS_COOKIE.name);
-      response.clearCookie(REFRESH_COOKIE.name);
+      clearTokens(response);
     }
     return next(err);
   }
@@ -153,8 +147,8 @@ export const verifyAccount = async (
   try {
     const { etoken } = request.query;
 
-    const decodedToken = jwt.verify(etoken, EMAIL_TOKEN_CONFIG.secret, {
-      algorithms: [EMAIL_TOKEN_CONFIG.algorithm],
+    const decodedToken = jwt.verify(etoken, config.emailTokenSecret, {
+      algorithms: ['HS256'],
     }) as UserDataPayload;
 
     if (decodedToken.isVerified) {
@@ -171,7 +165,7 @@ export const verifyAccount = async (
       },
     });
 
-    const isLogged = !!request.cookies[ACCESS_COOKIE.name];
+    const isLogged = !!request.cookies['x-access-token'];
 
     if (isLogged) {
       clearTokens(response);
