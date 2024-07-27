@@ -5,13 +5,14 @@ import {
   signUp,
   verifyAccount,
 } from '../controller/auth.controller';
-import { refreshTokenHandler, verifyAccessToken } from '../middlewares/token';
+import { refreshTokenHandler, authMiddleware } from '../middlewares/token';
 import { Router } from 'express';
 import {
   SignInSchema,
   SignUpSchema,
   verificationTokenValidation,
 } from '../validations/schemas';
+
 const router = Router();
 
 router.post('/signin', validation(SignInSchema), signIn);
@@ -22,6 +23,6 @@ router.post(
   verifyAccount,
 );
 router.post('/refresh', refreshTokenHandler);
-router.post('/refresh-verify', verifyAccessToken, sendNewVerificationEmail);
+router.post('/refresh-verify', authMiddleware, sendNewVerificationEmail);
 
 export default router;

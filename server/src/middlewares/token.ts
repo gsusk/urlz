@@ -46,7 +46,7 @@ export const refreshTokenHandler = async (
   }
 };
 
-export const verifyAccessToken = (
+export const authMiddleware = (
   req: Request & payloadData,
   _res: Response,
   next: NextFunction,
@@ -58,10 +58,10 @@ export const verifyAccessToken = (
       return next(new AppError('Token missing', HttpStatus.UNAUTHORIZED));
     }
 
-    const decoded = jwt.verify(token, ACCESS_TOKEN_CONFIG.secret, {
+    req.user = jwt.verify(token, ACCESS_TOKEN_CONFIG.secret, {
       algorithms: [ACCESS_TOKEN_CONFIG.algorithm],
     }) as UserDataPayload;
-    req.user = decoded;
+
     next();
   } catch (err) {
     return next(err);
