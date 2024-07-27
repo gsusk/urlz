@@ -24,14 +24,14 @@ type RefreshToken = {
   isVerified: boolean;
 };
 
-function signAccessToken(payload: UserDataPayload) {
+export function signAccessToken(payload: UserDataPayload) {
   return jwt.sign(payload, config.accessTokenSecret, {
     algorithm: 'HS256',
     expiresIn: TokenExpiration.Access,
   });
 }
 
-function signRefreshToken(payload: UserDataPayload) {
+export function signRefreshToken(payload: UserDataPayload) {
   return jwt.sign(payload, config.refreshTokenSecret, {
     algorithm: 'HS256',
     expiresIn: TokenExpiration.Refresh,
