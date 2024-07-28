@@ -17,7 +17,7 @@ export async function getUserProfile(
       select: { username: true, email: true, profilePic: true },
     });
     if (!user)
-      return next(new AppError('User not found.', HttpStatus.NOT_FOUND));
+      return next(new AppError('User not found', HttpStatus.NOT_FOUND));
     return response.json({ ...user });
   } catch (err) {
     return next(err);
@@ -37,7 +37,7 @@ export async function updateUserProfile(
   try {
     const { username: data } = request.user!;
     const { username, email, profilePic } = request.body;
-    const updateData: Partial<User> = {};
+    const updateData: typeof request.body = {};
 
     if (username) updateData.username = username;
     if (email) updateData.email = email;

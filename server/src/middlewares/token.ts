@@ -1,7 +1,6 @@
 import { HttpStatus } from '../constants/httpStatus';
 import { AppError } from '../utils/customErrors';
 import type { JwtPayload } from 'jsonwebtoken';
-
 import {
   buildTokens,
   clearTokens,
@@ -40,7 +39,7 @@ export const authMiddleware = (
   next: NextFunction,
 ) => {
   try {
-    const payload = verifyAccessToken(req.cookies['x-acces-token']);
+    const payload = verifyAccessToken(req.cookies['x-access-token']);
 
     if (!payload) {
       return next(new AppError('Token missing', HttpStatus.UNAUTHORIZED));

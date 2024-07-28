@@ -2,8 +2,8 @@ import { User } from '@prisma/client';
 import nodemailer from 'nodemailer';
 import Mail from 'nodemailer/lib/mailer';
 import path from 'path';
-import { EMAIL_TOKEN_CONFIG } from '../constants/jwt';
 import { sign } from 'jsonwebtoken';
+import { config } from '../config/config';
 
 const transporter = nodemailer.createTransport({
   host: 'smtp-relay.sendinblue.com',
@@ -20,11 +20,11 @@ export const mailVerification = (
 ) => {
   const token = sign(
     { username: user.username, isVerified: user.isVerified },
-    EMAIL_TOKEN_CONFIG.secret,
+    config.emailTokenSecret,
     {
-      algorithm: EMAIL_TOKEN_CONFIG.algorithm,
+      algorithm: 'HS256',
       subject: user.username,
-      expiresIn: EMAIL_TOKEN_CONFIG.expiresIn,
+      expiresIn: '12h',
     },
   );
 

@@ -17,7 +17,7 @@ import {
 } from '../utils/token.utils';
 import { mailVerification } from '../utils/mail';
 import jwt, { JsonWebTokenError } from 'jsonwebtoken';
-import { config } from '@/config/config';
+import { config } from '../config/config';
 
 const imageLocation = 'http://localhost:8081/public/default-profile-photo.jpg';
 
