@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   src: string;
@@ -18,7 +18,6 @@ function MyImage({
   height = "inherit",
 }: Props) {
   const [loading, setLoading] = useState(true);
-
   const handleLoad = () => setLoading(false);
 
   const style = {
@@ -26,6 +25,10 @@ function MyImage({
     height,
     borderRadius: "inherit",
   };
+
+  useEffect(() => {
+    setLoading(true);
+  }, [src]);
 
   return (
     <>
@@ -40,6 +43,7 @@ function MyImage({
         className={className}
         loading="lazy"
         onLoad={handleLoad}
+        onError={handleLoad}
         fetchPriority={fetchPriority}
       />
       {loading && <div className="loading-image" style={style}></div>}

@@ -1,31 +1,72 @@
 import { useEffect, useRef, useState } from "react";
-import { useAppSelector } from "../hooks/appSelector";
+import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import MyImage from "./MyImage";
 import { Link } from "react-router-dom";
-import { getProfileData } from "../services/user";
+import { getProfileData, updateProfileData } from "../services/user";
+import { updateInfo } from "../redux/user/user";
 
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
-  const [_username] = useAppSelector((state) => state.user.user?.username)!;
-  const [isLoading, _setIsLoading] = useState(true);
-  const [_file, setFile] = useState<File>();
+  const username = useAppSelector((state) => state.user.user?.username)!;
+  const [usernameField, setUsernameField] = useState(username);
+  const [emailField, setEmailField] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [_file, setFile] = useState<File | undefined>();
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const dispatch = useAppDispatch();
+  console.log(profilePic, emailField);
   const handleClick = () => {
     inputRef.current?.click();
   };
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!isLoading) setIsLoading(true);
       try {
-        const data = await getProfileData();
-        console.log(data);
+        const res = await getProfileData();
+        console.log(res.data, profilePic, "dataaaaaaaaaaaaa");
+
+        console.log("dispatchhh");
+        dispatch(
+          updateInfo({
+            username: res.data.username,
+            profilePic: res.data.profilePic,
+          })
+        );
+        setUsernameField(res.data.username);
+        setEmailField(res.data.email);
+
+        console.log("no");
       } catch (error) {
         console.log(error);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (_file && inputRef.current && inputRef.current.files?.[0]) {
+      const update = async () => {
+        try {
+          const file = new FormData();
+          file.set("file", _file);
+          const res = await updateProfileData(file);
+          dispatch(
+            updateInfo({
+              profilePic: res.data.profilePic,
+            })
+          );
+        } catch (error) {
+          console.log(error);
+        } finally {
+          //setFile(undefined);
+        }
+      };
+      update();
+    }
+  }, [_file]);
 
   return (
     <div className="profile-container">
@@ -40,7 +81,7 @@ function Profile() {
           >
             <div className="outer-image-box">
               <div className="profile-image-container">
-                <MyImage src={`${profilePic}`} alt="pic" fetchPriority="low" />
+                <MyImage src={profilePic} alt="pic" />
               </div>
             </div>
             <div className="profile-file-container">
@@ -87,9 +128,11 @@ function Profile() {
                     <input
                       type="text"
                       name="username"
+                      value={usernameField}
                       id="username_profile"
                       className="shortener-input"
                       style={{ width: "100%" }}
+                      onChange={(e) => setUsernameField(e.target.value)}
                     />
                   </div>
                 </div>
@@ -104,6 +147,8 @@ function Profile() {
                       id="email_profile"
                       style={{ width: "100%" }}
                       className="shortener-input"
+                      value={emailField}
+                      onChange={(e) => setEmailField(e.target.value)}
                     />
                   </div>
                 </div>

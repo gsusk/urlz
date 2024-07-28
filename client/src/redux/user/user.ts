@@ -95,7 +95,10 @@ const authSlice = createSlice({
     logout(_state) {
       _state = { user: null, error: {}, loading: false };
     },
-    updateInfo(state, action: PayloadAction<AuthenticatedData>) {
+    updateInfo(
+      state,
+      action: PayloadAction<{ username?: string; profilePic?: string }>
+    ) {
       if (state.user) {
         state.user.username = action.payload.username ?? state.user.username;
         state.user.profilePic =
@@ -146,5 +149,10 @@ const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
-export const { formError, resetError, successfulVerification, logout } =
-  authSlice.actions;
+export const {
+  formError,
+  resetError,
+  successfulVerification,
+  logout,
+  updateInfo,
+} = authSlice.actions;
