@@ -95,7 +95,15 @@ const authSlice = createSlice({
     logout(_state) {
       _state = { user: null, error: {}, loading: false };
     },
+    updateInfo(state, action: PayloadAction<AuthenticatedData>) {
+      if (state.user) {
+        state.user.username = action.payload.username ?? state.user.username;
+        state.user.profilePic =
+          action.payload.profilePic ?? state.user.profilePic;
+      }
+    },
   },
+
   extraReducers: (builder) => {
     builder.addCase(signIn.fulfilled, (state, action) => {
       state.loading = false;

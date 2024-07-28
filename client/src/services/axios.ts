@@ -30,7 +30,7 @@ const refreshToken = async (error: AxiosError) => {
     } catch (e: unknown) {
       console.log("error on 401");
       if (e instanceof AxiosError) {
-        console.log("yes");
+        console.log("axios instance error");
       }
       console.error(e, (e as AxiosError).response);
       return Promise.reject(
@@ -42,10 +42,8 @@ const refreshToken = async (error: AxiosError) => {
   }
   console.log("here is a not retry", originalRequest);
   if (error.response?.status === 401 && originalRequest?.__retry) {
-    console.log("not retry log out indeed");
-    return Promise.reject(
-      new Error(error.response.data.message ?? "Error auth")
-    );
+    console.log("not retry, log out...");
+    return Promise.reject(error.response.data.message ?? "Error auth");
   }
   console.log("none before");
   return Promise.reject(error);

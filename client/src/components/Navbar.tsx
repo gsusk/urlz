@@ -4,6 +4,7 @@ import MyImage from "./MyImage";
 
 function Navbar() {
   const user = useAppSelector((state) => state.user.user);
+  console.log("navbar");
   const handleClick = () => {};
   return (
     <div className="nav-container">
@@ -31,7 +32,11 @@ function Navbar() {
             <Link to="/manager" className="manager-header-container">
               <button className="button __vsc">MANAGER</button>
             </Link>
-            <div className="profile-header-container" onClick={handleClick}>
+            <Link
+              to="/settings/profile"
+              className="profile-header-container"
+              onClick={handleClick}
+            >
               <div className="pfp-image-header-container">
                 <MyImage
                   src={`${user.profilePic}`}
@@ -42,7 +47,7 @@ function Navbar() {
               <div className="username-header-container">
                 <span className="username-header-display">Gsuskre123</span>
               </div>
-            </div>
+            </Link>
           </>
         )}
       </div>
