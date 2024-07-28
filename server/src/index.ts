@@ -4,8 +4,8 @@ import helmet from 'helmet';
 import apiRoutes from './routes/api';
 import { redirectUrl } from './controller/url.controller';
 import { errorHandler } from './utils/errorHandler';
-import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import morgan from 'morgan';
 
 process
   .on('unhandledRejection', (reason, p) => {
@@ -17,6 +17,7 @@ process
   });
 
 const app = express();
+
 app.use(morgan('dev'));
 app.use(
   cors({
@@ -27,7 +28,7 @@ app.use(
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(express.json());
 app.use(cookieParser());
-app.use('/public', express.static('public'));
+app.use(['/public', '/uploads'], express.static('public'));
 app.use(express.urlencoded({ extended: false }));
 
 app.use('/api', apiRoutes);

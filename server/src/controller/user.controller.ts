@@ -4,6 +4,7 @@ import type { payloadData } from '../utils/token.utils';
 import type { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
+import path from 'path';
 
 export async function getUserProfile(
   request: Request & payloadData,
@@ -35,13 +36,21 @@ export async function updateUserProfile(
   next: NextFunction,
 ) {
   try {
+    console.log(request.file, 'adsdsasda');
     const { username: data } = request.user!;
-    const { username, email, profilePic } = request.body;
+    const { username, email } = request.body;
+    const profilePic = request.file?.filename;
     const updateData: typeof request.body = {};
 
     if (username) updateData.username = username;
     if (email) updateData.email = email;
-    if (profilePic) updateData.profilePic = profilePic;
+    if (profilePic) {
+      updateData.profilePic = path.join(
+        'http://localhost:8081',
+        'uploads',
+        profilePic,
+      );
+    }
 
     const user = await prisma.user.update({
       where: { username: data },
