@@ -12,7 +12,7 @@ import path from 'path';
 const file = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, next) => {
-      next(null, path.resolve('.', 'src', 'uploads'));
+      next(null, 'uploads');
     },
     filename: (_req, _file, next) => {
       const extension = path.extname(_file.originalname);

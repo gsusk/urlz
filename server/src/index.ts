@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { request } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import apiRoutes from './routes/api';
@@ -6,6 +6,7 @@ import { redirectUrl } from './controller/url.controller';
 import { errorHandler } from './utils/errorHandler';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
+import path from 'path';
 
 process
   .on('unhandledRejection', (reason, p) => {
@@ -31,7 +32,6 @@ app.use(cookieParser());
 app.use('/public', express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use(express.urlencoded({ extended: false }));
-
 app.use('/api', apiRoutes);
 app.get('/:url', redirectUrl);
 app.use(errorHandler);

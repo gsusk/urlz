@@ -90,6 +90,9 @@ export function setTokens(res: Response, access: string, refresh?: string) {
  */
 
 export function clearTokens(res: Response) {
-  res.cookie('x-access-token', '', { ...defaultCookieOptions, maxAge: 0 });
-  res.cookie('x-refresh-token', '', { ...defaultCookieOptions, maxAge: 0 });
+  res.cookie('x-access-token', '', { ...accessTokenCookieOptions, maxAge: 0 });
+  res.cookie('x-refresh-token', '', {
+    ...refreshTokenCookieOptions,
+    maxAge: 0,
+  });
 }
