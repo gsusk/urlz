@@ -15,8 +15,32 @@ function Profile() {
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   console.log(profilePic, emailField);
+
   const handleClick = () => {
     inputRef.current?.click();
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const oldEmail = emailField;
+    const formData = new FormData();
+    if (usernameField !== username) formData.set("username", usernameField);
+    if (emailField) formData.set("email", emailField);
+    try {
+      const { data } = await updateProfileData(formData);
+      console.log("RESSS", data);
+      dispatch(
+        updateInfo({
+          username: data.username,
+        })
+      );
+      if (data.email) {
+        setEmailField(data.email);
+      }
+    } catch (err) {
+      console.error("object ERRR", err, oldEmail);
+      setEmailField(oldEmail);
+    }
   };
 
   useEffect(() => {
@@ -26,13 +50,13 @@ function Profile() {
         const res = await getProfileData();
         console.log(res.data, profilePic, "dataaaaaaaaaaaaa");
 
-        console.log("dispatchhh");
         dispatch(
           updateInfo({
             username: res.data.username,
             profilePic: res.data.profilePic,
           })
         );
+
         setUsernameField(res.data.username);
         setEmailField(res.data.email);
 
@@ -44,6 +68,7 @@ function Profile() {
       }
     };
     fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   useEffect(() => {
@@ -61,12 +86,12 @@ function Profile() {
         } catch (error) {
           console.log(error);
         } finally {
-          //setFile(undefined);
+          setFile(undefined);
         }
       };
       update();
     }
-  }, [_file]);
+  }, [_file, dispatch]);
 
   return (
     <div className="profile-container">
@@ -112,14 +137,13 @@ function Profile() {
       <div className="mw">
         <div className="uw">
           <h3>Contact Information</h3>
-          <form role="form row-container">
+          <form role="form row-container" onSubmit={handleSubmit}>
             {isLoading ? (
               <div className="row-container">
                 <div className="button-submit-container">loading</div>
               </div>
             ) : (
               <>
-                {" "}
                 <div className="row-container">
                   <label htmlFor="username_profile" className="outer-image-box">
                     Username

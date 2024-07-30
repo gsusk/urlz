@@ -35,7 +35,7 @@ const refreshToken = async (error: AxiosError) => {
       console.error(e, (e as AxiosError).response);
       return Promise.reject(
         (e as AxiosError<{ message?: string }>).response?.data?.message ||
-          e.message ||
+          (e as Error).message ||
           "Unexpected Error. sss"
       );
     }
@@ -43,7 +43,9 @@ const refreshToken = async (error: AxiosError) => {
   console.log("here is a not retry", originalRequest);
   if (error.response?.status === 401 && originalRequest?.__retry) {
     console.log("not retry, log out...");
-    return Promise.reject(error.response.data.message ?? "Error auth");
+    return Promise.reject(
+      (error.response.data as { message: string }).message ?? "Error auth"
+    );
   }
   console.log("none before");
   return Promise.reject(error);

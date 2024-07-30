@@ -3,8 +3,9 @@ import { useAppSelector } from "../hooks/appSelector";
 import MyImage from "./MyImage";
 
 function Navbar() {
-  const user = useAppSelector((state) => state.user.user);
-  console.log("navbar");
+  const username = useAppSelector((state) => state.user.user?.username);
+  const profilePic = useAppSelector((state) => state.user.user?.profilePic);
+
   const handleClick = () => {};
   return (
     <div className="nav-container">
@@ -18,7 +19,7 @@ function Navbar() {
         />
       </div>
       <div className="grow-end-c">
-        {!user ? (
+        {!username ? (
           <>
             <Link to="/register">
               <button className="button __vsc">Sign Up</button>
@@ -38,14 +39,10 @@ function Navbar() {
               onClick={handleClick}
             >
               <div className="pfp-image-header-container">
-                <MyImage
-                  src={`${user.profilePic}`}
-                  alt="pic"
-                  fetchPriority="low"
-                />
+                <MyImage src={`${profilePic}`} alt="pic" fetchPriority="low" />
               </div>
               <div className="username-header-container">
-                <span className="username-header-display">Gsuskre123</span>
+                <span className="username-header-display">{username}</span>
               </div>
             </Link>
           </>

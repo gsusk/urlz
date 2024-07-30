@@ -15,5 +15,6 @@ export async function getProfileData() {
 export async function updateProfileData(data: FormData) {
   return await client.put<Partial<ProfileDataType>>("/user/profile", data, {
     __retry: false,
+    headers: { "Content-Type": "multipart/form-data" },
   });
 }
