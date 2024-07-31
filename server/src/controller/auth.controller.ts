@@ -1,6 +1,6 @@
 import { prisma } from '../db';
 import {
-  verificationTokenValidation,
+  verificationToken,
   type SignInSchemaType,
   type SignUpSchemaType,
 } from '../validations/schemas';
@@ -140,7 +140,7 @@ export const signUp = async (
 };
 
 export const verifyAccount = async (
-  request: Request<unknown, unknown, unknown, verificationTokenValidation>,
+  request: Request<unknown, unknown, unknown, verificationToken>,
   response: Response,
   next: NextFunction,
 ) => {

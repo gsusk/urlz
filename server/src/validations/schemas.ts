@@ -44,15 +44,6 @@ export const ProfileSchema = profileSchema.refine(
   },
 );
 
-export const UpdateProfileSchema = profileSchema
-  .pick({
-    username: true,
-    email: true,
-  })
-  .refine((data) => Object.values(data).some((value) => value !== undefined), {
-    message: 'At least one field is requried.',
-  });
-
 function validURL(url: string, ctx: z.RefinementCtx) {
   if (!isURL(url, { host_blacklist: ['localhost'], require_tld: false })) {
     if (url.includes('localhost.com')) {
@@ -86,8 +77,5 @@ export type SignUpSchemaType = z.infer<typeof SignUpSchema>;
 export type SignInSchemaType = z.infer<typeof SignInSchema>;
 export type UrlSchemaType = z.infer<typeof UrlSchema>;
 export type CustomUrlSchemaType = z.infer<typeof CustomUrlSchema>;
-export type verificationTokenValidation = z.infer<
-  typeof verificationTokenValidation
->;
+export type verificationToken = z.infer<typeof verificationTokenValidation>;
 export type ProfileSchemaType = z.infer<typeof ProfileSchema>;
-export type UpdateProfileSchemaType = z.infer<typeof UpdateProfileSchema>;
