@@ -32,11 +32,22 @@ export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
   }),
 );
 
-export const ProfileSchema = z
-  .object({
-    username: z.string().trim().min(4).max(64),
-    email: z.string().trim().email().optional(),
-    profilePic: z.string().trim().optional(),
+const profileSchema = z.object({
+  username: z.string().trim().min(4).max(64),
+  email: z.string().trim().email().optional(),
+});
+
+export const ProfileSchema = profileSchema.refine(
+  (data) => Object.values(data).some((value) => value !== undefined),
+  {
+    message: 'At least one field is requried.',
+  },
+);
+
+export const UpdateProfileSchema = profileSchema
+  .pick({
+    username: true,
+    email: true,
   })
   .refine((data) => Object.values(data).some((value) => value !== undefined), {
     message: 'At least one field is requried.',
@@ -78,3 +89,5 @@ export type CustomUrlSchemaType = z.infer<typeof CustomUrlSchema>;
 export type verificationTokenValidation = z.infer<
   typeof verificationTokenValidation
 >;
+export type ProfileSchemaType = z.infer<typeof ProfileSchema>;
+export type UpdateProfileSchemaType = z.infer<typeof UpdateProfileSchema>;
