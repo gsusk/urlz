@@ -1,4 +1,33 @@
+import { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+
 function Security() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [error, setError] = useState<Record<string, unknown>>({});
+  const [inputTypes, setInputTypes] = useState({
+    currentPassword: "password",
+    password: "password",
+    confirmPassword: "password",
+  });
+
+  const handleToggleVisibility = (field: keyof typeof inputTypes) => {
+    setInputTypes((prev) => ({
+      ...prev,
+      [field]: prev[field] === "password" ? "text" : "password",
+    }));
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      setError({ message: "Passwords do not match" });
+      return;
+    }
+    setError({ message: "pass dont match" });
+  };
+
   return (
     <div className="out-sec">
       <div className="profile-container panel panel-border">
@@ -6,7 +35,7 @@ function Security() {
         <h2>Update Password</h2>
         <div className="uw">
           <div className="mw">
-            <form action="form row-container">
+            <form action="form row-container" onSubmit={handleSubmit}>
               <div className="inner-sec-form">
                 <div className="row-container">
                   <label
@@ -17,11 +46,30 @@ function Security() {
                   </label>
                   <div className="security-input-column">
                     <input
-                      type="password"
+                      type={inputTypes.currentPassword}
                       name="currentPassword"
                       id="currentPassword"
                       className="shortener-input relative-input"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
                     />
+                    <button className="button-toggle-input" type="button">
+                      {inputTypes.currentPassword === "text" ? (
+                        <FaRegEyeSlash
+                          className=""
+                          onClick={() =>
+                            handleToggleVisibility("currentPassword")
+                          }
+                        />
+                      ) : (
+                        <FaRegEye
+                          className=""
+                          onClick={() =>
+                            handleToggleVisibility("currentPassword")
+                          }
+                        />
+                      )}
+                    </button>
                   </div>
                 </div>
                 <div className="row-container">
@@ -30,11 +78,26 @@ function Security() {
                   </label>
                   <div className="security-input-column">
                     <input
-                      type="password"
+                      type={inputTypes.password}
                       name="password"
                       id="password"
                       className="shortener-input relative-input"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                     />
+                    <button className="button-toggle-input" type="button">
+                      {inputTypes.password === "text" ? (
+                        <FaRegEyeSlash
+                          className=""
+                          onClick={() => handleToggleVisibility("password")}
+                        />
+                      ) : (
+                        <FaRegEye
+                          className=""
+                          onClick={() => handleToggleVisibility("password")}
+                        />
+                      )}
+                    </button>
                   </div>
                 </div>
                 <div className="row-container">
@@ -46,11 +109,30 @@ function Security() {
                   </label>
                   <div className="security-input-column ">
                     <input
-                      type="password"
+                      type={inputTypes.confirmPassword}
                       name="confirmPassword"
                       id="confirmPassword"
                       className="shortener-input relative-input"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
                     />
+                    <button className="button-toggle-input" type="button">
+                      {inputTypes.confirmPassword === "text" ? (
+                        <FaRegEyeSlash
+                          className=""
+                          onClick={() =>
+                            handleToggleVisibility("confirmPassword")
+                          }
+                        />
+                      ) : (
+                        <FaRegEye
+                          className=""
+                          onClick={() =>
+                            handleToggleVisibility("confirmPassword")
+                          }
+                        />
+                      )}
+                    </button>
                   </div>
                 </div>
                 <div className="row-container">
@@ -75,6 +157,7 @@ function Security() {
           </p>
         </div>
       </div>
+      <div>{error.message}</div>
     </div>
   );
 }

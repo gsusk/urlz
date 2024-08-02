@@ -151,9 +151,23 @@
   align-items: center;
   padding: 1rem;
   width: 100%;
+  position: relative;
 }
 
-.sec-update-button {
+.visibility-input-toggle {
+  position: absolute;
+  text-align: right;
+}
+
+.button-toggle-input {
+  position: absolute;
+  border: none;
+  background-color: inherit;
+  color: var(--main-darkest-color);
+  line-height: 1rem;
+  top: 1.6rem;
+  right: 1.5rem;
+  font-size: 1.2rem;
 }
 
 @media (min-width: 768px) {

@@ -70,7 +70,6 @@ function Profile() {
 
         setUsernameField(res.data.username);
         setEmailField(res.data.email);
-        console.log("no");
       } catch (error) {
         console.log(error);
       } finally {
