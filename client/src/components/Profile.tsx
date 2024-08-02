@@ -4,6 +4,7 @@ import MyImage from "./MyImage";
 import { Link } from "react-router-dom";
 import { getProfileData, updateProfileData } from "../services/user";
 import { updateInfo } from "../redux/user/user";
+import { errorHandler } from "../utils/errorparser";
 
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
@@ -12,6 +13,11 @@ function Profile() {
   const [emailField, setEmailField] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [_file, setFile] = useState<File | undefined>();
+  const [error, setError] = useState<{
+    username?: string;
+    email?: string;
+    message?: string;
+  }>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   console.log(profilePic, emailField);
@@ -22,10 +28,11 @@ function Profile() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const oldEmail = emailField;
+
     const formData = new FormData();
     if (usernameField !== username) formData.set("username", usernameField);
     if (emailField) formData.set("email", emailField);
+
     try {
       const { data } = await updateProfileData(formData);
       console.log("RESSS", data);
@@ -34,12 +41,16 @@ function Profile() {
           username: data.username,
         })
       );
+
       if (data.email) {
         setEmailField(data.email);
       }
     } catch (err) {
-      console.error("object ERRR", err, oldEmail);
-      setEmailField(oldEmail);
+      const error = errorHandler<{ username?: string; email?: string }>(
+        err as Error
+      );
+      console.error(error);
+      setError(error);
     }
   };
 
@@ -59,7 +70,6 @@ function Profile() {
 
         setUsernameField(res.data.username);
         setEmailField(res.data.email);
-
         console.log("no");
       } catch (error) {
         console.log(error);
@@ -104,12 +114,12 @@ function Profile() {
             className="row-container"
             onChange={() => console.log("object")}
           >
-            <div className="outer-image-box">
+            <div className="left-flex-container">
               <div className="profile-image-container">
                 <MyImage src={profilePic} alt="pic" />
               </div>
             </div>
-            <div className="profile-file-container">
+            <div className="right-flex-container">
               <div className="inner-file-c">
                 <input
                   type="file"
@@ -145,10 +155,13 @@ function Profile() {
             ) : (
               <>
                 <div className="row-container">
-                  <label htmlFor="username_profile" className="outer-image-box">
+                  <label
+                    htmlFor="username_profile"
+                    className="left-flex-container"
+                  >
                     Username
                   </label>
-                  <div className="profile-file-container">
+                  <div className="right-flex-container">
                     <input
                       type="text"
                       name="username"
@@ -160,11 +173,15 @@ function Profile() {
                     />
                   </div>
                 </div>
+                <div>{error.username}</div>
                 <div className="row-container">
-                  <label htmlFor="email_profile" className="outer-image-box">
+                  <label
+                    htmlFor="email_profile"
+                    className="left-flex-container"
+                  >
                     Email Address
                   </label>
-                  <div className="profile-file-container">
+                  <div className="right-flex-container">
                     <input
                       type="text"
                       name="email"
@@ -176,17 +193,14 @@ function Profile() {
                     />
                   </div>
                 </div>
+                <div>{error.email}</div>
                 <div className="row-container">
                   <div className="button-submit-container">
-                    <button
-                      type="submit"
-                      name="email"
-                      id="email_profile"
-                      className="button __vmc"
-                    >
+                    <button type="submit" className="button __vmc">
                       Update
                     </button>
                   </div>
+                  <div>{error.message}</div>
                 </div>
               </>
             )}

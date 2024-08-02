@@ -20,7 +20,6 @@ function MyImage({
   const [loading, setLoading] = useState(true);
 
   const handleLoad = () => {
-    console.log("LOADED");
     setLoading(false);
   };
 
