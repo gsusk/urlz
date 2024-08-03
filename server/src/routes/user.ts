@@ -1,4 +1,4 @@
-import { ProfileSchema } from '../validations/schemas';
+import { PasswordSchema, ProfileSchema } from '../validations/schemas';
 import {
   getUserProfile,
   updateUserPassword,
@@ -21,6 +21,11 @@ router.put(
   updateUserProfile,
 );
 
-router.put('/password', authMiddleware, updateUserPassword);
+router.put(
+  '/password',
+  authMiddleware,
+  validation(PasswordSchema),
+  updateUserPassword,
+);
 
 export default router;

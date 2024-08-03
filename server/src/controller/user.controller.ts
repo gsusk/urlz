@@ -1,11 +1,6 @@
 import { AppError } from '../utils/customErrors';
 import { prisma } from '../db';
-import {
-  buildTokens,
-  setTokens,
-  UserDataPayload,
-  type payloadData,
-} from '../utils/token.utils';
+import { buildTokens, setTokens, type payloadData } from '../utils/token.utils';
 import type { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
@@ -87,7 +82,7 @@ export async function updateUserProfile(
 }
 
 export async function updateUserPassword(
-  request: Request & UserDataPayload,
+  request: Request & payloadData,
   response: Response,
   next: NextFunction,
 ) {
@@ -105,7 +100,6 @@ export async function updateUserPassword(
     await prisma.user.update({
       where: { username },
       data: { password: hashedPassword },
-      select: {},
     });
 
     return response

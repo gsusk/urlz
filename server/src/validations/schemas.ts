@@ -32,6 +32,20 @@ export const CustomUrlSchema = UrlSchema.pick({ url: true }).and(
   }),
 );
 
+export const PasswordSchema = baseAuthSchema
+  .pick({
+    password: true,
+    confirmPassword: true,
+  })
+  .and(
+    z.object({
+      currentPassword: z.string().trim().min(7),
+    }),
+  )
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Password doesn't match",
+  });
+
 const profileSchema = z.object({
   username: z.string().trim().min(4).max(64),
   email: z.string().trim().email().optional(),
@@ -79,3 +93,4 @@ export type UrlSchemaType = z.infer<typeof UrlSchema>;
 export type CustomUrlSchemaType = z.infer<typeof CustomUrlSchema>;
 export type verificationToken = z.infer<typeof verificationTokenValidation>;
 export type ProfileSchemaType = z.infer<typeof ProfileSchema>;
+export type PasswordSchemaType = z.infer<typeof PasswordSchema>;
