@@ -5,12 +5,12 @@ function Security() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-  const [error, setError] = useState<Record<string, unknown>>({});
   const [inputTypes, setInputTypes] = useState({
     currentPassword: "password",
     password: "password",
     confirmPassword: "password",
   });
+  const [error, setError] = useState<Record<string, string>>({});
 
   const handleToggleVisibility = (field: keyof typeof inputTypes) => {
     setInputTypes((prev) => ({
@@ -19,17 +19,17 @@ function Security() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError({ message: "Passwords do not match" });
       return;
     }
-    setError({ message: "pass dont match" });
+    //fetch
   };
 
   return (
-    <div className="out-sec">
+    <div className="out-sec panel-pdl">
       <div className="profile-container panel panel-border">
         <h4>Security</h4>
         <h2>Update Password</h2>
@@ -148,7 +148,7 @@ function Security() {
         </div>
       </div>
       <div className="profile-container panel">
-        <div>
+        <div style={{ padding: "0 0.8rem" }}>
           <h4>Additional Security</h4>
           <h2>Two-Factor Authentication</h2>
           <p>
