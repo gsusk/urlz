@@ -25,7 +25,7 @@ export async function updatePassword(
   confirmPassword: string
 ) {
   return await client.put(
-    "/user/profile",
+    "/user/password",
     { password, currentPassword, confirmPassword },
     { __retry: false }
   );

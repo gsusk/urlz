@@ -7,6 +7,7 @@ function Security() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [inputTypes, setInputTypes] = useState({
     currentPassword: "password",
     password: "password",
@@ -27,6 +28,7 @@ function Security() {
       setError({ message: "Passwords do not match" });
       return;
     }
+    setLoading(true);
     //fetch
     try {
       const res = await updatePassword(
@@ -43,6 +45,8 @@ function Security() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -148,14 +152,24 @@ function Security() {
                     </button>
                   </div>
                 </div>
+                <div>{error.message}</div>
                 <div className="row-container">
                   <div className="sec-update-button">
-                    <button type="submit" className="button __vmc">
+                    <button
+                      type="submit"
+                      className="button __vmc"
+                      disabled={loading}
+                    >
                       Update
                     </button>
                   </div>
                 </div>
               </div>
+              {success && (
+                <div className="success-message">
+                  Password updated successfully
+                </div>
+              )}
             </form>
           </div>
         </div>
@@ -170,7 +184,6 @@ function Security() {
           </p>
         </div>
       </div>
-      <div>{error.message}</div>
     </div>
   );
 }
