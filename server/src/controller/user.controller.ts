@@ -1,9 +1,15 @@
 import { AppError } from '../utils/customErrors';
 import { prisma } from '../db';
-import { buildTokens, setTokens, type payloadData } from '../utils/token.utils';
+import {
+  buildTokens,
+  setTokens,
+  UserDataPayload,
+  type payloadData,
+} from '../utils/token.utils';
 import type { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 export async function getUserProfile(
   request: Request & payloadData,
@@ -75,6 +81,36 @@ export async function updateUserProfile(
         rest.profilePic ||
         'http://localhost:8081/public/default-profile-photo.jpg',
     });
+  } catch (err) {
+    return next(err);
+  }
+}
+
+export async function updateUserPassword(
+  request: Request & UserDataPayload,
+  response: Response,
+  next: NextFunction,
+) {
+  const { password, currentPassword } = request.body;
+  const { username } = request.user!;
+
+  try {
+    const user = await prisma.user.findUnique({ where: { username } });
+    if (!user)
+      return next(new AppError('User not found', HttpStatus.NOT_FOUND));
+    if (!(await bcrypt.compare(currentPassword, user.password)))
+      return next(new AppError('Incorrect password', HttpStatus.BAD_REQUEST));
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    await prisma.user.update({
+      where: { username },
+      data: { password: hashedPassword },
+      select: {},
+    });
+
+    return response
+      .status(HttpStatus.OK)
+      .json({ message: 'Password updated successfully' });
   } catch (err) {
     return next(err);
   }

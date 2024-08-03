@@ -1,6 +1,7 @@
 import { ProfileSchema } from '../validations/schemas';
 import {
   getUserProfile,
+  updateUserPassword,
   updateUserProfile,
 } from '../controller/user.controller';
 import { authMiddleware } from '../middlewares/token';
@@ -19,5 +20,7 @@ router.put(
   file.single('file'),
   updateUserProfile,
 );
+
+router.put('/password', authMiddleware, updateUserPassword);
 
 export default router;
