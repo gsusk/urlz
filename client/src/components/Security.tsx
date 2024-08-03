@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { updatePassword } from "../services/user";
 
 function Security() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
+  const [success, setSuccess] = useState(false);
   const [inputTypes, setInputTypes] = useState({
     currentPassword: "password",
     password: "password",
@@ -26,7 +28,32 @@ function Security() {
       return;
     }
     //fetch
+    try {
+      const res = await updatePassword(
+        password,
+        currentPassword,
+        confirmPassword
+      );
+      if (res.status === 200) {
+        setPassword("");
+        setConfirmPassword("");
+        setCurrentPassword("");
+        setError({});
+        setSuccess(true);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
 
   return (
     <div className="out-sec panel-pdl">

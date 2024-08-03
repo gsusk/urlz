@@ -18,3 +18,15 @@ export async function updateProfileData(data: FormData) {
     headers: { "Content-Type": "multipart/form-data" },
   });
 }
+
+export async function updatePassword(
+  password: string,
+  currentPassword: string,
+  confirmPassword: string
+) {
+  return await client.put(
+    "/user/profile",
+    { password, currentPassword, confirmPassword },
+    { __retry: false }
+  );
+}
