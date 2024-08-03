@@ -143,7 +143,7 @@
   align-items: center;
   padding: 1rem;
   width: 100%;
-  justify-content: center;
+  justify-content: end;
 }
 
 .security-input-column {
@@ -165,9 +165,16 @@
   background-color: inherit;
   color: var(--main-darkest-color);
   line-height: 1rem;
-  top: 1.6rem;
+  top: 1.67rem;
   right: 1.5rem;
-  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-toggle-input > svg {
+  justify-content: center;
+  align-items: center;
 }
 
 .panel-pdl {
@@ -224,6 +231,11 @@
 
 @media (min-width: 992px) {
   .right-flex-container {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+
+  .t-fix {
     flex: 0 0 33.3333333333% !important;
     max-width: 33.3333333333% !important;
   }

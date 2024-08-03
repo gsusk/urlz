@@ -118,7 +118,7 @@ function Profile() {
                 <MyImage src={profilePic} alt="pic" />
               </div>
             </div>
-            <div className="right-flex-container">
+            <div className="right-flex-container t-fix">
               <div className="inner-file-c">
                 <input
                   type="file"

@@ -53,21 +53,15 @@ function Security() {
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                     />
-                    <button className="button-toggle-input" type="button">
+                    <button
+                      className="button-toggle-input"
+                      type="button"
+                      onClick={() => handleToggleVisibility("currentPassword")}
+                    >
                       {inputTypes.currentPassword === "text" ? (
-                        <FaRegEyeSlash
-                          className=""
-                          onClick={() =>
-                            handleToggleVisibility("currentPassword")
-                          }
-                        />
+                        <FaRegEyeSlash className="" />
                       ) : (
-                        <FaRegEye
-                          className=""
-                          onClick={() =>
-                            handleToggleVisibility("currentPassword")
-                          }
-                        />
+                        <FaRegEye className="" />
                       )}
                     </button>
                   </div>
@@ -85,17 +79,15 @@ function Security() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
-                    <button className="button-toggle-input" type="button">
+                    <button
+                      className="button-toggle-input"
+                      type="button"
+                      onClick={() => handleToggleVisibility("password")}
+                    >
                       {inputTypes.password === "text" ? (
-                        <FaRegEyeSlash
-                          className=""
-                          onClick={() => handleToggleVisibility("password")}
-                        />
+                        <FaRegEyeSlash className="" />
                       ) : (
-                        <FaRegEye
-                          className=""
-                          onClick={() => handleToggleVisibility("password")}
-                        />
+                        <FaRegEye className="" />
                       )}
                     </button>
                   </div>
@@ -116,21 +108,15 @@ function Security() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                     />
-                    <button className="button-toggle-input" type="button">
+                    <button
+                      className="button-toggle-input"
+                      type="button"
+                      onClick={() => handleToggleVisibility("confirmPassword")}
+                    >
                       {inputTypes.confirmPassword === "text" ? (
-                        <FaRegEyeSlash
-                          className=""
-                          onClick={() =>
-                            handleToggleVisibility("confirmPassword")
-                          }
-                        />
+                        <FaRegEyeSlash className="" />
                       ) : (
-                        <FaRegEye
-                          className=""
-                          onClick={() =>
-                            handleToggleVisibility("confirmPassword")
-                          }
-                        />
+                        <FaRegEye className="" />
                       )}
                     </button>
                   </div>
