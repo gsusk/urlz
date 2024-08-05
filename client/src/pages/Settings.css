@@ -183,6 +183,7 @@
 
 .r-panel {
 }
+
 @media (min-width: 768px) {
   .right-flex-container {
     flex: 0 0 50% !important;
