@@ -10,20 +10,16 @@ import {
 import { errorHandler } from "../../utils/errorparser";
 import { AxiosError } from "axios";
 
-type User = {
-  user: AuthenticatedData | null;
+interface AuthState {
+  isAuthenticated: boolean;
   loading: boolean;
-  error: {
-    message?: string;
-    errors?: {
-      email: string;
-      username: string;
-      password: string;
-      confirmPassword: string;
-      etoken?: string;
-    };
-  };
-};
+  error: string | null;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+  } | null;
+}
 
 const initialState: User = {
   user: null,
