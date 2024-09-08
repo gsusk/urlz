@@ -1,21 +1,9 @@
 import client from "./axios";
 
-export type AuthenticatedData = {
+export type User = {
   username: string;
   isVerified: boolean;
   profilePic: string;
-};
-
-export type LoginForm = {
-  username: string;
-  password: string;
-};
-
-export type RegisterForm = {
-  email: string;
-  username: string;
-  password: string;
-  confirmPassword: string;
 };
 
 export type AuthRejectResponse = {
@@ -23,8 +11,14 @@ export type AuthRejectResponse = {
   errors?: Record<string, string>[];
 };
 
-export async function login({ username, password }: LoginForm) {
-  return await client.post<AuthenticatedData>(
+export async function login({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}) {
+  return await client.post<User>(
     "/auth/signin",
     {
       username,
@@ -44,8 +38,13 @@ export async function register({
   username,
   password,
   confirmPassword,
-}: RegisterForm) {
-  return await client.post<AuthenticatedData>(
+}: {
+  email: string;
+  username: string;
+  password: string;
+  confirmPassword: string;
+}) {
+  return await client.post<User>(
     "/auth/signup",
     {
       email,

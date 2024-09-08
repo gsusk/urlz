@@ -1,36 +1,40 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {
-  type LoginForm,
-  type RegisterForm,
-  type AuthenticatedData,
-  login,
-  register,
-  verifyAccount,
-} from "../../services/auth";
+import { login, register, verifyAccount, User } from "../../services/auth";
 import { errorHandler } from "../../utils/errorparser";
 import { AxiosError } from "axios";
 
 interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
-  error: string | null;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-  } | null;
+  error: { [field: string]: string };
+  user: User | null;
 }
+/* 
+to be consider
+"errors": [
+    {
+        "code": "100",
+        "field": null,
+        "message": "Name is required"
+    }, {
+        "code": "100",
+        "field": null,
+        "message": "Age is required"
+    }
+  ]
+ */
 
-const initialState: User = {
+const initialState: AuthState = {
+  isAuthenticated: false,
   user: null,
   loading: false,
   error: {},
 };
 
 export const signIn = createAsyncThunk<
-  AuthenticatedData,
-  LoginForm,
-  { rejectValue: User["error"] }
+  User,
+  { username: string; password: string },
+  { rejectValue: { errors: AuthState["error"] } }
 >("user/signin", async (credentials, api) => {
   try {
     const res = await login(credentials);
@@ -41,9 +45,14 @@ export const signIn = createAsyncThunk<
 });
 
 export const signUp = createAsyncThunk<
-  AuthenticatedData,
-  RegisterForm,
-  { rejectValue: User["error"] }
+  User,
+  {
+    username: string;
+    password: string;
+    email: string;
+    confirmPassword: string;
+  },
+  { rejectValue: { errors: AuthState["error"] } }
 >("user/signup", async (credentials, api) => {
   try {
     const res = await register(credentials);
@@ -56,7 +65,7 @@ export const signUp = createAsyncThunk<
 export const verify = createAsyncThunk<
   boolean,
   string,
-  { rejectValue: Pick<User["error"], "message"> }
+  { rejectValue: Pick<AuthState["error"], "message"> }
 >("user/verify", async (token, api) => {
   try {
     const res = await verifyAccount(token);
@@ -77,7 +86,7 @@ const authSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    formError(state, action: PayloadAction<User["error"]>) {
+    formError(state, action: PayloadAction<AuthState["error"]>) {
       state.error = action.payload;
     },
     resetError(state) {
@@ -89,7 +98,12 @@ const authSlice = createSlice({
       }
     },
     logout(_state) {
-      _state = { user: null, error: {}, loading: false };
+      _state = {
+        user: null,
+        error: {},
+        loading: false,
+        isAuthenticated: false,
+      };
     },
     updateInfo(
       state,
@@ -114,7 +128,7 @@ const authSlice = createSlice({
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || {};
+      state.error = action.payload?.errors || {};
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
@@ -126,7 +140,7 @@ const authSlice = createSlice({
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || {};
+      state.error = action.payload?.errors || {};
     });
     builder.addCase(verify.fulfilled, (state, action) => {
       state.loading = false;
@@ -136,7 +150,7 @@ const authSlice = createSlice({
     });
     builder.addCase(verify.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload! || {};
+      state.error = action.payload || {};
     });
     builder.addCase(verify.pending, (state) => {
       state.loading = true;

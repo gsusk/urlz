@@ -27,6 +27,7 @@ export function errorHandler<T>(err: Error) {
       errors: normalizeError<T>(err.response.data.errors!),
     };
   }
+
   return {
     message: err.message || "Something went wrong",
     errors: {} as T,
