@@ -4,50 +4,20 @@ import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { formError, resetError, signUp } from "../redux/user/user";
 import { FaRegEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
-import { type RegisterForm } from "../services/auth";
-import { z } from "zod";
 import { serializeZodError } from "../utils/errorparser";
-
-const registerFormSchema = z
-  .object({
-    username: z
-      .string()
-      .trim()
-      .min(4, { message: "Must be at least 4 characters long" })
-      .max(64, { message: "Too many characters" }),
-    email: z
-      .string()
-      .trim()
-      .email({ message: "Not valid email" })
-      .min(5, { message: "Must be at least 5 characters long" })
-      .max(64, { message: "Too many characters" }),
-    password: z
-      .string()
-      .trim()
-      .min(8, { message: "Must be at least 8 characters long" }),
-    confirmPassword: z.string().trim(),
-  })
-  .superRefine(({ password, confirmPassword }, ctx) => {
-    if (password !== confirmPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: "The passwords doesnt match",
-        path: ["confirmPassword"],
-      });
-    }
-  });
+import { registerFormSchema, type RegisterType } from "../validation/forms";
 
 function RegisterForm() {
   const loading = useAppSelector((state) => state.user.loading);
-  const username = useAppSelector((state) => state.user.error.errors?.username);
-  const email = useAppSelector((state) => state.user.error.errors?.email);
-  const password = useAppSelector((state) => state.user.error.errors?.password);
+  const username = useAppSelector((state) => state.user.error?.username);
+  const email = useAppSelector((state) => state.user.error?.email);
+  const password = useAppSelector((state) => state.user.error?.password);
   const message = useAppSelector((state) => state.user.error.message);
   const confirmPassword = useAppSelector(
-    (state) => state.user.error.errors?.confirmPassword
+    (state) => state.user.error?.confirmPassword
   );
   const passwordRef = useRef<HTMLInputElement>(null);
-  const [formData, setFormData] = useState<RegisterForm>({
+  const [formData, setFormData] = useState<RegisterType>({
     username: "",
     password: "",
     email: "",
@@ -80,9 +50,9 @@ function RegisterForm() {
         console.error(err);
       }
     } else {
-      console.error(result, "errrr");
-      const errors = serializeZodError<typeof formData>(result.error);
-      dispatch(formError({ errors }));
+      console.error(result);
+      const errors = serializeZodError<RegisterType>(result.error);
+      dispatch(formError(errors));
     }
   };
 
