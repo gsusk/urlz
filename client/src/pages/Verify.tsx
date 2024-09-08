@@ -7,7 +7,7 @@ import { useState } from "react";
 import { errorHandler } from "../utils/errorparser";
 
 function Verify() {
-  const user = useAppSelector((state) => state.user.user);
+  const isAuthenticated = useAppSelector((state) => state.user.isAuthenticated);
   const [loading, setLoading] = useState<boolean>(false);
   const [isSuccessful, setIsSuccessful] = useState<boolean>(false);
   const [error, setError] = useState("");
@@ -29,7 +29,7 @@ function Verify() {
     }
   };
 
-  if (!user || user.isVerified) {
+  if (!isAuthenticated || isAuthenticated) {
     return <Navigate to={"/"} replace={true}></Navigate>;
   }
 

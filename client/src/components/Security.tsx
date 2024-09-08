@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { updatePassword } from "../services/user";
+import { Form } from "react-router-dom";
 
 function Security() {
   const [form, setForm] = useState({
@@ -8,9 +9,6 @@ function Security() {
     confirmPassword: "",
     currentPassword: "",
   });
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [currentPassword, setCurrentPassword] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [inputTypes, setInputTypes] = useState({
@@ -29,22 +27,16 @@ function Security() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
+    if (form.password !== form.confirmPassword) {
       setError({ message: "Passwords do not match" });
       return;
     }
     setLoading(true);
     //fetch
     try {
-      const res = await updatePassword(
-        password,
-        currentPassword,
-        confirmPassword
-      );
+      const res = await updatePassword(form);
       if (res.status === 200) {
-        setPassword("");
-        setConfirmPassword("");
-        setCurrentPassword("");
+        setForm({ password: "", currentPassword: "", confirmPassword: "" });
         setError({});
         setSuccess(true);
       }
@@ -86,8 +78,13 @@ function Security() {
                       name="currentPassword"
                       id="currentPassword"
                       className="shortener-input relative-input"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      value={form.currentPassword}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          [e.currentTarget.id]: e.currentTarget.value,
+                        }))
+                      }
                     />
                     <button
                       className="button-toggle-input"
@@ -112,8 +109,13 @@ function Security() {
                       name="password"
                       id="password"
                       className="shortener-input relative-input"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={form.password}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          [e.currentTarget.id]: e.currentTarget.value,
+                        }))
+                      }
                     />
                     <button
                       className="button-toggle-input"
@@ -141,8 +143,13 @@ function Security() {
                       name="confirmPassword"
                       id="confirmPassword"
                       className="shortener-input relative-input"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      value={form.confirmPassword}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          [e.currentTarget.id]: e.currentTarget.value,
+                        }))
+                      }
                     />
                     <button
                       className="button-toggle-input"
