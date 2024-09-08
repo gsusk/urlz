@@ -31,14 +31,16 @@ function Profile() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    if (username === form.usernameField && form.emailField === form.oldEmail)
+      return;
     const formData = new FormData();
-    console.log("username is:", form.usernameField);
-    formData.set("username", form.usernameField);
+    if (username !== form.usernameField)
+      formData.set("username", form.usernameField);
     if (form.emailField !== form.oldEmail)
       formData.set("email", form.emailField);
-    console.log(formData.entries().next());
+
     try {
+      setIsLoading(true);
       const { data } = await updateProfileData(formData);
       console.log("RESSS", data);
       console.log(data);
@@ -67,6 +69,7 @@ function Profile() {
         email: error.errors.email,
       });
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
