@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAppSelector } from "../hooks/appSelector";
 
 function Authenticated() {
-  const user = useAppSelector((state) => state.user.user);
+  const isAuth = useAppSelector((state) => state.user.isAuthenticated);
 
-  if (!user) {
+  if (!isAuth) {
     return <Navigate to={"/"}></Navigate>;
   }
 

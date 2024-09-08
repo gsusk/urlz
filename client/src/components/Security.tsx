@@ -87,6 +87,7 @@ function Security() {
                       className="shortener-input relative-input"
                       value={form.currentPassword}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                     <button
                       className="button-toggle-input"
@@ -113,6 +114,7 @@ function Security() {
                       className="shortener-input relative-input"
                       value={form.password}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                     <button
                       className="button-toggle-input"
@@ -142,6 +144,7 @@ function Security() {
                       className="shortener-input relative-input"
                       value={form.confirmPassword}
                       onChange={handleChange}
+                      autoComplete="off"
                     />
                     <button
                       className="button-toggle-input"
