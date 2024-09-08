@@ -3,6 +3,11 @@ import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { updatePassword } from "../services/user";
 
 function Security() {
+  const [form, setForm] = useState({
+    password: "",
+    confirmPassword: "",
+    currentPassword: "",
+  });
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
