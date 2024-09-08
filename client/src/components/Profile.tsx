@@ -9,8 +9,11 @@ import { errorHandler } from "../utils/errorparser";
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
   const username = useAppSelector((state) => state.user.user?.username)!;
-  const [usernameField, setUsernameField] = useState(username);
-  const [emailField, setEmailField] = useState<string>("");
+  const [form, setForm] = useState({
+    usernameField: username,
+    emailField: "",
+    oldEmail: "",
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [_file, setFile] = useState<File | undefined>();
   const [error, setError] = useState<{
@@ -20,7 +23,7 @@ function Profile() {
   }>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
-  console.log(profilePic, emailField);
+  console.log(profilePic, form.emailField);
 
   const handleClick = () => {
     inputRef.current?.click();
@@ -28,14 +31,19 @@ function Profile() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    if (username === form.usernameField && form.emailField === form.oldEmail)
+      return;
     const formData = new FormData();
-    if (usernameField !== username) formData.set("username", usernameField);
-    if (emailField) formData.set("email", emailField);
+    if (username !== form.usernameField)
+      formData.set("username", form.usernameField);
+    if (form.emailField !== form.oldEmail)
+      formData.set("email", form.emailField);
 
     try {
+      setIsLoading(true);
       const { data } = await updateProfileData(formData);
       console.log("RESSS", data);
+      console.log(data);
       dispatch(
         updateInfo({
           username: data.username,
@@ -43,33 +51,44 @@ function Profile() {
       );
 
       if (data.email) {
-        setEmailField(data.email);
+        setForm((prev) => {
+          return {
+            ...prev,
+            emailField: data.email!,
+            oldEmail: data.email!,
+          };
+        });
       }
     } catch (err) {
       const error = errorHandler<{ username?: string; email?: string }>(
         err as Error
       );
-      console.error(error);
-      setError(error);
+      setError({
+        ...error,
+        username: error.errors.username,
+        email: error.errors.email,
+      });
     }
+    setIsLoading(false);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       if (!isLoading) setIsLoading(true);
       try {
-        const res = await getProfileData();
-        console.log(res.data, profilePic, "dataaaaaaaaaaaaa");
-
-        dispatch(
-          updateInfo({
-            username: res.data.username,
-            profilePic: res.data.profilePic,
-          })
-        );
-
-        setUsernameField(res.data.username);
-        setEmailField(res.data.email);
+        getProfileData().then((res) => {
+          dispatch(
+            updateInfo({
+              username: res.data.username,
+              profilePic: res.data.profilePic,
+            })
+          );
+          setForm((prev) => ({
+            ...prev,
+            emailField: res.data.email,
+            oldEmail: res.data.email,
+          }));
+        });
       } catch (error) {
         console.log(error);
       } finally {
@@ -164,11 +183,17 @@ function Profile() {
                     <input
                       type="text"
                       name="username"
-                      value={usernameField}
+                      value={form.usernameField}
                       id="username_profile"
                       className="shortener-input"
                       style={{ width: "100%" }}
-                      onChange={(e) => setUsernameField(e.target.value)}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          usernameField: e.target.value,
+                        }))
+                      }
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -187,15 +212,25 @@ function Profile() {
                       id="email_profile"
                       style={{ width: "100%" }}
                       className="shortener-input"
-                      value={emailField}
-                      onChange={(e) => setEmailField(e.target.value)}
+                      value={form.emailField}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          usernameField: e.target.value,
+                        }))
+                      }
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
                 <div>{error.email}</div>
                 <div className="row-container">
                   <div className="button-submit-container">
-                    <button type="submit" className="button __vmc">
+                    <button
+                      type="submit"
+                      className="button __vmc"
+                      disabled={isLoading}
+                    >
                       Update
                     </button>
                   </div>

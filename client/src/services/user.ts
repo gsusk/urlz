@@ -19,11 +19,15 @@ export async function updateProfileData(data: FormData) {
   });
 }
 
-export async function updatePassword(
-  password: string,
-  currentPassword: string,
-  confirmPassword: string
-) {
+export async function updatePassword({
+  password,
+  currentPassword,
+  confirmPassword,
+}: {
+  password: string;
+  currentPassword: string;
+  confirmPassword: string;
+}) {
   return await client.put(
     "/user/password",
     { password, currentPassword, confirmPassword },
