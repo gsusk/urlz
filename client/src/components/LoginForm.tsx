@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import { z } from "zod";
-import { type LoginForm } from "../services/auth";
 import { formError } from "../redux/user/user";
 import { serializeZodError } from "../utils/errorparser";
 
@@ -22,15 +21,15 @@ const formLoginSchema = z.object({
 });
 
 function LoginForm() {
-  const [formData, setFormData] = useState<LoginForm>({
+  const [formData, setFormData] = useState<z.infer<typeof formLoginSchema>>({
     username: "",
     password: "",
   });
   const [inputType, setInputType] = useState("password");
   const loading = useAppSelector((state) => state.user.loading);
-  const username = useAppSelector((state) => state.user.error.errors?.username);
-  const password = useAppSelector((state) => state.user.error.errors?.email);
-  const message = useAppSelector((state) => state.user.error.message);
+  const username = useAppSelector((state) => state.user.error?.username);
+  const password = useAppSelector((state) => state.user.error?.password);
+  const message = useAppSelector((state) => state.user.error?.message);
   const dispatch = useAppDispatch();
 
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {

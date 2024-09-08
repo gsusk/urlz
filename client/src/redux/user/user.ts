@@ -6,7 +6,13 @@ import { AxiosError } from "axios";
 interface AuthState {
   isAuthenticated: boolean;
   loading: boolean;
-  error: { [field: string]: string };
+  error: {
+    message?: string;
+    username?: string;
+    password?: string;
+    email?: string;
+    confirmPassword?: string;
+  };
   user: User | null;
 }
 /* 
@@ -34,7 +40,9 @@ const initialState: AuthState = {
 export const signIn = createAsyncThunk<
   User,
   { username: string; password: string },
-  { rejectValue: { errors: AuthState["error"] } }
+  {
+    rejectValue: AuthState["error"];
+  }
 >("user/signin", async (credentials, api) => {
   try {
     const res = await login(credentials);
@@ -52,7 +60,9 @@ export const signUp = createAsyncThunk<
     email: string;
     confirmPassword: string;
   },
-  { rejectValue: { errors: AuthState["error"] } }
+  {
+    rejectValue: AuthState["error"];
+  }
 >("user/signup", async (credentials, api) => {
   try {
     const res = await register(credentials);
@@ -128,7 +138,7 @@ const authSlice = createSlice({
     });
     builder.addCase(signIn.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload?.errors || {};
+      state.error = action.payload || {};
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
@@ -140,7 +150,7 @@ const authSlice = createSlice({
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload?.errors || {};
+      state.error = action.payload || {};
     });
     builder.addCase(verify.fulfilled, (state, action) => {
       state.loading = false;
