@@ -4,24 +4,12 @@ import { resetError, signIn } from "../redux/user/user";
 import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import { FaRegEyeSlash } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
-import { z } from "zod";
 import { formError } from "../redux/user/user";
 import { serializeZodError } from "../utils/errorparser";
-
-const formLoginSchema = z.object({
-  username: z
-    .string()
-    .trim()
-    .min(4, { message: "Must be at least 4 characters long" })
-    .max(64, { message: "Too many characters" }),
-  password: z
-    .string()
-    .trim()
-    .min(8, { message: "Must be at least 8 characters long" }),
-});
+import { loginFormSchema, type LoginType } from "../validation/forms";
 
 function LoginForm() {
-  const [formData, setFormData] = useState<z.infer<typeof formLoginSchema>>({
+  const [formData, setFormData] = useState<LoginType>({
     username: "",
     password: "",
   });
@@ -44,8 +32,7 @@ function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const result = formLoginSchema.safeParse(formData);
+    const result = loginFormSchema.safeParse(formData);
 
     if (result.success) {
       await dispatch(signIn(result.data));
