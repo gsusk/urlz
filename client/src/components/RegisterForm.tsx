@@ -12,7 +12,7 @@ function RegisterForm() {
   const username = useAppSelector((state) => state.user.error?.username);
   const email = useAppSelector((state) => state.user.error?.email);
   const password = useAppSelector((state) => state.user.error?.password);
-  const message = useAppSelector((state) => state.user.error.message);
+  const message = useAppSelector((state) => state.user.error?.message);
   const confirmPassword = useAppSelector(
     (state) => state.user.error?.confirmPassword
   );
@@ -43,12 +43,9 @@ function RegisterForm() {
     const result = registerFormSchema.safeParse(formData);
 
     if (result.success) {
-      try {
-        await dispatch(signUp(result.data)).unwrap();
-        return navigate("/email/verify");
-      } catch (err) {
-        console.error(err);
-      }
+      dispatch(signUp(result.data)).then((full) => {
+        if (full.meta.requestStatus === "fulfilled") navigate("/email/verify");
+      });
     } else {
       console.error(result);
       const errors = serializeZodError<RegisterType>(result.error);
