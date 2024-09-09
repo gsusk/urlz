@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getProfileData, updateProfileData } from "../services/user";
 import { updateInfo } from "../redux/user/user";
 import { errorHandler } from "../utils/errorparser";
+import { profileSchema } from "../validation/forms";
 
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
@@ -50,19 +51,29 @@ function Profile() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (username === form.usernameField && form.emailField === form.oldEmail)
-      return;
     const formData = new FormData();
+
     if (username !== form.usernameField)
       formData.set("username", form.usernameField);
+
     if (form.emailField !== form.oldEmail)
       formData.set("email", form.emailField);
+
+    const { data, error } = profileSchema.safeParse({
+      username: form.usernameField,
+      email: form.emailField,
+      oldUsername: username,
+      oldEmail: form.oldEmail,
+    });
+
+    if (error) {
+      error.
+    }
 
     try {
       setIsLoading(true);
       const { data } = await updateProfileData(formData);
-      console.log("RESSS", data);
-      console.log(data);
+
       dispatch(
         updateInfo({
           username: data.username,
