@@ -10,6 +10,7 @@ import {
   generateShortUrl,
 } from "../services/shorten";
 import { errorHandler, serializeZodError } from "../utils/errorparser";
+import { urlSchema } from "../validation/url";
 
 function Shortener() {
   const [form, setForm] = useState({ url: "", customUrl: "" });

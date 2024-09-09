@@ -16,8 +16,8 @@ router.get('/profile', authMiddleware, getUserProfile);
 router.put(
   '/profile',
   authMiddleware,
+  file.single('profilePic'),
   validation(ProfileSchema),
-  file.single('file'),
   updateUserProfile,
 );
 

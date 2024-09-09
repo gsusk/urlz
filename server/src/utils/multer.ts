@@ -23,6 +23,8 @@ export const file = multer({
       'image/gif',
       'image/jpeg',
     ];
-    cb(null, allowedMimeTypes.includes(file.mimetype));
+    const valid = allowedMimeTypes.includes(file.mimetype);
+    _req.body.file = valid;
+    cb(null, valid);
   },
 });
