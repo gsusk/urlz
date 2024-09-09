@@ -3,9 +3,9 @@ import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import MyImage from "./MyImage";
 import { Link } from "react-router-dom";
 import { getProfileData, updateProfileData } from "../services/user";
-import { updateInfo } from "../redux/user/user";
+import { formError, updateInfo } from "../redux/user/user";
 import { errorHandler } from "../utils/errorparser";
-import { profileSchema } from "../validation/forms";
+import { profileSchema, ProfileType } from "../validation/forms";
 
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
@@ -51,13 +51,7 @@ function Profile() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData();
-
-    if (username !== form.usernameField)
-      formData.set("username", form.usernameField);
-
-    if (form.emailField !== form.oldEmail)
-      formData.set("email", form.emailField);
+    setIsLoading(true);
 
     const { data, error } = profileSchema.safeParse({
       username: form.usernameField,
@@ -67,11 +61,19 @@ function Profile() {
     });
 
     if (error) {
-      error.
+      return setError(error);
     }
 
+    const formData = new FormData();
+
+    for (const [key, value] of Object.entries(data)) {
+      formData.set(key, value);
+    }
+
+    if (data.username) formData.set("username", data.username);
+    if (data.email) formData.set("email", data.email);
+
     try {
-      setIsLoading(true);
       const { data } = await updateProfileData(formData);
 
       dispatch(

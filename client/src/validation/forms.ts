@@ -42,15 +42,25 @@ export const registerFormSchema = userSchema.superRefine(
   }
 );
 
-export const profileSchema = userSchema
-  .pick({ username: true, email: true })
-  .and(
-    z.object({
-      oldUsername: z.string().trim(),
-      oldEmail: z.string().trim(),
-    })
-  )
+export const profileSchema = z
+  .object({
+    username: z.string().optional(),
+    email: z.string().optional(),
+    oldUsername: z.string().trim(),
+    oldEmail: z.string().trim(),
+  })
   .superRefine((data, ctx) => {
+    if (
+      !Object.values({ username: data.username, email: data.email }).some(
+        (val) => val !== undefined
+      )
+    ) {
+      return ctx.addIssue({
+        path: ["email", "username"],
+        code: "custom",
+        message: "At least one field is required.",
+      });
+    }
     if (data.oldUsername === data.username && data.email === data.oldEmail) {
       return ctx.addIssue({ path: [], code: "custom" });
     }
