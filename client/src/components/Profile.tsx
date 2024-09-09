@@ -10,6 +10,7 @@ import { profileSchema, ProfileType } from "../validation/forms";
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
   const username = useAppSelector((state) => state.user.user?.username)!;
+
   const [form, setForm] = useState({
     usernameField: username,
     emailField: "",
@@ -31,21 +32,17 @@ function Profile() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0];
     if (file) {
-      const update = async () => {
-        try {
-          const _file = new FormData();
-          _file.set("profilePic", file);
-          const res = await updateProfileData(_file);
+      const _file = new FormData();
+      _file.set("profilePic", file);
+      updateProfileData(_file)
+        .then((res) => {
           dispatch(
             updateInfo({
               profilePic: res.data.profilePic,
             })
           );
-        } catch (error) {
-          setError(errorHandler<typeof form>(error as Error));
-        }
-      };
-      update();
+        })
+        .catch((error) => setError(errorHandler<ProfileType>(error as Error)));
     }
   };
 
@@ -89,7 +86,6 @@ function Profile() {
         setForm((prev) => {
           return {
             ...prev,
-            emailField: data.email!,
             oldEmail: data.email!,
           };
         });
