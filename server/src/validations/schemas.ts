@@ -47,14 +47,20 @@ export const PasswordSchema = baseAuthSchema
   });
 
 const profileSchema = z.object({
-  username: z.string().trim().min(4).max(64),
-  email: z.string().trim().email().optional(),
+  username: z.string().trim().min(4).max(64).optional(),
+  email: z.string().trim().email().min(5).optional(),
+  file: z.boolean(),
 });
 
 export const ProfileSchema = profileSchema.refine(
-  (data) => Object.values(data).some((value) => value !== undefined),
+  (data) => {
+    if (data.file === true) return true;
+    const { file, ...rest } = data;
+    return Object.values(rest).some((value) => value !== undefined);
+  },
   {
     message: 'At least one field is requried.',
+    path: ['username'],
   },
 );
 
