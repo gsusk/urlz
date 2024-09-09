@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { getProfileData, updateProfileData } from "../services/user";
 import { updateInfo } from "../redux/user/user";
 import { errorHandler } from "../utils/errorparser";
+import { profileSchema, ProfileType } from "../validation/forms";
 
 function Profile() {
   const profilePic = useAppSelector((state) => state.user.user?.profilePic)!;
@@ -48,21 +49,36 @@ function Profile() {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [id, value] = [e.currentTarget.id, e.currentTarget.value];
+    setError((prev) => ({ ...prev, [id]: "" }));
+    setForm((prev) => ({ ...prev, [id]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (username === form.usernameField && form.emailField === form.oldEmail)
-      return;
+    setIsLoading(true);
+
+    const { data, error } = profileSchema.safeParse({
+      username: form.usernameField,
+      email: form.emailField,
+      oldUsername: username,
+      oldEmail: form.oldEmail,
+    });
+
+    if (error) {
+      return setError(error);
+    }
+
     const formData = new FormData();
-    if (username !== form.usernameField)
-      formData.set("username", form.usernameField);
-    if (form.emailField !== form.oldEmail)
-      formData.set("email", form.emailField);
+
+    for (const [key, value] of Object.entries(data)) {
+      formData.set(key, value);
+    }
 
     try {
-      setIsLoading(true);
       const { data } = await updateProfileData(formData);
-      console.log("RESSS", data);
-      console.log(data);
+
       dispatch(
         updateInfo({
           username: data.username,
@@ -79,42 +95,37 @@ function Profile() {
         });
       }
     } catch (err) {
-      const error = errorHandler<{ username?: string; email?: string }>(
-        err as Error
-      );
+      const { message, errors } = errorHandler<ProfileType>(err as Error);
       setError({
-        ...error,
-        username: error.errors.username,
-        email: error.errors.email,
+        message,
+        ...errors,
       });
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!isLoading) setIsLoading(true);
-      try {
-        getProfileData().then((res) => {
-          dispatch(
-            updateInfo({
-              username: res.data.username,
-              profilePic: res.data.profilePic,
-            })
-          );
-          setForm((prev) => ({
-            ...prev,
-            emailField: res.data.email,
-            oldEmail: res.data.email,
-          }));
-        });
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
+    if (!isLoading) setIsLoading(true);
+    getProfileData()
+      .then((res) => {
+        dispatch(
+          updateInfo({
+            username: res.data.username,
+            profilePic: res.data.profilePic,
+          })
+        );
+        setForm((prev) => ({
+          ...prev,
+          emailField: res.data.email,
+          oldEmail: res.data.email,
+        }));
+      })
+      .catch((err) => {
+        const { message, errors } = errorHandler<ProfileType>(err);
+        setError({ message, ...errors });
+      })
+      .finally(() => setIsLoading(false));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
@@ -184,12 +195,7 @@ function Profile() {
                       id="username_profile"
                       className="shortener-input"
                       style={{ width: "100%" }}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          usernameField: e.target.value,
-                        }))
-                      }
+                      onChange={handleChange}
                       disabled={isLoading}
                     />
                   </div>
@@ -210,12 +216,7 @@ function Profile() {
                       style={{ width: "100%" }}
                       className="shortener-input"
                       value={form.emailField}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          emailField: e.target.value,
-                        }))
-                      }
+                      onChange={handleChange}
                       disabled={isLoading}
                     />
                   </div>

@@ -40,14 +40,14 @@ function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = registerFormSchema.safeParse(formData);
+    const { data, error } = registerFormSchema.safeParse(formData);
 
-    if (result.success) {
-      dispatch(signUp(result.data)).then((full) => {
+    if (!error) {
+      dispatch(signUp(data)).then((full) => {
         if (full.meta.requestStatus === "fulfilled") navigate("/email/verify");
       });
     } else {
-      dispatch(formError(serializeZodError<RegisterType>(result.error)));
+      dispatch(formError(serializeZodError<RegisterType>(error)));
     }
   };
 
