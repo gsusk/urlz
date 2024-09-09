@@ -28,7 +28,7 @@ function Profile() {
   const handleClick = () => {
     inputRef.current?.click();
   };
-
+  console.log("reload", username, form, isLoading, error);
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0];
     if (file) {
@@ -91,7 +91,6 @@ function Profile() {
         }
       } catch (err) {
         const { message, errors } = errorHandler<ProfileType>(err as Error);
-        console.log(message, errors);
         setError({
           message,
           ...errors,
@@ -103,6 +102,7 @@ function Profile() {
   };
 
   useEffect(() => {
+    console.log("reloading");
     if (!isLoading) setIsLoading(true);
     getProfileData()
       .then((res) => {
@@ -133,11 +133,7 @@ function Profile() {
       <h2>Update Information</h2>
       <div>
         <div className="mw">
-          <form
-            role="form"
-            className="row-container"
-            onChange={() => console.log("object")}
-          >
+          <form role="form" className="row-container">
             <div className="left-flex-container">
               <div className="profile-image-container">
                 <MyImage src={profilePic} alt="pic" />
@@ -153,7 +149,6 @@ function Profile() {
                   accept="image/*"
                   multiple={false}
                   onChange={handleFileChange}
-                  onError={() => console.log("error")}
                 />
                 <button
                   type="button"

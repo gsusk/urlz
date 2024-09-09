@@ -26,7 +26,6 @@ function RegisterForm() {
   const [inputType, setInputType] = useState("password");
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-
   const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
     if (username || email || password || message || confirmPassword)
       dispatch(resetError());
