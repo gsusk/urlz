@@ -41,7 +41,15 @@ export const signIn = createAsyncThunk<
   User,
   { username: string; password: string },
   {
-    rejectValue: AuthState["error"];
+    rejectValue: {
+      message: string;
+      errors: {
+        username?: string;
+        email?: string;
+        password?: string;
+        confirmPassword?: string;
+      };
+    };
   }
 >("user/signin", async (credentials, api) => {
   try {
@@ -61,7 +69,15 @@ export const signUp = createAsyncThunk<
     confirmPassword: string;
   },
   {
-    rejectValue: AuthState["error"];
+    rejectValue: {
+      message: string;
+      errors: {
+        username?: string;
+        email?: string;
+        password?: string;
+        confirmPassword?: string;
+      };
+    };
   }
 >("user/signup", async (credentials, api) => {
   try {
@@ -138,8 +154,8 @@ const authSlice = createSlice({
       state.error = {};
     });
     builder.addCase(signIn.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload || {};
+      const { message, errors } = action.payload!;
+      state.error = { message, ...errors } || {};
     });
     builder.addCase(signUp.fulfilled, (state, action) => {
       state.loading = false;
@@ -152,7 +168,8 @@ const authSlice = createSlice({
     });
     builder.addCase(signUp.rejected, (state, action) => {
       state.loading = false;
-      state.error = action.payload || {};
+      const { message, errors } = action.payload!;
+      state.error = { message, ...errors } || {};
     });
     builder.addCase(verify.fulfilled, (state, action) => {
       state.loading = false;
