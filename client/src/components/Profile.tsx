@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../hooks/appSelector";
 import MyImage from "./MyImage";
 import { Link } from "react-router-dom";
 import { getProfileData, updateProfileData } from "../services/user";
-import { formError, updateInfo } from "../redux/user/user";
+import { updateInfo } from "../redux/user/user";
 import { errorHandler } from "../utils/errorparser";
 import { profileSchema, ProfileType } from "../validation/forms";
 
@@ -49,6 +49,12 @@ function Profile() {
     }
   };
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [id, value] = [e.currentTarget.id, e.currentTarget.value];
+    setError((prev) => ({ ...prev, [id]: "" }));
+    setForm((prev) => ({ ...prev, [id]: value }));
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -70,9 +76,6 @@ function Profile() {
       formData.set(key, value);
     }
 
-    if (data.username) formData.set("username", data.username);
-    if (data.email) formData.set("email", data.email);
-
     try {
       const { data } = await updateProfileData(formData);
 
@@ -92,42 +95,37 @@ function Profile() {
         });
       }
     } catch (err) {
-      const error = errorHandler<{ username?: string; email?: string }>(
-        err as Error
-      );
+      const { message, errors } = errorHandler<ProfileType>(err as Error);
       setError({
-        ...error,
-        username: error.errors.username,
-        email: error.errors.email,
+        message,
+        ...errors,
       });
     }
     setIsLoading(false);
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (!isLoading) setIsLoading(true);
-      try {
-        getProfileData().then((res) => {
-          dispatch(
-            updateInfo({
-              username: res.data.username,
-              profilePic: res.data.profilePic,
-            })
-          );
-          setForm((prev) => ({
-            ...prev,
-            emailField: res.data.email,
-            oldEmail: res.data.email,
-          }));
-        });
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
+    if (!isLoading) setIsLoading(true);
+    getProfileData()
+      .then((res) => {
+        dispatch(
+          updateInfo({
+            username: res.data.username,
+            profilePic: res.data.profilePic,
+          })
+        );
+        setForm((prev) => ({
+          ...prev,
+          emailField: res.data.email,
+          oldEmail: res.data.email,
+        }));
+      })
+      .catch((err) => {
+        const { message, errors } = errorHandler<ProfileType>(err);
+        setError({ message, ...errors });
+      })
+      .finally(() => setIsLoading(false));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
@@ -197,12 +195,7 @@ function Profile() {
                       id="username_profile"
                       className="shortener-input"
                       style={{ width: "100%" }}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          usernameField: e.target.value,
-                        }))
-                      }
+                      onChange={handleChange}
                       disabled={isLoading}
                     />
                   </div>
@@ -223,12 +216,7 @@ function Profile() {
                       style={{ width: "100%" }}
                       className="shortener-input"
                       value={form.emailField}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          emailField: e.target.value,
-                        }))
-                      }
+                      onChange={handleChange}
                       disabled={isLoading}
                     />
                   </div>

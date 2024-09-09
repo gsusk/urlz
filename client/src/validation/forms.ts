@@ -67,7 +67,7 @@ export const profileSchema = z
   })
   .transform((data) => {
     const { username, email } = data;
-    return { username, email };
+    return { username, email } as { email: string; username: string };
   });
 
 export type LoginType = z.infer<typeof loginFormSchema>;
