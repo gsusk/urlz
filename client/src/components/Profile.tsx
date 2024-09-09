@@ -15,7 +15,6 @@ function Profile() {
     oldEmail: "",
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [_file, setFile] = useState<File | undefined>();
   const [error, setError] = useState<{
     username?: string;
     email?: string;
@@ -23,10 +22,30 @@ function Profile() {
   }>({});
   const inputRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
-  console.log(profilePic, form.emailField);
 
   const handleClick = () => {
     inputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.currentTarget.files?.[0];
+    if (file) {
+      const update = async () => {
+        try {
+          const _file = new FormData();
+          _file.set("profilePic", file);
+          const res = await updateProfileData(_file);
+          dispatch(
+            updateInfo({
+              profilePic: res.data.profilePic,
+            })
+          );
+        } catch (error) {
+          setError(errorHandler<typeof form>(error as Error));
+        }
+      };
+      update();
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -99,28 +118,6 @@ function Profile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
-  useEffect(() => {
-    if (_file && inputRef.current && inputRef.current.files?.[0]) {
-      const update = async () => {
-        try {
-          const file = new FormData();
-          file.set("file", _file);
-          const res = await updateProfileData(file);
-          dispatch(
-            updateInfo({
-              profilePic: res.data.profilePic,
-            })
-          );
-        } catch (error) {
-          console.log(error);
-        } finally {
-          setFile(undefined);
-        }
-      };
-      update();
-    }
-  }, [_file, dispatch]);
-
   return (
     <div className="profile-container">
       <h4>Profile Management</h4>
@@ -146,7 +143,7 @@ function Profile() {
                   ref={inputRef}
                   accept="image/*"
                   multiple={false}
-                  onChange={(e) => setFile(e.target?.files?.[0])}
+                  onChange={handleFileChange}
                   onError={() => console.log("error")}
                 />
                 <button
@@ -216,7 +213,7 @@ function Profile() {
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
-                          usernameField: e.target.value,
+                          emailField: e.target.value,
                         }))
                       }
                       disabled={isLoading}

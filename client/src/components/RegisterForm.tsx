@@ -47,9 +47,7 @@ function RegisterForm() {
         if (full.meta.requestStatus === "fulfilled") navigate("/email/verify");
       });
     } else {
-      console.error(result);
-      const errors = serializeZodError<RegisterType>(result.error);
-      dispatch(formError(errors));
+      dispatch(formError(serializeZodError<RegisterType>(result.error)));
     }
   };
 

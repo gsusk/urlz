@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 type Props = {
   src: string;
   alt: string;
@@ -17,12 +15,6 @@ function MyImage({
   width = "inherit",
   height = "inherit",
 }: Props) {
-  const [loading, setLoading] = useState(true);
-
-  const handleLoad = () => {
-    setLoading(false);
-  };
-
   const style = {
     width,
     height,
@@ -36,16 +28,14 @@ function MyImage({
         alt={alt}
         style={{
           display: "block",
-          visibility: loading ? "hidden" : "visible",
+          visibility: "visible",
           objectFit: "cover",
           ...style,
         }}
         className={className}
         loading="lazy"
-        onLoad={handleLoad}
         fetchPriority={fetchPriority}
       />
-      {loading && <div className="loading-image" style={style}></div>}
     </>
   );
 }

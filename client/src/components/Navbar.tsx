@@ -39,7 +39,7 @@ function Navbar() {
               onClick={handleClick}
             >
               <div className="pfp-image-header-container">
-                <MyImage src={`${profilePic}`} alt="pic" fetchPriority="low" />
+                <MyImage src={profilePic!} alt="pic" fetchPriority="high" />
               </div>
               <div className="username-header-container">
                 <span className="username-header-display">{username}</span>
