@@ -36,7 +36,7 @@ client.interceptors.response.use(
       originalRequest.__retry = true;
       console.log("first 401");
 
-      client
+      return client
         .post("/auth/refresh", undefined, {
           __retry: true,
         })
@@ -49,7 +49,7 @@ client.interceptors.response.use(
           }
           console.error(err, (err as AxiosError).response);
           return Promise.reject(
-            (err as AxiosError<{ message?: string }>).response?.data?.message ||
+            (err as AxiosError<{ message?: string }>).response?.data ||
               (err as Error).message ||
               "Unexpected Error."
           );

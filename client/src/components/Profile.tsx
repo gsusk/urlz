@@ -120,7 +120,7 @@ function Profile() {
       })
       .catch((err) => {
         const { message, errors } = errorHandler<ProfileType>(err);
-        setError({ message, ...errors });
+        setError((prev) => ({ ...prev, ...errors, message }));
       })
       .finally(() => setIsLoading(false));
 
@@ -226,7 +226,7 @@ function Profile() {
                     </button>
                   </div>
                   <div className="shortener-err-div">
-                    {!error.email && error.username && error.message}
+                    {!error.email && !error.username && error.message}
                   </div>
                 </div>
               </>
