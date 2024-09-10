@@ -52,7 +52,11 @@ client.interceptors.response.use(
               (err as AxiosError).response,
               err instanceof AxiosError
             );
-            reject(err);
+            reject(
+              err.response?.data || {
+                message: err.message || "Unexpected Error.",
+              }
+            );
           });
       });
     }
