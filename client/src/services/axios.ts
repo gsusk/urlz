@@ -44,14 +44,15 @@ client.interceptors.response.use(
           return axios(originalRequest);
         })
         .catch((err) => {
-          if (err instanceof AxiosError) {
-            console.log("axios instance error");
-          }
-          console.error(err, (err as AxiosError).response);
+          console.error(
+            err,
+            (err as AxiosError).response,
+            err instanceof AxiosError
+          );
           return Promise.reject(
-            (err as AxiosError<{ message?: string }>).response?.data ||
-              (err as Error).message ||
-              "Unexpected Error."
+            err.response?.data || {
+              message: err.message || "Unexpected Error.",
+            }
           );
         });
     }
