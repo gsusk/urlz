@@ -36,25 +36,29 @@ client.interceptors.response.use(
       originalRequest.__retry = true;
       console.log("first 401");
 
-      return client
-        .post("/auth/refresh", undefined, {
-          __retry: true,
-        })
-        .then(() => {
-          return axios(originalRequest);
-        })
-        .catch((err) => {
-          console.error(
-            err,
-            (err as AxiosError).response,
-            err instanceof AxiosError
-          );
-          return Promise.reject(
-            err.response?.data || {
-              message: err.message || "Unexpected Error.",
-            }
-          );
-        });
+      return new Promise((resolve, reject) => {
+        client
+          .post("/auth/refresh", undefined, {
+            __retry: true,
+          })
+          .then(() => {
+            console.log("chichi");
+            resolve(axios(originalRequest));
+          })
+          .catch((err) => {
+            console.log("cheche");
+            console.error(
+              err,
+              (err as AxiosError).response,
+              err instanceof AxiosError
+            );
+            reject(
+              err.response?.data || {
+                message: err.message || "Unexpected Error.",
+              }
+            );
+          });
+      });
     }
 
     console.log("none before");
