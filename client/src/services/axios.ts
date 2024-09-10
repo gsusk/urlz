@@ -12,44 +12,7 @@ const client = axios.create({
   __retry: false,
 });
 
-const refreshToken = async (error: AxiosError) => {
-  const originalRequest = error.config;
-  if (
-    error.response?.status === 401 &&
-    originalRequest &&
-    !originalRequest.__retry
-  ) {
-    originalRequest.__retry = true;
-    console.log("first 401");
-    try {
-      await client.post("/auth/refresh", undefined, {
-        __retry: true,
-      });
-      console.log("success on 401");
-      return axios(originalRequest);
-    } catch (e: unknown) {
-      console.log("error on 401");
-      if (e instanceof AxiosError) {
-        console.log("axios instance error");
-      }
-      console.error(e, (e as AxiosError).response);
-      return Promise.reject(
-        (e as AxiosError<{ message?: string }>).response?.data?.message ||
-          (e as Error).message ||
-          "Unexpected Error. sss"
-      );
-    }
-  }
-  console.log("here is a not retry", originalRequest);
-  if (error.response?.status === 401 && originalRequest?.__retry) {
-    console.log("not retry, log out...");
-    return Promise.reject(
-      (error.response.data as { message: string }).message ?? "Error auth"
-    );
-  }
-  console.log("none before");
-  return Promise.reject(error);
-};
+const refreshToken = async (error: AxiosError) => {};
 
 client.interceptors.response.use(
   (response) => response,
@@ -58,7 +21,48 @@ client.interceptors.response.use(
     if (!error.response) {
       return Promise.reject(new Error("Error connecting to server."));
     }
-    return refreshToken(error);
+
+    if (error.config?.__retry) {
+      return Promise.reject(error);
+    }
+
+    const originalRequest = error.config;
+
+    if (
+      error.response.status === 401 &&
+      originalRequest &&
+      !originalRequest.__retry
+    ) {
+      originalRequest.__retry = true;
+      console.log("first 401");
+
+      return new Promise((resolve, reject) => {
+        client
+          .post("/auth/refresh", undefined, {
+            __retry: true,
+          })
+          .then(() => {
+            console.log("chichi");
+            resolve(axios(originalRequest));
+          })
+          .catch((err) => {
+            console.log("cheche");
+            console.error(
+              err,
+              (err as AxiosError).response,
+              err instanceof AxiosError
+            );
+            reject(
+              err.response?.data || {
+                message: err.message || "Unexpected Error.",
+              }
+            );
+          });
+      });
+    }
+
+    console.log("none before");
+    return Promise.reject(error);
   }
 );
 

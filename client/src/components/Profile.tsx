@@ -91,7 +91,6 @@ function Profile() {
         }
       } catch (err) {
         const { message, errors } = errorHandler<ProfileType>(err as Error);
-        console.log(message, errors);
         setError({
           message,
           ...errors,
@@ -120,7 +119,7 @@ function Profile() {
       })
       .catch((err) => {
         const { message, errors } = errorHandler<ProfileType>(err);
-        setError({ message, ...errors });
+        setError((prev) => ({ ...prev, ...errors, message }));
       })
       .finally(() => setIsLoading(false));
 
@@ -133,11 +132,7 @@ function Profile() {
       <h2>Update Information</h2>
       <div>
         <div className="mw">
-          <form
-            role="form"
-            className="row-container"
-            onChange={() => console.log("object")}
-          >
+          <form role="form" className="row-container">
             <div className="left-flex-container">
               <div className="profile-image-container">
                 <MyImage src={profilePic} alt="pic" />
@@ -153,7 +148,6 @@ function Profile() {
                   accept="image/*"
                   multiple={false}
                   onChange={handleFileChange}
-                  onError={() => console.log("error")}
                 />
                 <button
                   type="button"
@@ -231,7 +225,7 @@ function Profile() {
                     </button>
                   </div>
                   <div className="shortener-err-div">
-                    {!error.email && error.username && error.message}
+                    {!error.email && !error.username && error.message}
                   </div>
                 </div>
               </>
