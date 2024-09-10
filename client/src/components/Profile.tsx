@@ -28,7 +28,7 @@ function Profile() {
   const handleClick = () => {
     inputRef.current?.click();
   };
-  console.log("reload", username, form, isLoading, error);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.currentTarget.files?.[0];
     if (file) {
@@ -102,7 +102,6 @@ function Profile() {
   };
 
   useEffect(() => {
-    console.log("reloading");
     if (!isLoading) setIsLoading(true);
     getProfileData()
       .then((res) => {
