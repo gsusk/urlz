@@ -1,4 +1,6 @@
 import axios, { AxiosError } from "axios";
+import store from "../redux/store";
+import { logout } from "../redux/user/user";
 
 declare module "axios" {
   export interface AxiosRequestConfig {
@@ -46,12 +48,7 @@ client.interceptors.response.use(
             resolve(axios(originalRequest));
           })
           .catch((err) => {
-            console.log("cheche");
-            console.error(
-              err,
-              (err as AxiosError).response,
-              err instanceof AxiosError
-            );
+            store.dispatch(logout());
             reject(err);
           });
       });

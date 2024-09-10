@@ -123,13 +123,11 @@ const authSlice = createSlice({
         state.user.isVerified = true;
       }
     },
-    logout(_state) {
-      _state = {
-        user: null,
-        error: {},
-        loading: false,
-        isAuthenticated: false,
-      };
+    logout(state) {
+      state.error = {};
+      state.isAuthenticated = false;
+      state.loading = false;
+      state.user = null;
     },
     updateInfo(
       state,
