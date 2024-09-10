@@ -4,7 +4,7 @@ import MyImage from "./MyImage";
 import { Link } from "react-router-dom";
 import { getProfileData, updateProfileData } from "../services/user";
 import { updateInfo } from "../redux/user/user";
-import { errorHandler } from "../utils/errorparser";
+import { errorHandler, serializeZodError } from "../utils/errorparser";
 import { profileSchema, ProfileType } from "../validation/forms";
 
 function Profile() {
@@ -12,8 +12,8 @@ function Profile() {
   const username = useAppSelector((state) => state.user.user?.username)!;
 
   const [form, setForm] = useState({
-    usernameField: username,
-    emailField: "",
+    username: username,
+    email: "",
     oldEmail: "",
   });
   const [isLoading, setIsLoading] = useState(true);
@@ -47,9 +47,9 @@ function Profile() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const [id, value] = [e.currentTarget.id, e.currentTarget.value];
-    setError((prev) => ({ ...prev, [id]: "" }));
-    setForm((prev) => ({ ...prev, [id]: value }));
+    const [name, value] = [e.currentTarget.name, e.currentTarget.value];
+    setError((prev) => ({ ...prev, [name]: "", message: "" }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,46 +57,48 @@ function Profile() {
     setIsLoading(true);
 
     const { data, error } = profileSchema.safeParse({
-      username: form.usernameField,
-      email: form.emailField,
+      username: form.username,
+      email: form.email,
       oldUsername: username,
       oldEmail: form.oldEmail,
     });
 
     if (error) {
-      return setError(error);
-    }
+      setError(serializeZodError(error));
+    } else {
+      const formData = new FormData();
 
-    const formData = new FormData();
+      for (const [key, value] of Object.entries(data)) {
+        formData.set(key, value);
+      }
 
-    for (const [key, value] of Object.entries(data)) {
-      formData.set(key, value);
-    }
+      try {
+        const { data } = await updateProfileData(formData);
 
-    try {
-      const { data } = await updateProfileData(formData);
+        dispatch(
+          updateInfo({
+            username: data.username,
+          })
+        );
 
-      dispatch(
-        updateInfo({
-          username: data.username,
-        })
-      );
-
-      if (data.email) {
-        setForm((prev) => {
-          return {
-            ...prev,
-            oldEmail: data.email!,
-          };
+        if (data.email) {
+          setForm((prev) => {
+            return {
+              ...prev,
+              oldEmail: data.email!,
+            };
+          });
+        }
+      } catch (err) {
+        const { message, errors } = errorHandler<ProfileType>(err as Error);
+        console.log(message, errors);
+        setError({
+          message,
+          ...errors,
         });
       }
-    } catch (err) {
-      const { message, errors } = errorHandler<ProfileType>(err as Error);
-      setError({
-        message,
-        ...errors,
-      });
     }
+
     setIsLoading(false);
   };
 
@@ -112,7 +114,7 @@ function Profile() {
         );
         setForm((prev) => ({
           ...prev,
-          emailField: res.data.email,
+          email: res.data.email,
           oldEmail: res.data.email,
         }));
       })
@@ -187,7 +189,7 @@ function Profile() {
                     <input
                       type="text"
                       name="username"
-                      value={form.usernameField}
+                      value={form.username}
                       id="username_profile"
                       className="shortener-input"
                       style={{ width: "100%" }}
@@ -196,7 +198,7 @@ function Profile() {
                     />
                   </div>
                 </div>
-                <div>{error.username}</div>
+                <div className="shortener-err-div">{error.username}</div>
                 <div className="row-container">
                   <label
                     htmlFor="email_profile"
@@ -211,13 +213,13 @@ function Profile() {
                       id="email_profile"
                       style={{ width: "100%" }}
                       className="shortener-input"
-                      value={form.emailField}
+                      value={form.email}
                       onChange={handleChange}
                       disabled={isLoading}
                     />
                   </div>
                 </div>
-                <div>{error.email}</div>
+                <div className="shortener-err-div">{error.email}</div>
                 <div className="row-container">
                   <div className="button-submit-container">
                     <button
@@ -228,7 +230,9 @@ function Profile() {
                       Update
                     </button>
                   </div>
-                  <div>{error.message}</div>
+                  <div className="shortener-err-div">
+                    {!error.email && error.username && error.message}
+                  </div>
                 </div>
               </>
             )}

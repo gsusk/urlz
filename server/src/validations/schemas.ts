@@ -3,7 +3,7 @@ import isURL from 'validator/lib/isURL';
 
 const baseAuthSchema = z.object({
   username: z.string().trim().min(4).max(64),
-  email: z.string().trim().email(),
+  email: z.string().trim().email().min(5),
   password: z.string().trim().min(7),
   confirmPassword: z.string().trim().min(7),
 });
@@ -49,7 +49,7 @@ export const PasswordSchema = baseAuthSchema
 const profileSchema = z.object({
   username: z.string().trim().min(4).max(64).optional(),
   email: z.string().trim().email().min(5).optional(),
-  file: z.boolean(),
+  file: z.boolean().optional(),
 });
 
 export const ProfileSchema = profileSchema.refine(

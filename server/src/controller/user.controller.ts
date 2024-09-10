@@ -48,6 +48,7 @@ export async function updateUserProfile(
     const { username, email } = request.body;
     const profilePic = request.file?.path;
     const updateData: typeof request.body = {};
+
     if (username) updateData.username = username;
     if (email) updateData.email = email;
     if (profilePic) {
