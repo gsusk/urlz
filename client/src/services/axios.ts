@@ -20,7 +20,6 @@ const client = axios.create({
 });
 
 let isRefreshing = false;
-let completedQueue: Promise<unknown>[] = [];
 let failedQueue: PromiseQueue<AxiosRequestConfig>[] = [];
 
 const requestQueue = (error: unknown = undefined) => {
@@ -29,7 +28,6 @@ const requestQueue = (error: unknown = undefined) => {
       request.reject(error);
     } else {
       request.resolve();
-      console.log("who");
     }
   });
 
@@ -50,18 +48,15 @@ client.interceptors.response.use(
     const originalRequest = error.config;
     if (error.response.status === 401) {
       if (isRefreshing) {
-        const request = new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then(() => {
-            console.log("clccl");
             return client.request(originalRequest);
           })
           .catch((err) => {
             return Promise.reject(err);
           });
-        completedQueue.push(request);
-        return request;
       }
 
       originalRequest.__retry = true;
@@ -82,15 +77,7 @@ client.interceptors.response.use(
             reject(err);
           })
           .finally(() => {
-            console.log("aa");
-            Promise.allSettled(completedQueue)
-              .then((v) => {
-                console.log(v);
-                console.log("bb");
-                completedQueue = [];
-                isRefreshing = false;
-              })
-              .catch((e) => console.log(e));
+            isRefreshing = false;
           });
       });
     }
