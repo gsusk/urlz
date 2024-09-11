@@ -21,16 +21,17 @@ const client = axios.create({
 
 let isRefreshing = false;
 
-const failedQueue: PromiseQueue<AxiosRequestConfig>[] = [];
+let failedQueue: PromiseQueue<AxiosRequestConfig>[] = [];
 
-const requestQueue = (error: AxiosError, config: AxiosRequestConfig) => {
+const requestQueue = (error: unknown, config: AxiosRequestConfig | null) => {
   failedQueue.forEach((request) => {
-    if (error) {
+    if (error && !config) {
       request.reject(error);
     } else {
-      request.resolve(config);
+      request.resolve(config!);
     }
   });
+  failedQueue = [];
 };
 
 client.interceptors.response.use(
@@ -57,7 +58,11 @@ client.interceptors.response.use(
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
-        }).then(() => {});
+        })
+          .then(() => {
+            return client.request(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
       }
 
       originalRequest.__retry = true;
@@ -69,11 +74,16 @@ client.interceptors.response.use(
             __retry: true,
           })
           .then(() => {
+            requestQueue(null, originalRequest);
             resolve(axios(originalRequest));
           })
           .catch((err) => {
+            requestQueue(err, null);
             store.dispatch(logout());
             reject(err);
+          })
+          .finally(() => {
+            isRefreshing = false;
           });
       });
     }
