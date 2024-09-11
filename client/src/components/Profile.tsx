@@ -74,7 +74,6 @@ function Profile() {
 
       try {
         const { data } = await updateProfileData(formData);
-
         dispatch(
           updateInfo({
             username: data.username,

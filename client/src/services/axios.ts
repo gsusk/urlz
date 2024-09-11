@@ -9,7 +9,7 @@ declare module "axios" {
 }
 
 type PromiseQueue<T> = {
-  resolve: (value: T | PromiseLike<T>) => void;
+  resolve: (value?: T | PromiseLike<T>) => void;
   reject: (reason: unknown) => void;
 };
 
@@ -20,25 +20,26 @@ const client = axios.create({
 });
 
 let isRefreshing = false;
-
+let completedQueue: Promise<unknown>[] = [];
 let failedQueue: PromiseQueue<AxiosRequestConfig>[] = [];
 
-const requestQueue = (error: unknown, config: AxiosRequestConfig | null) => {
+const requestQueue = (error: unknown = undefined) => {
   failedQueue.forEach((request) => {
-    if (error && !config) {
+    if (error) {
       request.reject(error);
     } else {
-      request.resolve(config!);
+      request.resolve();
+      console.log("who");
     }
   });
+
   failedQueue = [];
 };
 
 client.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    console.log("start");
-    if (!error.response) {
+    if (!error.response || !error.config) {
       return Promise.reject(new Error("Error connecting to server."));
     }
 
@@ -47,22 +48,20 @@ client.interceptors.response.use(
     }
 
     const originalRequest = error.config;
-
-    if (
-      error.response.status === 401 &&
-      originalRequest &&
-      !originalRequest.__retry
-    ) {
-      console.log("first 401");
-
+    if (error.response.status === 401) {
       if (isRefreshing) {
-        return new Promise((resolve, reject) => {
+        const request = new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then(() => {
+            console.log("clccl");
             return client.request(originalRequest);
           })
-          .catch((err) => Promise.reject(err));
+          .catch((err) => {
+            return Promise.reject(err);
+          });
+        completedQueue.push(request);
+        return request;
       }
 
       originalRequest.__retry = true;
@@ -74,21 +73,28 @@ client.interceptors.response.use(
             __retry: true,
           })
           .then(() => {
-            requestQueue(null, originalRequest);
+            requestQueue();
             resolve(axios(originalRequest));
           })
           .catch((err) => {
-            requestQueue(err, null);
+            requestQueue(err);
             store.dispatch(logout());
             reject(err);
           })
           .finally(() => {
-            isRefreshing = false;
+            console.log("aa");
+            Promise.allSettled(completedQueue)
+              .then((v) => {
+                console.log(v);
+                console.log("bb");
+                completedQueue = [];
+                isRefreshing = false;
+              })
+              .catch((e) => console.log(e));
           });
       });
     }
 
-    console.log("none before");
     return Promise.reject(error);
   }
 );
