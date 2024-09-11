@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import store from "../redux/store";
 import { logout } from "../redux/user/user";
 
@@ -8,13 +8,30 @@ declare module "axios" {
   }
 }
 
+type PromiseQueue<T> = {
+  resolve: (value: T | PromiseLike<T>) => void;
+  reject: (reason: unknown) => void;
+};
+
 const client = axios.create({
   baseURL: "http://localhost:8081/api",
   withCredentials: true,
   __retry: false,
 });
 
-const refreshToken = async (error: AxiosError) => {};
+let isRefreshing = false;
+
+const failedQueue: PromiseQueue<AxiosRequestConfig>[] = [];
+
+const requestQueue = (error: AxiosError, config: AxiosRequestConfig) => {
+  failedQueue.forEach((request) => {
+    if (error) {
+      request.reject(error);
+    } else {
+      request.resolve(config);
+    }
+  });
+};
 
 client.interceptors.response.use(
   (response) => response,
@@ -35,8 +52,16 @@ client.interceptors.response.use(
       originalRequest &&
       !originalRequest.__retry
     ) {
-      originalRequest.__retry = true;
       console.log("first 401");
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject });
+        }).then(() => {});
+      }
+
+      originalRequest.__retry = true;
+      isRefreshing = true;
 
       return new Promise((resolve, reject) => {
         client
@@ -44,7 +69,6 @@ client.interceptors.response.use(
             __retry: true,
           })
           .then(() => {
-            console.log("chichi");
             resolve(axios(originalRequest));
           })
           .catch((err) => {
