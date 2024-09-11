@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { updatePassword } from "../services/user";
+import { errorHandler } from "../utils/errorparser";
+
+type SecurityForm = {
+  password: string;
+  confirmPassword: string;
+  currentPassword: string;
+};
+
+type InputTypes = {
+  [k in keyof SecurityForm]: "password" | "text";
+};
 
 function Security() {
   const [form, setForm] = useState({
@@ -10,7 +21,7 @@ function Security() {
   });
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [inputTypes, setInputTypes] = useState({
+  const [inputTypes, setInputTypes] = useState<InputTypes>({
     currentPassword: "password",
     password: "password",
     confirmPassword: "password",
@@ -37,6 +48,7 @@ function Security() {
     setLoading(true);
     if (form.password !== form.confirmPassword) {
       setError({ message: "Passwords don't match" });
+      setLoading(false);
       return;
     }
     //fetch
@@ -48,7 +60,8 @@ function Security() {
         setSuccess(true);
       }
     } catch (error) {
-      console.error(error);
+      const { message, errors } = errorHandler<SecurityForm>(error as Error);
+      setError({ message, ...errors });
     } finally {
       setLoading(false);
     }
