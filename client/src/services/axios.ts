@@ -30,7 +30,6 @@ const requestQueue = (error: unknown = undefined) => {
       request.resolve();
     }
   });
-
   failedQueue = [];
 };
 
