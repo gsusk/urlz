@@ -5,7 +5,6 @@ import { FaFileInvoice } from "react-icons/fa";
 import "./Settings.css";
 
 function Settings() {
-  console.log("as");
   return (
     <div className="h-container">
       <div className="settings-page-container">

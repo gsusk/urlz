@@ -12,6 +12,7 @@ import EmailVerification from "./pages/EmailVerification";
 import Settings from "./pages/Settings";
 import Profile from "./components/Profile";
 import Security from "./components/Security";
+import Urls from "./pages/Urls";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
                 <Route path="profile" element={<Profile />} />
                 <Route path="security" element={<Security />}></Route>
               </Route>
+              <Route path="/my-urls" element={<Urls />}></Route>
             </Route>
             {/* <Route path="*" element={<Navigate to="/" />} /> */}
           </Routes>

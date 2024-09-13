@@ -30,7 +30,7 @@ function Navbar() {
           </>
         ) : (
           <>
-            <Link to="/manager" className="manager-header-container">
+            <Link to="/my-urls" className="manager-header-container">
               <button className="button __vsc">MANAGER</button>
             </Link>
             <Link
