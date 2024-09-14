@@ -1,3 +1,4 @@
+import Url from "../components/Url";
 import "./Urls.css";
 
 function Urls() {
@@ -25,10 +26,7 @@ function Urls() {
           <div>asdasd</div>
         </div>
         <div>
-          <div>
-            <span>asdasd</span>
-            <p>sadasdas</p>
-          </div>
+          <Url></Url>
         </div>
       </div>
     </div>
