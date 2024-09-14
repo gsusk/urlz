@@ -7,24 +7,28 @@ export default function Url() {
     <div className="urli-container">
       <div className="url-fp">
         <div>
-          <div className="url-fp">
-            <ImQrcode />
-            <a target="_blank" href="https://t.ly/G4L7b" referrerPolicy="">
+          <div className="url-flex lc">
+            <ImQrcode className="font-rq" />
+            <a
+              target="_blank"
+              href="https://t.ly/G4L7b"
+              referrerPolicy="no-referrer"
+            >
               t.ly/bJsdnP
             </a>
           </div>
-          <div className="url-fp">
+          <div className="url-flex">
             <IoEarth className="url-il" />
             <p className="url-il">original url</p>
           </div>
         </div>
         <div>
-          <div>number</div>
+          <div>1 view</div>
         </div>
         <div>
-          <div>date</div>
+          <div>22/12/2024</div>
         </div>
-        <div>adhs</div>
+        <div>Extra</div>
       </div>
     </div>
   );

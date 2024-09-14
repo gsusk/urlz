@@ -4,6 +4,11 @@
   align-items: center;
   width: 100%;
   margin: 1rem 0;
+  padding: 1rem;
+}
+
+.url-flex {
+  display: flex;
 }
 
 .url-il {
@@ -12,6 +17,34 @@
 }
 
 .urli-container {
-  min-width: 100%;
   display: flex;
+  justify-content: center;
+}
+
+.font-rq {
+  font-size: 1.5rem;
+}
+
+@media (min-width: 540px) {
+  .url-fp {
+    max-width: 540px;
+  }
+}
+
+@media (min-width: 620px) {
+  .url-fp {
+    max-width: 620px;
+  }
+}
+
+@media (min-width: 760px) {
+  .url-fp {
+    max-width: 760px;
+  }
+}
+
+@media (min-width: 900px) {
+  .url-fp {
+    max-width: 900px;
+  }
 }

@@ -5,26 +5,26 @@
   width: 100%;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: 540px) {
   .centered-container {
-    max-width: 1140px;
+    max-width: 540px;
   }
 }
 
-@media (min-width: 992px) {
-  .centered-container {
-    max-width: 960px;
-  }
-}
-
-@media (min-width: 768px) {
+@media (min-width: 720px) {
   .centered-container {
     max-width: 720px;
   }
 }
 
-@media (min-width: 576px) {
+@media (min-width: 960px) {
   .centered-container {
-    max-width: 540px;
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 1140px) {
+  .centered-container {
+    max-width: 1140px;
   }
 }
