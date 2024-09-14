@@ -44,4 +44,13 @@ model Url {
   @@index([id])
   @@index([shortUrl])
   @@index([custom])
+  analytics UrlAnalytics?
+}
+
+model UrlAnalytics {
+  id String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  urlId BigInt @unique
+  url Url @relation(fields: [urlId], references: [id])
+  country String @db.Text
+  record DateTime @db.Timestamp()
 }

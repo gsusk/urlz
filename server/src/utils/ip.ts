@@ -32,8 +32,8 @@ export const geolocation = async (
   ];
   const ip = ipList[Math.floor(Math.random() * ipList.length)];
   console.log(ip);
-  const data = await ipToGeolocation(ip);
+  const data = await ipToGeolocation(ip).catch(() => null);
   console.log(data);
-  res.locals = data;
+  res.locals = data ?? {};
   next();
 };

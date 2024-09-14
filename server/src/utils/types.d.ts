@@ -14,5 +14,5 @@ declare module 'location-from-ip' {
     is_dst: boolean;
   };
 
-  export function ipToGeolocation(ip: string): Promise<Geolocation>;
+  export function ipToGeolocation(ip: string): Promise<Geolocation | null>;
 }

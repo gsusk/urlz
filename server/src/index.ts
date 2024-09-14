@@ -18,7 +18,6 @@ process
   });
 
 const app = express();
-app.use(geolocation);
 app.use(morgan('dev'));
 app.use(
   cors({
