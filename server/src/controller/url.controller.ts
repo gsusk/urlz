@@ -30,25 +30,29 @@ export const shortenUrl = async (
 ) => {
   try {
     const { url } = request.body;
-    const savedUrl = await prisma.url.create({
-      data: {
-        original: url,
-      },
-      select: {
-        id: true,
-      },
-    });
-    const shortenedUrl = encodeBase62(savedUrl.id);
-    const shortUrl = await prisma.url.update({
-      where: {
-        id: savedUrl.id,
-      },
-      data: {
-        shortUrl: shortenedUrl,
-      },
-      select: {
-        shortUrl: true,
-      },
+    await prisma.$executeRaw`BEGIN`;
+
+    const shortUrl = await prisma.$transaction(async (tx) => {
+      const savedUrl = await tx.url.create({
+        data: {
+          original: url,
+        },
+        select: {
+          id: true,
+        },
+      });
+      const shortenedUrl = encodeBase62(savedUrl.id);
+      return await tx.url.update({
+        where: {
+          id: savedUrl.id,
+        },
+        data: {
+          shortUrl: shortenedUrl,
+        },
+        select: {
+          shortUrl: true,
+        },
+      });
     });
     return response.status(201).json({
       shortenedUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
