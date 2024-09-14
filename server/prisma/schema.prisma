@@ -20,37 +20,44 @@ datasource db {
 //);
 
 model User {
-  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  username    String    @unique @db.Text
-  email       String    @unique @db.Text
-  password    String    @db.Text
-  createdAt   DateTime  @default(now())
-  isVerified Boolean    @default(false)
-  profilePic String?     @db.Text
-  url        Url[]     // One-to-many relationship with Url
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username   String   @unique @db.Text
+  email      String   @unique @db.Text
+  password   String   @db.Text
+  createdAt  DateTime @default(now())
+  isVerified Boolean  @default(false)
+  profilePic String?  @db.Text
+  url        Url[] // One-to-many relationship with Url
 
   @@index([id])
   @@index([username])
 }
 
 model Url {
-  id         BigInt     @id @default(autoincrement())
-  shortUrl   String?    @unique
-  custom String? @unique
-  original   String?    
-  userId     String?    @db.Uuid
-  user       User?      @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
-  
+  id        BigInt         @id @default(autoincrement())
+  shortUrl  String?        @unique
+  custom    String?        @unique
+  original  String?
+  userId    String?        @db.Uuid
+  user      User?          @relation(fields: [userId], references: [id]) // Many-to-one relationship with User
+  analytics UrlAnalytics[]
+
   @@index([id])
   @@index([shortUrl])
   @@index([custom])
-  analytics UrlAnalytics?
 }
 
 model UrlAnalytics {
-  id String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  urlId BigInt @unique
-  url Url @relation(fields: [urlId], references: [id])
-  country String @db.Text
-  record DateTime @db.Timestamp()
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  urlId       BigInt
+  url         Url       @relation(fields: [urlId], references: [id])
+  country     String?   @db.VarChar(100)
+  countryCode String?   @db.VarChar(10)
+  constinent  String?   @db.VarChar(10)
+  referrer    String?   @db.Text
+  latitude    Float?    @db.Real
+  longitude   Float?    @db.Real
+  visitedAt   DateTime  @default(now()) @db.Timestamp()
+  localtime   DateTime? @db.Timestamptz()
+  user_agent  String?   @db.Text
 }
