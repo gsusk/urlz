@@ -1,0 +1,30 @@
+.centered-container {
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 1rem;
+  width: 100%;
+}
+
+@media (min-width: 1200px) {
+  .centered-container {
+    max-width: 1140px;
+  }
+}
+
+@media (min-width: 992px) {
+  .centered-container {
+    max-width: 960px;
+  }
+}
+
+@media (min-width: 768px) {
+  .centered-container {
+    max-width: 720px;
+  }
+}
+
+@media (min-width: 576px) {
+  .centered-container {
+    max-width: 540px;
+  }
+}
