@@ -19,7 +19,6 @@ export function errorHandler(
       err = new AppError('Invalid Token', HttpStatus.UNAUTHORIZED);
     }
   }
-  console.error(err, 'on error handler...');
 
   sendError(err, req, res);
 }
@@ -51,7 +50,6 @@ function sendError(err: AppError | Error, _req: Request, res: Response) {
   }
 
   console.error('ERROR 💥', err);
-  console.log('NOT OPERATIONAL, OR NOT AN APPERROR');
 
   return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
     message: 'Something went wrong',

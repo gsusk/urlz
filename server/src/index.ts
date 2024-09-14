@@ -1,4 +1,4 @@
-import express, { request } from 'express';
+import express  from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import apiRoutes from './routes/api';
@@ -6,7 +6,6 @@ import { redirectUrl } from './controller/url.controller';
 import { errorHandler } from './utils/errorHandler';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
-import path from 'path';
 
 process
   .on('unhandledRejection', (reason, p) => {
