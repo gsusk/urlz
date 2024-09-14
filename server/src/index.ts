@@ -33,7 +33,7 @@ app.use('/public', express.static('public'));
 app.use('/uploads', express.static('uploads'));
 app.use(express.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);
-app.get('/:url', redirectUrl);
+app.get('/:url', geolocation, redirectUrl);
 app.use(errorHandler);
 app.use('*', (req, res) => {
   const { name, stack, message } = new Error(
