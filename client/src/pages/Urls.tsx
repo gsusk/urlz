@@ -25,9 +25,8 @@ function Urls() {
           <div>asdasd</div>
           <div>asdasd</div>
         </div>
-        <div>
-          <Url></Url>
-        </div>
+
+        <Url></Url>
       </div>
     </div>
   );

@@ -1,0 +1,17 @@
+.url-fp {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.url-il {
+  margin: 0;
+  display: inline;
+}
+
+.urli-container {
+  min-width: 100%;
+  display: flex;
+}
