@@ -1,4 +1,4 @@
-import express  from 'express';
+import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import apiRoutes from './routes/api';
@@ -6,6 +6,7 @@ import { redirectUrl } from './controller/url.controller';
 import { errorHandler } from './utils/errorHandler';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
+import { geolocation } from './utils/ip';
 
 process
   .on('unhandledRejection', (reason, p) => {
@@ -17,7 +18,7 @@ process
   });
 
 const app = express();
-
+app.use(geolocation);
 app.use(morgan('dev'));
 app.use(
   cors({
