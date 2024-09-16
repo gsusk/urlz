@@ -51,7 +51,12 @@ function Shortener() {
     if (Object.keys(formError).length > 0) return;
     setLoading(true);
     try {
-      const result = urlSchema.safeParse(form);
+      let formdata = form as { url: string; customUrl?: string };
+      if (formdata.customUrl === "") {
+        const { customUrl: _, url } = formdata;
+        formdata = { url };
+      }
+      const result = urlSchema.safeParse(formdata);
       if (!result.success) {
         const errors = serializeZodError(result.error);
         setFormError(errors);
