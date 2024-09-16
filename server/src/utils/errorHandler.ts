@@ -28,7 +28,10 @@ function handlePrismaError(
 ): AppError {
   switch (err.code) {
     case 'P2002':
-      return new AppError('Duplicate field value', HttpStatus.BAD_REQUEST);
+      return new AppError(
+        'The current value already exists.',
+        HttpStatus.BAD_REQUEST,
+      );
     case 'P2003':
       return new AppError('Invalid input data', HttpStatus.BAD_REQUEST);
     case 'P2006':

@@ -30,8 +30,6 @@ export const shortenUrl = async (
 ) => {
   try {
     const { url } = request.body;
-    await prisma.$executeRaw`BEGIN`;
-
     const shortUrl = await prisma.$transaction(async (tx) => {
       const savedUrl = await tx.url.create({
         data: {
@@ -70,18 +68,6 @@ export const createCustomUrl = async (
   try {
     const { url, customUrl } = request.body;
 
-    const exists = await prisma.url.findUnique({
-      where: { custom: customUrl },
-    });
-
-    if (exists) {
-      return next(
-        new AppError('Url not available.', HttpStatus.CONFLICT, [
-          { customUrl: 'Url not available.' },
-        ]),
-      );
-    }
-
     const newUrl = await prisma.url.create({
       data: {
         custom: customUrl,
@@ -97,7 +83,7 @@ export const createCustomUrl = async (
       shortenedUrl: `${request.protocol}://${request.get('host')}/${newUrl.custom}`,
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
