@@ -32,6 +32,7 @@ export const shortenUrl = async (
   try {
     const { url } = request.body;
     const userId = request.user?.id || null; // Either user ID or null for anonymous
+    console.log(request.user);
     const shortUrl = await prisma.$transaction(async (tx) => {
       const savedUrl = await tx.url.create({
         data: {
@@ -66,7 +67,7 @@ export const createCustomUrl = async (
   try {
     const { url, customUrl } = request.body;
     const userId = request.user?.id || null;
-
+    console.log(request.user);
     const newUrl = await prisma.url.create({
       data: {
         custom: customUrl,

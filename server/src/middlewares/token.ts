@@ -57,17 +57,18 @@ export const guestOrUser = (
   _res: Response,
   next: NextFunction,
 ) => {
-  try {
-    const payload = verifyAccessToken(req.cookies['x-access-token']);
+  const token = req.cookies['x-access-token'] as string | undefined;
 
-    if (!payload) {
-      req.user = undefined;
-      return next();
-    }
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const payload = verifyAccessToken(token);
 
     req.user = payload;
     next();
   } catch (err) {
-    next();
+    next(err);
   }
 };
