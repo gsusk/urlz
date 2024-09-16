@@ -65,11 +65,13 @@ export const createCustomUrl = async (
 ) => {
   try {
     const { url, customUrl } = request.body;
+    const userId = request.user?.id || null;
 
     const newUrl = await prisma.url.create({
       data: {
         custom: customUrl,
         original: url,
+        ...(userId && { userId }),
       },
       select: {
         custom: true,
