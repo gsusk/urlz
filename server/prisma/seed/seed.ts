@@ -34,42 +34,6 @@ async function main() {
       },
     },
   });
-
-  for (let i = 0; i < range; i++) {
-    const url = `http://${randomstring.generate(10)}.com`;
-    await prisma.$transaction(async (tx) => {
-      const savedUrl = await tx.url.create({
-        data: {
-          original: url,
-        },
-        select: {
-          id: true,
-        },
-      });
-      const shortenedUrl = encodeBase62(savedUrl.id);
-      await tx.url.update({
-        where: {
-          id: savedUrl.id,
-        },
-        data: {
-          shortUrl: shortenedUrl,
-        },
-      });
-    });
-  }
-
-  const rangetwo = 5000;
-
-  for (let i = 0; i < rangetwo; i++) {
-    const original = `http://${randomstring.generate(5)}`;
-    const customUrl = randomstring.generate(8);
-    await prisma.url.create({
-      data: {
-        custom: customUrl,
-        original: original,
-      },
-    });
-  }
 }
 
 main();

@@ -51,3 +51,23 @@ export const authMiddleware = (
     return next(err);
   }
 };
+
+export const guestOrUser = (
+  req: Request & payloadData,
+  _res: Request,
+  next: NextFunction,
+) => {
+  try {
+    const payload = verifyAccessToken(req.cookies['x-access-token']);
+
+    if (!payload) {
+      req.user = undefined;
+      return next();
+    }
+
+    req.user = payload;
+    next();
+  } catch (err) {
+    return next(err);
+  }
+};
