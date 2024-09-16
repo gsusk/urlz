@@ -3,7 +3,7 @@ import { createCustomUrl, shortenUrl } from '../controller/url.controller';
 import { Router } from 'express';
 import { CustomUrlSchema, UrlSchema } from '../validations/schemas';
 import { geolocation } from '../utils/ip';
-import { guestOrUser } from '@/middlewares/token';
+import { guestOrUser } from '../middlewares/token';
 
 const router = Router();
 

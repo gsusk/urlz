@@ -35,6 +35,7 @@ export const signIn = async (
         email: true,
         isVerified: true,
         profilePic: true,
+        id: true,
       },
       where: {
         username: username,
@@ -122,6 +123,7 @@ export const signUp = async (
         username: true,
         email: true,
         isVerified: true,
+        id: true,
       },
     });
 
@@ -163,6 +165,7 @@ export const verifyAccount = async (
         isVerified: true,
         username: true,
         email: true,
+        id: true,
       },
     });
 
