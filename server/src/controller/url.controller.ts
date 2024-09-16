@@ -6,6 +6,7 @@ import {
   type CustomUrlSchemaType,
   type UrlSchemaType,
 } from '@/validations/schemas';
+import { payloadData } from '@/utils/token.utils';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -24,34 +25,31 @@ const encodeBase62 = (id: bigint): string => {
 };
 
 export const shortenUrl = async (
-  request: Request<object, unknown, UrlSchemaType>,
+  request: Request<object, unknown, UrlSchemaType> & payloadData,
   response: Response,
   next: NextFunction,
 ) => {
   try {
     const { url } = request.body;
+    const userId = request.user?.id || null; // Either user ID or null for anonymous
     const shortUrl = await prisma.$transaction(async (tx) => {
       const savedUrl = await tx.url.create({
         data: {
           original: url,
+          ...(userId && { userId }), // Conditionally include userId if available
         },
-        select: {
-          id: true,
-        },
+        select: { id: true },
       });
+
       const shortenedUrl = encodeBase62(savedUrl.id);
+
       return await tx.url.update({
-        where: {
-          id: savedUrl.id,
-        },
-        data: {
-          shortUrl: shortenedUrl,
-        },
-        select: {
-          shortUrl: true,
-        },
+        where: { id: savedUrl.id },
+        data: { shortUrl: shortenedUrl },
+        select: { shortUrl: true },
       });
     });
+
     return response.status(201).json({
       shortenedUrl: `${request.protocol}://${request.get('host')}/${shortUrl.shortUrl}`,
     });
@@ -61,7 +59,7 @@ export const shortenUrl = async (
 };
 
 export const createCustomUrl = async (
-  request: Request<object, unknown, CustomUrlSchemaType>,
+  request: Request<object, unknown, CustomUrlSchemaType> & payloadData,
   response: Response,
   next: NextFunction,
 ) => {

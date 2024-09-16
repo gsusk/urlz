@@ -4,7 +4,7 @@ import type { User } from '@prisma/client';
 import { config } from '../config/config';
 import { CookieOptions } from 'express';
 
-export type UserDataPayload = Pick<User, 'username' | 'isVerified'> &
+export type UserDataPayload = Pick<User, 'username' | 'isVerified' | 'id'> &
   JwtPayload;
 
 export type payloadData = { user?: UserDataPayload };
@@ -17,11 +17,13 @@ enum TokenExpiration {
 type AccessToken = {
   username: string;
   isVerified: boolean;
+  id: string;
 };
 
 type RefreshToken = {
   username: string;
   isVerified: boolean;
+  id: string;
 };
 
 export function signAccessToken(payload: UserDataPayload) {
@@ -69,10 +71,12 @@ export function buildTokens(user: UserDataPayload) {
   const accessToken = signAccessToken({
     username: user.username,
     isVerified: user.isVerified,
+    id: user.id,
   });
   const refreshToken = signRefreshToken({
     username: user.username,
     isVerified: user.isVerified,
+    id: user.id,
   });
 
   return { accessToken, refreshToken };

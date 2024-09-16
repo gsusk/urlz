@@ -54,7 +54,7 @@ export const authMiddleware = (
 
 export const guestOrUser = (
   req: Request & payloadData,
-  _res: Request,
+  _res: Response,
   next: NextFunction,
 ) => {
   try {
@@ -68,6 +68,6 @@ export const guestOrUser = (
     req.user = payload;
     next();
   } catch (err) {
-    return next(err);
+    next();
   }
 };
