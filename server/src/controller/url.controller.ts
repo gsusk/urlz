@@ -7,6 +7,8 @@ import {
   type UrlSchemaType,
 } from '@/validations/schemas';
 import { payloadData } from '@/utils/token.utils';
+import { Geolocation } from 'location-from-ip';
+import { FilteredGeoData } from '@/utils/ip';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -90,32 +92,36 @@ export const createCustomUrl = async (
 
 export const redirectUrl = async (
   request: Request<UrlSchemaType>,
-  response: Response,
+  response: Response<unknown, FilteredGeoData>,
   next: NextFunction,
 ) => {
   try {
     const { url } = request.params;
+    const ipdata = response.locals;
+    const referrer = request.get('Referer');
+    const user_agent = request.get('user-agent');
 
     const shortUrl = await prisma.url.findFirst({
-      select: {
-        original: true,
-      },
-      where: {
-        OR: [
-          {
-            shortUrl: url,
-          },
-          {
-            custom: url,
-          },
-        ],
-      },
+      where: { OR: [{ custom: url }, { shortUrl: url }] },
+      select: { original: true, id: true },
     });
 
-    if (!shortUrl?.original) {
-      return next(new AppError('Not Found', HttpStatus.NOT_FOUND));
+    if (!shortUrl || !shortUrl.original) {
+      // Custom error handling for not found URL
+      return next(new AppError('URL Not Found', HttpStatus.NOT_FOUND));
     }
 
+    // Analytics logging (no need for a transaction if unrelated)
+    await prisma.urlAnalytics.create({
+      data: {
+        ...ipdata, // Geo Data
+        urlId: shortUrl.id,
+        referrer: referrer || null, // Handle optional fields
+        user_agent: user_agent || null,
+      },
+    });
+    response.setHeader('Cache-Control', 'no-store');
+    response.setHeader('Pragma', 'no-cache');
     return response.redirect(301, shortUrl.original);
   } catch (err) {
     next(err);

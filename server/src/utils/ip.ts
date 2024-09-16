@@ -1,6 +1,16 @@
 import { NextFunction, Request, Response } from 'express';
 import { ipToGeolocation } from 'location-from-ip';
 
+export type FilteredGeoData = {
+  continent: string;
+  country: string;
+  country_code: string;
+  latitude: number;
+  longitude: number;
+  timezone: string;
+  local_time: string;
+};
+
 export const geolocation = async (
   _req: Request,
   res: Response,
@@ -31,9 +41,11 @@ export const geolocation = async (
     '85.55.38.165',
   ];
   const ip = ipList[Math.floor(Math.random() * ipList.length)];
-  console.log(ip);
   const data = await ipToGeolocation(ip).catch(() => null);
-  console.log(data);
-  res.locals = data ?? {};
+  if (!data) {
+    return next();
+  }
+  const { zip, is_dst, local_time_unix, state, city, timezone, ...rest } = data;
+  res.locals = rest as typeof rest;
   next();
 };

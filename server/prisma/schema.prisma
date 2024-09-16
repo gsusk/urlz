@@ -52,12 +52,12 @@ model UrlAnalytics {
   urlId       BigInt
   url         Url       @relation(fields: [urlId], references: [id])
   country     String?   @db.VarChar(100)
-  countryCode String?   @db.VarChar(10)
-  constinent  String?   @db.VarChar(10)
+  country_code String?   @db.VarChar(10)
+  continent   String?   @db.VarChar(10)
   referrer    String?   @db.Text
   latitude    Float?    @db.Real
   longitude   Float?    @db.Real
   visitedAt   DateTime  @default(now()) @db.Timestamp()
-  localtime   DateTime? @db.Timestamptz()
+  local_time   DateTime? @db.Timestamptz()
   user_agent  String?   @db.Text
 }
