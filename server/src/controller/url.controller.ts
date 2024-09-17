@@ -128,33 +128,24 @@ export const redirectUrl = async (
   }
 };
 
-export const getUrlViews = async (
+export const getUserUrls = async (
   request: Request & payloadData,
   response: Response,
   next: NextFunction,
 ) => {
   try {
-    console.log(request.user);
     const id = request.user?.id;
-    const userUrls = await prisma.user.findFirstOrThrow({
-      where: { id: id },
-      include: {
-        url: {
-          select: {
-            id: true,
-            original: true,
-            shortUrl: true,
-            custom: true,
-            analytics: {
-              take: 100,
-            },
-          },
-          include: { _count: { select: { analytics: true } } },
-        },
+    const urls = await prisma.url.findMany({
+      where: { userId: id },
+      select: {
+        original: true,
+        custom: true,
+        shortUrl: true,
+        // _count: { select: { analytics: true } },
       },
     });
-    console.log(userUrls);
-    response;
+
+    response.json({ urls });
   } catch (err) {
     next(err);
   }
