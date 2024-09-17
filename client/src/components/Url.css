@@ -74,16 +74,29 @@
 
 .tend {
   position: relative;
+  cursor: pointer;
+}
+
+.tend:hover {
+  border-radius: 1rem;
+  border: 0.2rem double var(--main-pink-color);
 }
 
 .tend-dropdown-menu {
   position: absolute;
   top: 100%;
   background-color: var(--main-gray-color);
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 0rem;
   z-index: 1;
   display: flex;
   flex-direction: column;
+}
+
+.navlink-sett {
+  padding: 0.05rem 0.8rem;
+}
+.navlink-sett:hover {
+  background-color: var(--main-lgray-color);
 }
 
 @media (min-width: 540px) {
