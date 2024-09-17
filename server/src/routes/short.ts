@@ -1,7 +1,7 @@
 import { validation } from '../middlewares/validationMiddleware';
 import {
   createCustomUrl,
-  getUserUrls,
+  getUrlsByUserId,
   shortenUrl,
 } from '../controller/url.controller';
 import { Router } from 'express';
@@ -11,7 +11,7 @@ import { authMiddleware, guestOrUser } from '../middlewares/token';
 const router = Router();
 
 router.post('/create', validation(UrlSchema), guestOrUser, shortenUrl);
-router.get('/', authMiddleware, getUserUrls);
+router.get('/', authMiddleware, getUrlsByUserId);
 router.post(
   '/custom',
   validation(CustomUrlSchema),

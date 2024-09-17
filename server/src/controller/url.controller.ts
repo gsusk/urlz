@@ -128,7 +128,7 @@ export const redirectUrl = async (
   }
 };
 
-export const getUserUrls = async (
+export const getUrlsByUserId = async (
   request: Request & payloadData,
   response: Response,
   next: NextFunction,
@@ -143,6 +143,7 @@ export const getUserUrls = async (
         shortUrl: true,
         // _count: { select: { analytics: true } },
       },
+      take: 10,
     });
 
     response.json({ urls });
