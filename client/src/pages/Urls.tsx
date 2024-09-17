@@ -39,6 +39,7 @@ function Urls() {
         {urls.map((url) => {
           return (
             <UrlSection
+              key={url.shortUrl}
               views={url.views}
               shortenedUrl={url.custom ?? url.shortUrl}
               creationDate="12/11/2024"

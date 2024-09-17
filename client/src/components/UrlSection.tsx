@@ -35,7 +35,9 @@ export default function Url({
           </div>
           <div className="url-flex clr">
             <IoEarth className="url-il" />
-            <p className="url-il">{originalUrl}</p>
+            <a className="url-il" href={originalUrl}>
+              {originalUrl}
+            </a>
           </div>
         </div>
         <div className="tt">
@@ -51,6 +53,11 @@ export default function Url({
         </div>
         <div className="tend">
           <IoSettingsSharp />
+          <div className="tend-dropdown-menu">
+            <a>Copy</a>
+            <a>Stats</a>
+            <a>Delete</a>
+          </div>
         </div>
       </div>
     </div>
