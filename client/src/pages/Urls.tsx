@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Url from "../components/Url";
+import UrlSection from "../components/UrlSection";
 import "./Urls.css";
 import client from "../services/axios";
 
@@ -10,8 +10,11 @@ function Urls() {
     client
       .get("http://localhost:8081/api/url/")
       .then(async (val) => val)
-      .then((v) => console.log(v));
+      .then((v) => console.log(v))
+      .finally(() => setLoading(false));
   }, []);
+
+  if (loading) return <div>loading...</div>;
 
   return (
     <div className="h-container">
@@ -37,7 +40,13 @@ function Urls() {
           <div>asdasd</div>
         </div>
 
-        <Url></Url>
+        <UrlSection
+          views={0}
+          creationDate={""}
+          shortUrl={""}
+          originalUrl={""}
+          customUrl={""}
+        ></UrlSection>
       </div>
     </div>
   );
