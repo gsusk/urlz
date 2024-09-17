@@ -7,7 +7,6 @@ import {
   type UrlSchemaType,
 } from '@/validations/schemas';
 import { payloadData } from '@/utils/token.utils';
-import { Geolocation } from 'location-from-ip';
 import { FilteredGeoData } from '@/utils/ip';
 
 const BASE62C =
@@ -34,7 +33,7 @@ export const shortenUrl = async (
   try {
     const { url } = request.body;
     const userId = request.user?.id || null; // Either user ID or null for anonymous
-    console.log(request.user);
+
     const shortUrl = await prisma.$transaction(async (tx) => {
       const savedUrl = await tx.url.create({
         data: {
@@ -69,7 +68,7 @@ export const createCustomUrl = async (
   try {
     const { url, customUrl } = request.body;
     const userId = request.user?.id || null;
-    console.log(request.user);
+
     const newUrl = await prisma.url.create({
       data: {
         custom: customUrl,
@@ -114,15 +113,48 @@ export const redirectUrl = async (
     // Analytics logging (no need for a transaction if unrelated)
     await prisma.urlAnalytics.create({
       data: {
-        ...ipdata, // Geo Data
+        ...ipdata,
         urlId: shortUrl.id,
-        referrer: referrer || null, // Handle optional fields
+        referrer: referrer || null,
         user_agent: user_agent || null,
       },
     });
+
     response.setHeader('Cache-Control', 'no-store');
     response.setHeader('Pragma', 'no-cache');
     return response.redirect(301, shortUrl.original);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getUrlViews = async (
+  request: Request & payloadData,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    console.log(request.user);
+    const id = request.user?.id;
+    const userUrls = await prisma.user.findFirstOrThrow({
+      where: { id: id },
+      include: {
+        url: {
+          select: {
+            id: true,
+            original: true,
+            shortUrl: true,
+            custom: true,
+            analytics: {
+              take: 100,
+            },
+          },
+          include: { _count: { select: { analytics: true } } },
+        },
+      },
+    });
+    console.log(userUrls);
+    response;
   } catch (err) {
     next(err);
   }
