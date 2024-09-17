@@ -29,9 +29,7 @@ export default function Url({
   };
 
   useEffect(() => {
-    console.log("sssss");
     const handleCLickOutside = (event: MouseEvent) => {
-      console.log("fff");
       if (
         settingRef.current &&
         !settingRef.current.contains(event.target as Node)
