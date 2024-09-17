@@ -2,7 +2,23 @@ import { ImQrcode } from "react-icons/im";
 import { IoEarth } from "react-icons/io5";
 import "./Url.css";
 
-export default function Url() {
+type PropTypes = {
+  views: number;
+  creationDate: string;
+  shortUrl: string;
+  originalUrl: string;
+  customUrl: string;
+};
+
+export default function Url({
+  views,
+  creationDate,
+  shortUrl,
+  originalUrl,
+  customUrl,
+}: PropTypes) {
+  console.log(views, creationDate, shortUrl, originalUrl, customUrl);
+
   return (
     <div className="urli-container">
       <div className="url-fp">
