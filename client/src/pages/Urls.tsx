@@ -3,14 +3,31 @@ import UrlSection from "../components/UrlSection";
 import "./Urls.css";
 import client from "../services/axios";
 
+type UrlList = {
+  custom: string;
+  original: string;
+  shortUrl: string;
+  views: number;
+}[];
 function Urls() {
   const [loading, setLoading] = useState(true);
+  const [urls, setUrls] = useState<UrlList>([]);
 
   useEffect(() => {
     client
       .get("http://localhost:8081/api/url/")
-      .then(async (val) => val)
-      .then((v) => console.log(v))
+      .then((response) => {
+        const urls = response.data.urls.map((url: []) => ({
+          ...url,
+          //@ts-expect-error its fine
+          views: url._count.analytics, // Add 'views' property based on '_count.analytics'
+        }));
+        setUrls(urls);
+      })
+      .catch((err) => {
+        console.log(err);
+        setUrls([]);
+      })
       .finally(() => setLoading(false));
   }, []);
 
@@ -19,34 +36,16 @@ function Urls() {
   return (
     <div className="h-container">
       <div className="centered-container">
-        <div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-          <div>asdasd</div>
-        </div>
-
-        <UrlSection
-          views={0}
-          creationDate={""}
-          shortUrl={""}
-          originalUrl={""}
-          customUrl={""}
-        ></UrlSection>
+        {urls.map((url) => {
+          return (
+            <UrlSection
+              views={url.views}
+              shortenedUrl={url.custom ?? url.shortUrl}
+              creationDate="12/11/2024"
+              originalUrl={url.original}
+            ></UrlSection>
+          );
+        })}
       </div>
     </div>
   );
