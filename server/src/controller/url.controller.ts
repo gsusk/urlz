@@ -106,11 +106,9 @@ export const redirectUrl = async (
     });
 
     if (!shortUrl || !shortUrl.original) {
-      // Custom error handling for not found URL
       return next(new AppError('URL Not Found', HttpStatus.NOT_FOUND));
     }
 
-    // Analytics logging (no need for a transaction if unrelated)
     await prisma.urlAnalytics.create({
       data: {
         ...ipdata,
@@ -141,13 +139,23 @@ export const getUrlsByUserId = async (
         original: true,
         custom: true,
         shortUrl: true,
-        // _count: { select: { analytics: true } },
+        _count: { select: { analytics: true } },
       },
       take: 10,
     });
-
     response.json({ urls });
   } catch (err) {
     next(err);
   }
 };
+
+export const getUrlStatsById = async (request: Request<unknown, unknown, unknown, {url: string}> & payloadData, response: Response, next: NextFunction) => {
+  try {
+    const urlId = request.query.url
+    const url = await prisma.url.findUniqueOrThrow({"where": {"shortUrl": urlId}, "include": {"_count": {"select": {"analytics": true}}, "analytics": {"select": {"country": true, "country_code": true, "latitude": true, "longitude": true, "referrer": true}}}})
+    response.json(url)
+  } catch (err) {
+    next(err)
+  }
+}
+
