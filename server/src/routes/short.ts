@@ -1,4 +1,4 @@
-import {getUrlStatsById} from '../controller/url.controller'
+import { getUrlStatsById } from '../controller/url.controller';
 import { validation } from '../middlewares/validationMiddleware';
 import {
   createCustomUrl,
@@ -13,7 +13,7 @@ const router = Router();
 
 router.post('/create', validation(UrlSchema), guestOrUser, shortenUrl);
 router.get('/', authMiddleware, getUrlsByUserId);
-router.get('/:url/stats', authMiddleware, getUrlStatsById)
+router.get('/:url/stats', authMiddleware, getUrlStatsById);
 router.post(
   '/custom',
   validation(CustomUrlSchema),

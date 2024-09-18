@@ -149,13 +149,34 @@ export const getUrlsByUserId = async (
   }
 };
 
-export const getUrlStatsById = async (request: Request<unknown, unknown, unknown, {url: string}> & payloadData, response: Response, next: NextFunction) => {
+export const getUrlStatsById = async (
+  request: Request<{ url: string }, unknown, unknown> & payloadData,
+  response: Response,
+  next: NextFunction,
+) => {
   try {
-    const urlId = request.query.url
-    const url = await prisma.url.findUniqueOrThrow({"where": {"shortUrl": urlId}, "include": {"_count": {"select": {"analytics": true}}, "analytics": {"select": {"country": true, "country_code": true, "latitude": true, "longitude": true, "referrer": true}}}})
-    response.json(url)
+    const urlId = request.params.url;
+    const url = await prisma.url.findUniqueOrThrow({
+      where: { shortUrl: urlId },
+      select: {
+        _count: { select: { analytics: true } },
+        analytics: {
+          select: {
+            country: true,
+            country_code: true,
+            latitude: true,
+            longitude: true,
+            referrer: true,
+            visitedAt: true,
+          },
+          take: 100,
+          orderBy: { visitedAt: 'desc' },
+        },
+      },
+    });
+    console.log(url);
+    response.json(url);
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
-
+};
