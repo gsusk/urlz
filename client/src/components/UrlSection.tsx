@@ -3,7 +3,7 @@ import { IoEarth } from "react-icons/io5";
 import { IoSettingsSharp } from "react-icons/io5";
 import { FaEye } from "react-icons/fa";
 import "./Url.css";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 export type PropTypes = {
@@ -80,10 +80,13 @@ export default function Url({
           <IoSettingsSharp />
           {isOpen && (
             <div className="tend-dropdown-menu">
-              <NavLink className="navlink-sett" to={"/"}>
+              <NavLink className="navlink-sett" to={""}>
                 Copy
               </NavLink>
-              <NavLink className="navlink-sett" to={"/"}>
+              <NavLink
+                className="navlink-sett"
+                to={`/stats?url=${shortenedUrl}`}
+              >
                 Stats
               </NavLink>
               <NavLink className="navlink-sett" to={"/"}>

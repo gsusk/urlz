@@ -75,6 +75,7 @@
 .tend {
   position: relative;
   cursor: pointer;
+  border: 0.2rem double var(--main-darkest-color);
 }
 
 .tend:hover {
@@ -90,10 +91,11 @@
   z-index: 1;
   display: flex;
   flex-direction: column;
+  border-radius: 0.4rem;
 }
 
 .navlink-sett {
-  padding: 0.05rem 0.8rem;
+  padding: 0.05rem 1.05rem;
 }
 .navlink-sett:hover {
   background-color: var(--main-lgray-color);

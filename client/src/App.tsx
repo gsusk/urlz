@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import Profile from "./components/Profile";
 import Security from "./components/Security";
 import Urls from "./pages/Urls";
+import Stats from "./pages/Stats";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
                 <Route path="security" element={<Security />}></Route>
               </Route>
               <Route path="/my-urls" element={<Urls />}></Route>
+              <Route path="/stats" element={<Stats />}></Route>
             </Route>
             {/* <Route path="*" element={<Navigate to="/" />} /> */}
           </Routes>
