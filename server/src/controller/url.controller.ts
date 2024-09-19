@@ -162,9 +162,10 @@ export const getUrlStatsById = async (
       _count: true,
     });
 
-    let totalViews = 0;
+    let totalClicks = 0;
+
     const formatedUrlData = url.map((stats) => {
-      totalViews += stats._count;
+      totalClicks += stats._count;
       return {
         country: stats.country,
         country_code: stats.country_code,
@@ -172,8 +173,7 @@ export const getUrlStatsById = async (
       };
     });
 
-    console.log(formatedUrlData);
-    response.json(formatedUrlData);
+    response.json({ totalClicks, stats: formatedUrlData });
   } catch (err) {
     next(err);
   }
