@@ -156,7 +156,7 @@ export const getUrlStatsById = async (
 ) => {
   try {
     const urlId = request.params.url;
-    const url = await prisma.urlAnalytics.groupBy({
+    const analytics = await prisma.urlAnalytics.groupBy({
       by: ['country', 'country_code'],
       where: { url: { shortUrl: urlId } },
       _count: true,
@@ -164,7 +164,7 @@ export const getUrlStatsById = async (
 
     let totalClicks = 0;
 
-    const formatedUrlData = url.map((stats) => {
+    const formatedUrlData = analytics.map((stats) => {
       totalClicks += stats._count;
       return {
         country: stats.country,
@@ -174,6 +174,25 @@ export const getUrlStatsById = async (
     });
 
     response.json({ totalClicks, stats: formatedUrlData });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getUrlDetails = async (
+  request: Request<{ url: string }, unknown, unknown> & payloadData,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    const urlId = request.params.url;
+    const url = await prisma.urlAnalytics.findMany({
+      select: { visitedAt: true, referrer: true, user_agent: true },
+      where: { url: { shortUrl: urlId } },
+      take: 10,
+      orderBy: { visitedAt: 'desc' },
+    });
+    response.json(url);
   } catch (err) {
     next(err);
   }
