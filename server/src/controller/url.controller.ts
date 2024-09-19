@@ -186,13 +186,13 @@ export const getUrlDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
-    const url = await prisma.urlAnalytics.findMany({
+    const urlDetails = await prisma.urlAnalytics.findMany({
       select: { visitedAt: true, referrer: true, user_agent: true },
       where: { url: { shortUrl: urlId } },
       take: 10,
       orderBy: { visitedAt: 'desc' },
     });
-    response.json(url);
+    response.json({ details: urlDetails });
   } catch (err) {
     next(err);
   }
