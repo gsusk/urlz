@@ -156,26 +156,20 @@ export const getUrlStatsById = async (
 ) => {
   try {
     const urlId = request.params.url;
-    const url = await prisma.url.findUniqueOrThrow({
-      where: { shortUrl: urlId },
-      select: {
-        _count: { select: { analytics: true } },
-        analytics: {
-          select: {
-            country: true,
-            country_code: true,
-            latitude: true,
-            longitude: true,
-            referrer: true,
-            visitedAt: true,
-          },
-          take: 100,
-          orderBy: { visitedAt: 'desc' },
-        },
-      },
+    const url = await prisma.urlAnalytics.groupBy({
+      by: ['country', 'country_code'],
+      where: { url: { shortUrl: urlId } },
+      _count: true,
     });
-    console.log(url);
-    response.json(url);
+
+    const formatedUrlData = url.map((stats) => ({
+      country: stats.country,
+      country_code: stats.country_code,
+      views: stats._count,
+    }));
+
+    console.log(formatedUrlData);
+    response.json(formatedUrlData);
   } catch (err) {
     next(err);
   }
