@@ -14,7 +14,7 @@ function RegisterForm() {
   const password = useAppSelector((state) => state.user.error?.password);
   const message = useAppSelector((state) => state.user.error?.message);
   const confirmPassword = useAppSelector(
-    (state) => state.user.error?.confirmPassword
+    (state) => state.user.error?.confirmPassword,
   );
   const passwordRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<RegisterType>({

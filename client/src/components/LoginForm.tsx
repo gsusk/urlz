@@ -100,12 +100,7 @@ function LoginForm() {
             </p>
           </div>
           <div className="sign-form-cont">
-            <button
-              className="sign-form-button button __vmc"
-              disabled={loading}
-            >
-              Login
-            </button>
+            <button disabled={loading}>Login</button>
           </div>
           <div className="shortener-err-div">
             {message &&
