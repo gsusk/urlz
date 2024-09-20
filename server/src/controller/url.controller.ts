@@ -156,6 +156,16 @@ export const getUrlStatsById = async (
 ) => {
   try {
     const urlId = request.params.url;
+    const now = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(now.getDate() - 30);
+    console.log(thirtyDaysAgo);
+    const dailyClicks = await prisma.$queryRaw`
+      SELECT DATE("visitedAt") as day, COUNT(*) FROM "UrlAnalytics", "Url" 
+      WHERE "Url"."shortUrl" = ${urlId} AND "UrlAnalytics"."visitedAt" >= NOW() - interval '30 days'
+      GROUP BY day;
+    `;
+    console.log(dailyClicks);
     const analytics = await prisma.urlAnalytics.groupBy({
       by: ['country', 'country_code'],
       where: { url: { shortUrl: urlId } },
@@ -172,6 +182,7 @@ export const getUrlStatsById = async (
         views: stats._count,
       };
     });
+    console.log(formatedUrlData);
 
     response.json({ totalClicks, stats: formatedUrlData });
   } catch (err) {
