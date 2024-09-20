@@ -23,3 +23,27 @@
   color: var(--main-lgray-color);
   padding-bottom: 0.5rem;
 }
+
+.lurl-tab-count {
+  width: 70%;
+  border: 1px solid var(--main-pink-color);
+}
+
+.inne-tc {
+  padding: 1rem 2rem;
+}
+
+.inne-tc-comp {
+  font-size: 1.1rem;
+  padding-bottom: 1.2rem;
+}
+.lk {
+  color: #c98151;
+  cursor: pointer;
+}
+
+.inne-tc-comp:first-of-type {
+  font-size: 1.8rem;
+  color: var(--main-pink-color);
+  padding-bottom: 2rem;
+}
