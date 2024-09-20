@@ -1,0 +1,25 @@
+.click-counter-container {
+  display: flex;
+}
+
+.turl-tab-count {
+  flex: 1 0 auto;
+}
+
+.url-tab-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--main-pink-color);
+}
+
+.urlt1 {
+  font-size: 2rem;
+  padding: 0.3rem;
+}
+
+.urlt2 {
+  font-size: 1rem;
+  color: var(--main-lgray-color);
+  padding-bottom: 0.5rem;
+}
