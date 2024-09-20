@@ -3,6 +3,7 @@ import client from "../services/axios";
 import { useSearchParams } from "react-router-dom";
 import Clicks from "../components/Clicks";
 import "./stats.css";
+import ClickScan from "../components/ClickScan";
 
 function Stats() {
   const [params] = useSearchParams();
@@ -33,7 +34,9 @@ function Stats() {
           ></Clicks>
         </div>
         <h2 className="sepline">Daily</h2>
-        <div></div>
+        <div>
+          <ClickScan></ClickScan>
+        </div>
       </div>
     </div>
   );
