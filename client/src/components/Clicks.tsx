@@ -32,9 +32,13 @@ export default function Clicks({
         </div>
         <div className="lurl-tab-count">
           <div className="inne-tc">
-            <div className="inne-tc-comp">{shortUrl}</div>
             <div className="inne-tc-comp">
-              <span className="lk">{originalUrl}</span>
+              <a href={originalUrl}>{shortUrl}</a>
+            </div>
+            <div className="inne-tc-comp">
+              <a className="lk" href={originalUrl}>
+                {originalUrl}
+              </a>
             </div>
             <div className="inne-tc-comp">Created: {`${createdAt}`}</div>
           </div>
