@@ -4,12 +4,12 @@ import { useSearchParams } from "react-router-dom";
 import Clicks from "../components/Clicks";
 import "./stats.css";
 import ClickScan, { ScanDataType } from "../components/ClickScan";
+import CountriesMap from "../components/CountriesMap";
 
 function Stats() {
   const [params] = useSearchParams();
-  const [urlData, setUrlData] = useState();
   const [urlStats, setUrlStats] = useState({
-    monthStats: [],
+    monthStats: [] as ScanDataType[],
     totalClicks: 0,
     stats: [] as { country: string; country_code: string; views: number }[],
   });
@@ -42,7 +42,7 @@ function Stats() {
     <div className="h-container">
       <div className="centered-container">
         <h2 className="sepline">Info</h2>
-        <div>
+        <div className="clicks-ss">
           <Clicks
             totalViews={urlStats.totalClicks}
             shortUrl={urlDetails.shortUrl}
@@ -50,9 +50,13 @@ function Stats() {
             originalUrl={urlDetails.original}
           ></Clicks>
         </div>
-        <h2 className="sepline">Daily</h2>
-        <div>
+        <h2 className="sepline">Daily Stats</h2>
+        <div className="clicks-ss">
           <ClickScan monthStats={urlStats.monthStats}></ClickScan>
+        </div>
+        <h2 className="sepline">Countries</h2>
+        <div className="clicks-ss">
+          <CountriesMap></CountriesMap>
         </div>
       </div>
     </div>
