@@ -35,7 +35,7 @@ export default function ClickScan({ monthStats }: PropTypes) {
 
     const xAxis = chart.xAxes.push(
       am5xy.DateAxis.new(root, {
-        maxDeviation: 2,
+        maxDeviation: 1,
         baseInterval: { timeUnit: "day", count: 1 },
         renderer: am5xy.AxisRendererX.new(root, {}),
         tooltip: am5.Tooltip.new(root, {}),
@@ -68,7 +68,7 @@ export default function ClickScan({ monthStats }: PropTypes) {
           { color: am5.color(0x67b7dc), opacity: 0 }, // Gradient fading to 0 opacity
         ],
       }),
-      visible: true, // Make sure the fill is visible
+      visible: true, // Make sure the fill is visible"
     });
 
     series.bullets.push(() =>
@@ -105,12 +105,12 @@ export default function ClickScan({ monthStats }: PropTypes) {
         return { date: new Date(dayData.date).getTime(), views: 0 };
       }
     });
-    console.log("sASDSDADSASDASADSDASDA", data);
+
     series.data.setAll(data);
 
     return () => root.dispose();
   }, [monthStats]);
-  console.log("sdadasasdsad");
+
   return (
     <>
       <div id="chartdiv" style={{ width: "100%", height: "500px" }}></div>

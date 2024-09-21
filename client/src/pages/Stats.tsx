@@ -59,6 +59,8 @@ function Stats() {
         <div className="clicks-ss">
           <CountriesMap stats={urlStats.stats}></CountriesMap>
         </div>
+        <h2 className="sepline">Detailed Logs</h2>
+        <div className="clicks-ss"></div>
       </div>
     </div>
   );

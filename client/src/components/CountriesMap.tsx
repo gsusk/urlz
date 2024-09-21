@@ -39,7 +39,7 @@ function CountriesMap({ stats }: CountryMapPropTypes) {
     polygonSeries.mapPolygons.template.setAll({
       templateField: "polygonSettings",
     });
-    console.log(stats, "dsdsdss");
+
     const data = stats.map((value) => ({
       id: value.country_code,
       name: value.country,
@@ -50,34 +50,8 @@ function CountriesMap({ stats }: CountryMapPropTypes) {
         fill: am5.color(0xf3111a),
       },
     }));
-    console.log(data);
-    polygonSeries.data.setAll(data);
-    /*
-    
-    polygonSeries.data.setAll([
-      {
-        id: "FR",
-        name: "France",
-        value: 100,
-        polygonSettings: {
-          stroke: am5.color(0xf3111a),
-          tooltipText: "{value}",
-          fill: am5.color(0xf3111a),
-        },
-      },
-      {
-        id: "ES",
-        name: "Spain",
-        value: 200,
-        polygonSettings: {
-          stroke: am5.color(0x999999),
-          tooltipText: "{value}",
-          fill: am5.color(0x999999),
-        },
-      },
-    ]);
 
-    */
+    polygonSeries.data.setAll(data);
 
     return () => root.dispose();
   }, [stats]);
