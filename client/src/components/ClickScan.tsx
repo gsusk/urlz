@@ -76,7 +76,7 @@ export default function ClickScan({ monthStats }: PropTypes) {
           radius: 5, // Size of the circle (dot)
           fill: am5.color(0xffffff), // Fill color (white)
           stroke: am5.color(0x67b7dc), // Border color (same as line)
-          strokeWidth: 2, // Border thickness
+          strokeWidth: 1, // Border thickness
           tooltipText: "{valueY}",
         }),
       })
@@ -86,11 +86,12 @@ export default function ClickScan({ monthStats }: PropTypes) {
       date: new Date(data.date).getTime(),
       views: data.views,
     }));
-    console.log(data);
+
     series.data.setAll(data);
 
     return () => root.dispose();
-  }, []);
+  }, [monthStats]);
+  console.log("sdadasasdsad");
   return (
     <>
       <div id="chartdiv" style={{ width: "100%", height: "500px" }}></div>
