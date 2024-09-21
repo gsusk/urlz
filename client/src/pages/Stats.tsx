@@ -4,14 +4,14 @@ import { useSearchParams } from "react-router-dom";
 import Clicks from "../components/Clicks";
 import "./stats.css";
 import ClickScan, { ScanDataType } from "../components/ClickScan";
-import CountriesMap from "../components/CountriesMap";
+import CountriesMap, { CountryMapPropTypes } from "../components/CountriesMap";
 
 function Stats() {
   const [params] = useSearchParams();
   const [urlStats, setUrlStats] = useState({
     monthStats: [] as ScanDataType[],
     totalClicks: 0,
-    stats: [] as { country: string; country_code: string; views: number }[],
+    stats: [] as CountryMapPropTypes["stats"],
   });
   const [urlDetails, setUrlDetails] = useState({
     custom: "",
@@ -24,6 +24,7 @@ function Stats() {
     const t = async () => {
       const response = await client.get(`/url/${params.get("url")}/stats`);
       setUrlStats(response.data);
+      console.log(response.data);
     };
     const b = async () => {
       const response = await client.get(`/url/${params.get("url")}/details`);
@@ -56,7 +57,7 @@ function Stats() {
         </div>
         <h2 className="sepline">Countries</h2>
         <div className="clicks-ss">
-          <CountriesMap></CountriesMap>
+          <CountriesMap stats={urlStats.stats}></CountriesMap>
         </div>
       </div>
     </div>

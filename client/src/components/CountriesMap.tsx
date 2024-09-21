@@ -3,7 +3,11 @@ import * as am5map from "@amcharts/amcharts5/map";
 import am5geodata_worldLow from "@amcharts/amcharts5-geodata/worldLow";
 import { useLayoutEffect } from "react";
 
-function CountriesMap() {
+export type CountryMapPropTypes = {
+  stats: { country: string; country_code: string; views: number }[];
+};
+
+function CountriesMap({ stats }: CountryMapPropTypes) {
   useLayoutEffect(() => {
     const root = am5.Root.new("chartsection");
     const chart = root.container.children.push(
@@ -32,12 +36,24 @@ function CountriesMap() {
       fillOpacity: 0.5,
     });
 
-    polygonSeries;
-
     polygonSeries.mapPolygons.template.setAll({
       templateField: "polygonSettings",
     });
-
+    console.log(stats, "dsdsdss");
+    const data = stats.map((value) => ({
+      id: value.country_code,
+      name: value.country,
+      value: value.views,
+      polygonSettings: {
+        stroke: am5.color(0xf3111a),
+        tooltipText: "{value}",
+        fill: am5.color(0xf3111a),
+      },
+    }));
+    console.log(data);
+    polygonSeries.data.setAll(data);
+    /*
+    
     polygonSeries.data.setAll([
       {
         id: "FR",
@@ -60,8 +76,11 @@ function CountriesMap() {
         },
       },
     ]);
+
+    */
+
     return () => root.dispose();
-  }, []);
+  }, [stats]);
 
   return (
     <section
