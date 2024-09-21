@@ -13,6 +13,7 @@ type PropTypes = { monthStats: ScanDataType[] };
 
 export default function ClickScan({ monthStats }: PropTypes) {
   useLayoutEffect(() => {
+    if (!monthStats[0]) return;
     const root = am5.Root.new("chartdiv");
     root.setThemes([am5themes_Animated.new(root)]);
 
@@ -34,7 +35,7 @@ export default function ClickScan({ monthStats }: PropTypes) {
 
     const xAxis = chart.xAxes.push(
       am5xy.DateAxis.new(root, {
-        maxDeviation: 0.2,
+        maxDeviation: 2,
         baseInterval: { timeUnit: "day", count: 1 },
         renderer: am5xy.AxisRendererX.new(root, {}),
         tooltip: am5.Tooltip.new(root, {}),
@@ -82,11 +83,29 @@ export default function ClickScan({ monthStats }: PropTypes) {
       })
     );
 
-    const data = monthStats.map((data) => ({
-      date: new Date(data.date).getTime(),
-      views: data.views,
+    const fillArray = Array.from({ length: 30 }, (_, i) => ({
+      date: new Date(new Date().setDate(i + 1)).toISOString(), // Initialize with dates for each day of the month
+      views: 0,
     }));
 
+    let pos = 0;
+
+    const data = fillArray.map((dayData, i) => {
+      if (
+        pos < monthStats.length &&
+        i + 1 === new Date(monthStats[pos].date).getDate()
+      ) {
+        const { date, views } = monthStats[pos];
+        pos++;
+        return {
+          date: new Date(date).getTime(),
+          views,
+        };
+      } else {
+        return { date: new Date(dayData.date).getTime(), views: 0 };
+      }
+    });
+    console.log("sASDSDADSASDASADSDASDA", data);
     series.data.setAll(data);
 
     return () => root.dispose();
