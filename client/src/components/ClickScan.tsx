@@ -2,9 +2,16 @@ import * as am5xy from "@amcharts/amcharts5/xy";
 import * as am5 from "@amcharts/amcharts5";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect } from "react";
 
-export default function ClickScan() {
+export type ScanDataType = {
+  date: string;
+  views: number;
+};
+
+type PropTypes = { monthStats: ScanDataType[] };
+
+export default function ClickScan({ monthStats }: PropTypes) {
   useLayoutEffect(() => {
     const root = am5.Root.new("chartdiv");
     root.setThemes([am5themes_Animated.new(root)]);
@@ -20,6 +27,7 @@ export default function ClickScan() {
         renderer: am5xy.AxisRendererY.new(root, {}),
       })
     );
+
     yAxis.get("renderer").labels.template.setAll({
       fill: am5.color(0xffffff), // White labels for Y-axis
     });
@@ -32,6 +40,7 @@ export default function ClickScan() {
         tooltip: am5.Tooltip.new(root, {}),
       })
     );
+
     xAxis.get("renderer").labels.template.setAll({
       fill: am5.color(0xffffff), // White labels for X-axis
     });
@@ -41,7 +50,7 @@ export default function ClickScan() {
         name: "Series",
         xAxis: xAxis,
         yAxis: yAxis,
-        valueYField: "count",
+        valueYField: "views",
         valueXField: "date",
         fill: am5.color(0x67b7dc), // Color for the fill
         stroke: am5.color(0x67b7dc), // Color for the line
@@ -73,15 +82,11 @@ export default function ClickScan() {
       })
     );
 
-    const data = [
-      { date: new Date(12, 1).getTime(), count: 50 },
-      { date: new Date(12, 2).getTime(), count: 55 },
-      { date: new Date(12, 3).getTime(), count: 60 },
-      { date: new Date(12, 4).getTime(), count: 45 },
-      { date: new Date(12, 5).getTime(), count: 70 },
-      { date: new Date(12, 6).getTime(), count: 12 },
-    ];
-
+    const data = monthStats.map((data) => ({
+      date: new Date(data.date).getTime(),
+      views: data.views,
+    }));
+    console.log(data);
     series.data.setAll(data);
 
     return () => root.dispose();

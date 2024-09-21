@@ -1,17 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import client from "../services/axios";
 import { useSearchParams } from "react-router-dom";
 import Clicks from "../components/Clicks";
 import "./stats.css";
-import ClickScan from "../components/ClickScan";
+import ClickScan, { ScanDataType } from "../components/ClickScan";
 
 function Stats() {
   const [params] = useSearchParams();
+  const [urlStats, setUrlStats] = useState([]);
 
   useEffect(() => {
     const t = async () => {
       const data = await client.get(`/url/${params.get("url")}/stats`);
-      console.log(data);
+      console.log(data.data.monthStats, "glele");
+      setUrlStats(data.data.monthStats);
     };
     const b = async () => {
       const data = await client.get(`/url/${params.get("url")}/details`);
@@ -35,7 +37,7 @@ function Stats() {
         </div>
         <h2 className="sepline">Daily</h2>
         <div>
-          <ClickScan></ClickScan>
+          <ClickScan monthStats={urlStats}></ClickScan>
         </div>
       </div>
     </div>
