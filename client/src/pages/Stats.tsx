@@ -5,6 +5,7 @@ import Clicks from "../components/Clicks";
 import "./stats.css";
 import ClickScan, { ScanDataType } from "../components/ClickScan";
 import CountriesMap, { CountryMapPropTypes } from "../components/CountriesMap";
+import DetailedLogs from "../components/DetailedLogs";
 
 function Stats() {
   const [params] = useSearchParams();
@@ -60,7 +61,9 @@ function Stats() {
           <CountriesMap stats={urlStats.stats}></CountriesMap>
         </div>
         <h2 className="sepline">Detailed Logs</h2>
-        <div className="clicks-ss"></div>
+        <div className="clicks-ss">
+          <DetailedLogs></DetailedLogs>
+        </div>
       </div>
     </div>
   );
