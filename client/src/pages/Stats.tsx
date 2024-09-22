@@ -5,7 +5,7 @@ import Clicks from "../components/Clicks";
 import "./stats.css";
 import ClickScan, { ScanDataType } from "../components/ClickScan";
 import CountriesMap, { CountryMapPropTypes } from "../components/CountriesMap";
-import DetailedLogs from "../components/DetailedLogs";
+import DetailedLogs, { LogsPropType } from "../components/DetailedLogs";
 
 function Stats() {
   const [params] = useSearchParams();
@@ -18,7 +18,7 @@ function Stats() {
     custom: "",
     original: "",
     shortUrl: "",
-    analytics: [],
+    analytics: [] as LogsPropType["details"],
   });
 
   useEffect(() => {
@@ -62,7 +62,7 @@ function Stats() {
         </div>
         <h2 className="sepline">Detailed Logs</h2>
         <div className="clicks-ss">
-          <DetailedLogs></DetailedLogs>
+          <DetailedLogs details={urlDetails.analytics}></DetailedLogs>
         </div>
       </div>
     </div>
