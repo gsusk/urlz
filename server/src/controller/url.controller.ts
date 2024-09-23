@@ -8,7 +8,6 @@ import {
 } from '@/validations/schemas';
 import { payloadData } from '@/utils/token.utils';
 import { FilteredGeoData } from '@/utils/ip';
-import { Resolver } from 'dns';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -224,14 +223,59 @@ export const getUrlDetails = async (
   }
 };
 
+function* urlDataYield(
+  urlStats: {
+    country: string | null;
+    referrer: string | null;
+    visitedAt: Date;
+    local_time: Date | null;
+    user_agent: string | null;
+  }[],
+) {
+  for (const element of urlStats) {
+    const data = Object.values(element).join(',') + '\n';
+    yield data;
+  }
+}
+
 export const generateCSVFromURLDetails = async (
-  request: Request,
+  request: Request<{ url: string }, unknown, unknown> & payloadData,
   response: Response,
   next: NextFunction,
 ) => {
   try {
-    console.log('');
+    const urlId = request.params.url;
+    const urlData = await prisma.urlAnalytics.findMany({
+      where: { url: { shortUrl: urlId } },
+      select: {
+        country: true,
+        local_time: true,
+        referrer: true,
+        visitedAt: true,
+        user_agent: true,
+      },
+      orderBy: { visitedAt: 'desc' },
+    });
+    response.setHeader('Content-Type', 'text/csv');
+    response.setHeader(
+      'Content-Disposition',
+      'attachment; filename="URLZY-stats.csv"',
+    );
+    response.write('country,local_time,referrer,visitedAt,user_agent,\n');
+    for (const row of urlData) {
+      const csvRow = `${row.country},${row.local_time},${row.referrer},${row.visitedAt},${row.user_agent},\n`;
+      const isWriteable = response.write(csvRow);
+      console.log('writing');
+      if (!isWriteable) {
+        console.log('draining');
+        await new Promise((resolve) => {
+          response.once('drain', resolve);
+          console.log('drained');
+        });
+      }
+    }
+    return response.end();
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };

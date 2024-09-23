@@ -1,4 +1,8 @@
-import { getUrlDetails, getUrlStatsById } from '../controller/url.controller';
+import {
+  generateCSVFromURLDetails,
+  getUrlDetails,
+  getUrlStatsById,
+} from '../controller/url.controller';
 import { validation } from '../middlewares/validationMiddleware';
 import {
   createCustomUrl,
@@ -21,5 +25,6 @@ router.post(
   guestOrUser,
   createCustomUrl,
 );
+router.get('/download', generateCSVFromURLDetails);
 
 export default router;
