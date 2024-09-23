@@ -8,6 +8,7 @@ import {
 } from '@/validations/schemas';
 import { payloadData } from '@/utils/token.utils';
 import { FilteredGeoData } from '@/utils/ip';
+import { Resolver } from 'dns';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -158,11 +159,12 @@ export const getUrlStatsById = async (
     const urlId = request.params.url;
 
     const dailyClicks = await prisma.$queryRaw`
-      SELECT DATE("visitedAt") as date, COUNT(*)::int as views FROM "UrlAnalytics", "Url" 
+      SELECT DATE("visitedAt") as date, COUNT(*)::int as views FROM "UrlAnalytics" JOIN "Url" ON "UrlAnalytics"."urlId" = "Url"."id"
       WHERE "Url"."shortUrl" = ${urlId} AND "UrlAnalytics"."visitedAt" >= NOW() - interval '30 days'
       GROUP BY date ORDER BY date;
     `;
-
+    console.log(urlId);
+    console.log(dailyClicks);
     const analytics = await prisma.urlAnalytics.groupBy({
       by: ['country', 'country_code'],
       where: { url: { shortUrl: urlId } },
@@ -203,7 +205,12 @@ export const getUrlDetails = async (
         custom: true,
         original: true,
         analytics: {
-          select: { visitedAt: true, referrer: true, user_agent: true },
+          select: {
+            visitedAt: true,
+            referrer: true,
+            user_agent: true,
+            continent: true,
+          },
           orderBy: { visitedAt: 'desc' },
           take: 10,
         },
@@ -212,6 +219,18 @@ export const getUrlDetails = async (
     });
 
     response.json({ details: urlDetails });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const generateCSVFromURLDetails = async (
+  request: Request,
+  response: Response,
+  next: NextFunction,
+) => {
+  try {
+    console.log('');
   } catch (err) {
     next(err);
   }
