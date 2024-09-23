@@ -1,11 +1,44 @@
-import UAParser from "ua-parser-js"
+import UAParser from "ua-parser-js";
+import { useRef } from "react";
+import client from "../services/axios";
 
 export type LogsPropType = {
-  details: { visitedAt: string; referrer: null | string; user_agent: string, continent: string }[];
+  details: {
+    visitedAt: string;
+    referrer: null | string;
+    user_agent: string;
+    continent: string;
+  }[];
 };
 
 // const logData = useMemo(() => {
 function DetailedLogs({ details }: LogsPropType) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const handleClick = (e: React.FormEvent<HTMLButtonElement>) => {
+    client
+      .get("/url/download", {
+        __retry: false,
+        responseType: "blob",
+      })
+      .then((res) => {
+        console.log(res.data);
+        return res.data as Blob;
+      })
+      .then((blob) => {
+        const blobData = new Blob([blob], { type: "text/csv" });
+        console.log(blobData);
+        const url = URL.createObjectURL(blobData);
+        if (ref.current) {
+          ref.current.style.setProperty("style", "display: none");
+          ref.current.href = url;
+          ref.current.download = "data.csv";
+          ref.current.click();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   // const parsedDetails = details.map((row) => {
   // return (<div>sds</div>)
   // })
@@ -13,7 +46,13 @@ function DetailedLogs({ details }: LogsPropType) {
   return (
     <div>
       <div>
-        <table style={{ "width": "100%", "textAlign": "center" }}>
+        <button type="button" onClick={handleClick}>
+          Download CSV
+        </button>
+        <a style={{ visibility: "hidden" }} ref={ref}></a>
+      </div>
+      <div>
+        <table style={{ width: "100%", textAlign: "center" }}>
           <thead>
             <tr>
               <th>Browser</th>
@@ -24,15 +63,17 @@ function DetailedLogs({ details }: LogsPropType) {
             </tr>
           </thead>
           <tbody>
-            {details.map(row => {
-              const parsedUA = new UAParser(row.user_agent)
-              return (<tr>
-                <td >{parsedUA.getBrowser().name ?? ""}</td>
-                <td >{parsedUA.getOS().name ?? ""}</td>
-                <td >{row.referrer ?? "-"}</td>
-                <td >{row.continent ?? ""}</td>
-                <td >{new Date(row.visitedAt).toLocaleString() || "-"}</td>
-              </tr>)
+            {details.map((row) => {
+              const parsedUA = new UAParser(row.user_agent);
+              return (
+                <tr>
+                  <td>{parsedUA.getBrowser().name ?? ""}</td>
+                  <td>{parsedUA.getOS().name ?? ""}</td>
+                  <td>{row.referrer ?? "-"}</td>
+                  <td>{row.continent ?? ""}</td>
+                  <td>{new Date(row.visitedAt).toLocaleString() || "-"}</td>
+                </tr>
+              );
             })}
           </tbody>
         </table>
