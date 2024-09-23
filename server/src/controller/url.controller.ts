@@ -223,21 +223,6 @@ export const getUrlDetails = async (
   }
 };
 
-function* urlDataYield(
-  urlStats: {
-    country: string | null;
-    referrer: string | null;
-    visitedAt: Date;
-    local_time: Date | null;
-    user_agent: string | null;
-  }[],
-) {
-  for (const element of urlStats) {
-    const data = Object.values(element).join(',') + '\n';
-    yield data;
-  }
-}
-
 export const generateCSVFromURLDetails = async (
   request: Request<{ url: string }, unknown, unknown> & payloadData,
   response: Response,
