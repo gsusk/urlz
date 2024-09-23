@@ -16,3 +16,16 @@
 .clicks-ss {
   margin-bottom: 4rem;
 }
+
+  
+th {
+  border-bottom: 1px solid #ddd; /* Header cell borders */
+  border-collapse:collapse; 
+  margin-bottom: 5rem;
+  padding: 12px; /* Padding inside header cells */
+}
+
+td {
+  padding: 1rem 0;
+}
+

@@ -16,7 +16,7 @@ function DetailedLogs({ details }: LogsPropType) {
         <table style={{ "width": "100%", "textAlign": "center" }}>
           <thead>
             <tr>
-              <th style={{ paddingBottom: "40px", marginBottom: "2rem" }}>Browser</th>
+              <th>Browser</th>
               <th>Platform</th>
               <th>Referrer</th>
               <th>Location</th>
