@@ -15,13 +15,12 @@ function DetailedLogs({ details }: LogsPropType) {
       <div>
         <table style={{ "width": "100%", "textAlign": "center" }}>
           <thead>
-            <tr style={{paddingBottom: "40 px"}}>
-              <th>Browser</th>
+            <tr>
+              <th style={{ paddingBottom: "40px", marginBottom: "2rem" }}>Browser</th>
               <th>Platform</th>
               <th>Referrer</th>
               <th>Location</th>
               <th>Date</th>
-              
             </tr>
           </thead>
           <tbody>
