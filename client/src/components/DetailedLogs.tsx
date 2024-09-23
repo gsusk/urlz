@@ -33,6 +33,7 @@ function DetailedLogs({ details }: LogsPropType) {
           ref.current.href = url;
           ref.current.download = "data.csv";
           ref.current.click();
+          URL.revokeObjectURL(url);
         }
       })
       .catch((err) => {
@@ -49,6 +50,12 @@ function DetailedLogs({ details }: LogsPropType) {
         <button type="button" onClick={handleClick}>
           Download CSV
         </button>
+        {/*
+          <a
+            download="data.csv"
+            href="http://localhost:8081/api/url/download"
+          ></a>
+        */}
         <a style={{ visibility: "hidden" }} ref={ref}></a>
       </div>
       <div>
