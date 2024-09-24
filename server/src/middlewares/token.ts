@@ -22,7 +22,7 @@ export const refreshTokenHandler = async (
     if (!payload) {
       throw new AppError('Invalid Token', HttpStatus.UNAUTHORIZED);
     }
-
+    console.log('rreeeesytyyy', payload);
     const { accessToken, refreshToken } = buildTokens(payload);
 
     setTokens(res, accessToken, refreshToken);
@@ -40,7 +40,7 @@ export const authMiddleware = (
 ) => {
   try {
     const payload = verifyAccessToken(req.cookies['x-access-token']);
-
+    console.log(payload);
     if (!payload) {
       return next(new AppError('Token missing', HttpStatus.UNAUTHORIZED));
     }

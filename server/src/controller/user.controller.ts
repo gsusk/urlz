@@ -63,13 +63,14 @@ export async function updateUserProfile(
         email: true,
         profilePic: true,
         isVerified: true,
+        id: true,
       },
     });
 
     const { accessToken, refreshToken } = buildTokens(user);
     setTokens(response, accessToken, refreshToken);
 
-    const { isVerified: _, ...rest } = user;
+    const { isVerified: _, id: __, ...rest } = user;
     return response.json({
       ...rest,
       profilePic:

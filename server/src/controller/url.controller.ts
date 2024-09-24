@@ -133,6 +133,7 @@ export const getUrlsByUserId = async (
 ) => {
   try {
     const id = request.user?.id;
+    console.log(id);
     const urls = await prisma.url.findMany({
       where: { userId: id },
       select: {
