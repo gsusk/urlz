@@ -126,7 +126,6 @@ export const signUp = async (
         id: true,
       },
     });
-    console.log(user);
     const { accessToken, refreshToken } = buildTokens(user);
     const { email: e, ...rest } = user;
 

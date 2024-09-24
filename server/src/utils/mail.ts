@@ -39,9 +39,9 @@ export const mailVerification = (
       </header>
       <h1>VERIFY YOUR ACCOUNT</h1>
       <div>
-        <p>Welcome <b>${user.username ?? ''}</b>! 
-        <br/> 
-        Your account verification is almost complete! 
+        <p>Welcome <b>${user.username ?? ''}</b>!
+        <br/>
+        Your account verification is almost complete!
         </p>
         <br/>
         <p>Click <a href="http://localhost:5173/verify-email?etoken=${token}">here</a> to verify it!</p>
@@ -63,6 +63,5 @@ export const mailVerification = (
       console.error(error, 'ocurred an error on email sent');
       return;
     }
-    console.log(info, 'success, email sent');
   });
 };

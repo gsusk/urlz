@@ -132,8 +132,13 @@ export const getUrlsByUserId = async (
   next: NextFunction,
 ) => {
   try {
+    const limit = 10;
     const id = request.user?.id;
-    console.log(id);
+    const page = request.query.page
+      ? parseInt(request.query.page as string)
+      : undefined;
+    const offset = page && page > 1 ? limit * (page - 1) : undefined;
+    const count = await prisma.url.count({ where: { userId: id } });
     const urls = await prisma.url.findMany({
       where: { userId: id },
       select: {
@@ -142,9 +147,15 @@ export const getUrlsByUserId = async (
         shortUrl: true,
         _count: { select: { analytics: true } },
       },
-      take: 10,
+      take: limit,
+      skip: offset,
     });
-    response.json({ urls });
+    response.json({
+      urls,
+      pages: {
+        total: count,
+      },
+    });
   } catch (err) {
     next(err);
   }
@@ -163,8 +174,6 @@ export const getUrlStatsById = async (
       WHERE "Url"."shortUrl" = ${urlId} AND "UrlAnalytics"."visitedAt" >= NOW() - interval '30 days'
       GROUP BY date ORDER BY date;
     `;
-    console.log(urlId);
-    console.log(dailyClicks);
     const analytics = await prisma.urlAnalytics.groupBy({
       by: ['country', 'country_code'],
       where: { url: { shortUrl: urlId, userId: request.user?.id } },
@@ -241,7 +250,6 @@ export const generateCSVFromURLDetails = async (
         user_agent: true,
       },
     });
-    console.log(urlData);
     response.setHeader('Content-Type', 'text/csv');
     response.setHeader('Content-Disposition', 'attachment;filename="data.csv"');
     response.write('country,local_time,referrer,visitedAt,user_agent,\n');
