@@ -25,6 +25,6 @@ router.post(
   guestOrUser,
   createCustomUrl,
 );
-router.get('/download', generateCSVFromURLDetails);
+router.get('/:url/download', generateCSVFromURLDetails);
 
 export default router;

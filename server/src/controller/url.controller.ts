@@ -166,7 +166,7 @@ export const getUrlStatsById = async (
     console.log(dailyClicks);
     const analytics = await prisma.urlAnalytics.groupBy({
       by: ['country', 'country_code'],
-      where: { url: { shortUrl: urlId } },
+      where: { url: { shortUrl: urlId, userId: request.user?.id } },
       _count: true,
     });
 
@@ -214,7 +214,7 @@ export const getUrlDetails = async (
           take: 10,
         },
       },
-      where: { shortUrl: urlId },
+      where: { shortUrl: urlId, userId: request.user?.id },
     });
 
     response.json({ details: urlDetails });
@@ -231,7 +231,7 @@ export const generateCSVFromURLDetails = async (
   try {
     const urlId = request.params.url;
     const urlData = await prisma.urlAnalytics.findMany({
-      where: { url: { shortUrl: urlId } },
+      where: { url: { shortUrl: urlId, userId: request.user?.id } },
       select: {
         country: true,
         local_time: true,
@@ -239,23 +239,17 @@ export const generateCSVFromURLDetails = async (
         visitedAt: true,
         user_agent: true,
       },
-      orderBy: { visitedAt: 'desc' },
     });
+    console.log(urlData);
     response.setHeader('Content-Type', 'text/csv');
-    response.setHeader(
-      'Content-Disposition',
-      'attachment; filename="URLZY-stats.csv"',
-    );
+    response.setHeader('Content-Disposition', 'attachment;filename="data.csv"');
     response.write('country,local_time,referrer,visitedAt,user_agent,\n');
     for (const row of urlData) {
       const csvRow = `${row.country},${row.local_time},${row.referrer},${row.visitedAt},${row.user_agent},\n`;
       const isWriteable = response.write(csvRow);
-      console.log('writing');
       if (!isWriteable) {
-        console.log('draining');
         await new Promise((resolve) => {
           response.once('drain', resolve);
-          console.log('drained');
         });
       }
     }
