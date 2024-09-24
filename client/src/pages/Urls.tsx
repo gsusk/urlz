@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import UrlSection from "../components/UrlSection";
 import "./Urls.css";
 import client from "../services/axios";
+import { useSearchParams } from "react-router-dom";
 
 type UrlList = {
   custom: string;
@@ -12,6 +13,7 @@ type UrlList = {
 function Urls() {
   const [loading, setLoading] = useState(true);
   const [urls, setUrls] = useState<UrlList>([]);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     client

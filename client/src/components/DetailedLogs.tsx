@@ -9,27 +9,25 @@ export type LogsPropType = {
     user_agent: string;
     continent: string;
   }[];
+  url: string;
 };
 
 // const logData = useMemo(() => {
-function DetailedLogs({ details }: LogsPropType) {
+function DetailedLogs({ details, url }: LogsPropType) {
   const ref = useRef<HTMLAnchorElement>(null);
   const handleClick = (e: React.FormEvent<HTMLButtonElement>) => {
     client
-      .get("/url/download", {
+      .get(`/url/${url}/download`, {
         __retry: false,
         responseType: "blob",
       })
       .then((res) => {
-        console.log(res.data);
         return res.data as Blob;
       })
       .then((blob) => {
         const blobData = new Blob([blob], { type: "text/csv" });
-        console.log(blobData);
         const url = URL.createObjectURL(blobData);
         if (ref.current) {
-          ref.current.style.setProperty("style", "display: none");
           ref.current.href = url;
           ref.current.download = "data.csv";
           ref.current.click();

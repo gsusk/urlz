@@ -20,15 +20,15 @@ function Stats() {
     shortUrl: "",
     analytics: [] as LogsPropType["details"],
   });
+  const dataParam = params.get("url");
 
   useEffect(() => {
     const t = async () => {
-      const response = await client.get(`/url/${params.get("url")}/stats`);
+      const response = await client.get(`/url/${dataParam ?? ""}/stats`);
       setUrlStats(response.data);
-      console.log(response.data);
     };
     const b = async () => {
-      const response = await client.get(`/url/${params.get("url")}/details`);
+      const response = await client.get(`/url/${dataParam ?? ""}/details`);
       const data = response.data.details;
       setUrlDetails({
         ...data,
@@ -62,7 +62,10 @@ function Stats() {
         </div>
         <h2 className="sepline">Detailed Logs</h2>
         <div className="clicks-ss">
-          <DetailedLogs details={urlDetails.analytics}></DetailedLogs>
+          <DetailedLogs
+            url={dataParam!}
+            details={urlDetails.analytics}
+          ></DetailedLogs>
         </div>
       </div>
     </div>
