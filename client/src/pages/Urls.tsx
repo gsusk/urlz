@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Pagination } from "../components/Pagination";
 import UrlSection from "../components/UrlSection";
 import "./Urls.css";
 import client from "../services/axios";
@@ -14,10 +15,11 @@ function Urls() {
   const [loading, setLoading] = useState(true);
   const [urls, setUrls] = useState<UrlList>([]);
   const [searchParams, setSearchParams] = useSearchParams();
+  const page = searchParams.get("page");
 
   useEffect(() => {
     client
-      .get("http://localhost:8081/api/url/")
+      .get(`http://localhost:8081/api/url?page=${page}`)
       .then((response) => {
         const urls = response.data.urls.map((url: []) => ({
           ...url,
@@ -50,6 +52,9 @@ function Urls() {
             ></UrlSection>
           );
         })}
+        <div>
+          <Pagination></Pagination>
+        </div>
       </div>
     </div>
   );
