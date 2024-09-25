@@ -37,6 +37,7 @@ export function Pagination({
             <button
               disabled={page === "..." || currentPage === page}
               className={`button __vsc pagbutt ${page === "..." ? "dot" : ""}`}
+              onClick={() => typeof page !== "string" && handlePageChange(page)}
             >
               {page}
             </button>
@@ -44,7 +45,7 @@ export function Pagination({
         );
       })}
       <button
-        disabled={currentPage === Math.floor(totalCount / pageSize)}
+        disabled={currentPage === Math.ceil(totalCount / pageSize)}
         onClick={() => handlePageChange(currentPage + 1)}
         className="button __vsc"
       >

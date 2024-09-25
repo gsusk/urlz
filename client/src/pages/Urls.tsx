@@ -24,8 +24,9 @@ function Urls() {
   const handlePageChange = (value: number) => {
     setSearchParams({ page: value.toString() });
   };
-
+  console.log("1 and outer: Urls");
   useEffect(() => {
+    setLoading(true);
     client
       .get(`http://localhost:8081/api/url?page=${page}`)
       .then((response) => {
@@ -61,14 +62,16 @@ function Urls() {
           );
         })}
         <div>
-          {urls.pages.total && urls.pages.total > 10 && (
-            <Pagination
-              totalCount={85}
-              currentPage={page}
-              pageSize={10}
-              handlePageChange={handlePageChange}
-            ></Pagination>
-          )}
+          {urls.pages.total &&
+            urls.pages.total > 10 &&
+            urls.urls.length > 0 && (
+              <Pagination
+                totalCount={urls.pages.total}
+                currentPage={page}
+                pageSize={10}
+                handlePageChange={handlePageChange}
+              ></Pagination>
+            )}
         </div>
       </div>
     </div>
