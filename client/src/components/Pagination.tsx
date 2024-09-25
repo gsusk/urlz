@@ -6,7 +6,7 @@ type PaginationPropTypes = {
   pageSize: number;
 };
 
-export function Pagination({
+export function usePagination({
   totalCount,
   currentPage,
   pageSize,
@@ -26,26 +26,22 @@ export function Pagination({
     const showDotsRight = rightSiblingIdx < totalPageCount - 2;
 
     if (!showDotsLeft && showDotsRight) {
-      const leftCount = 3 + 1;
+      const leftCount = 3;
       const leftRange = range(1, leftCount);
-      return [...leftRange, "...", totalPageCount];
+      return [...leftRange, DOTS, totalPageCount];
     }
     if (showDotsLeft && !showDotsRight) {
-      const rightCount = 3 + 1;
+      const rightCount = 3;
       const rightRange = range(totalPageCount - rightCount + 1, totalPageCount);
-      return [1, "...", ...rightRange];
+      return [1, DOTS, ...rightRange];
     }
     if (showDotsLeft && showDotsRight) {
       const middle = range(leftSiblingIdx, rightSiblingIdx);
-      return [1, "...", ...middle, "...", totalPageCount];
+      return [1, DOTS, ...middle, DOTS, totalPageCount];
     }
+    console.log("sds");
   }, [totalCount, currentPage, pageSize]);
-
-  return (
-    <div>
-      <div>sdasdaasd</div>
-    </div>
-  );
+  return paginationRange;
 }
 
 const range = (start: number, end: number) => {
