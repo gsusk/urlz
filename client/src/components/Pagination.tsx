@@ -1,10 +1,4 @@
-import { usePagination } from "../hooks/usePagination";
-
-export type PaginationPropTypes = {
-  totalCount: number;
-  currentPage: number;
-  pageSize: number;
-};
+import { PaginationPropTypes, usePagination } from "../hooks/usePagination";
 
 export function Pagination({
   totalCount,

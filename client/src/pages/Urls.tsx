@@ -54,11 +54,13 @@ function Urls() {
           );
         })}
         <div>
-          <Pagination
-            totalCount={85}
-            currentPage={parseInt("2")}
-            pageSize={10}
-          ></Pagination>
+          {urls.pages.total && urls.pages.total > 10 && (
+            <Pagination
+              totalCount={85}
+              currentPage={parseInt("2")}
+              pageSize={10}
+            ></Pagination>
+          )}
         </div>
       </div>
     </div>
