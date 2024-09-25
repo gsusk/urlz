@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Pagination } from "../components/Pagination";
+import { Pagination } from "../components/Pagination.tsx";
 import UrlSection from "../components/UrlSection";
 import "./Urls.css";
 import client from "../services/axios";
