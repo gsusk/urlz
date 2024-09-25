@@ -26,12 +26,26 @@ export function Pagination({
     const showDotsRight = rightSiblingIdx < totalPageCount - 2;
 
     if (!showDotsLeft && showDotsRight) {
-      const leftCount = 3;
+      const leftCount = 3 + 1;
       const leftRange = range(1, leftCount);
       return [...leftRange, "...", totalPageCount];
     }
+    if (showDotsLeft && !showDotsRight) {
+      const rightCount = 3 + 1;
+      const rightRange = range(totalPageCount - rightCount + 1, totalPageCount);
+      return [1, "...", ...rightRange];
+    }
+    if (showDotsLeft && showDotsRight) {
+      const middle = range(leftSiblingIdx, rightSiblingIdx);
+      return [1, "...", ...middle, "...", totalPageCount];
+    }
   }, [totalCount, currentPage, pageSize]);
-  return <div>pagination</div>;
+
+  return (
+    <div>
+      <div>sdasdaasd</div>
+    </div>
+  );
 }
 
 const range = (start: number, end: number) => {
