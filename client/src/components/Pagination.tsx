@@ -1,3 +1,4 @@
+import { NavigateOptions, URLSearchParamsInit } from "react-router-dom";
 import { PaginationPropTypes, usePagination } from "../hooks/usePagination";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 
@@ -23,7 +24,11 @@ export function Pagination({
         columnGap: "1rem",
       }}
     >
-      <button disabled={currentPage === 1} className="button __vsc">
+      <button
+        disabled={currentPage === 1}
+        className="button __vsc"
+        onClick={() => handlePageChange(currentPage - 1)}
+      >
         <MdNavigateBefore />
       </button>
       {paginationRange?.map((page, index) => {
@@ -40,6 +45,7 @@ export function Pagination({
       })}
       <button
         disabled={currentPage === Math.floor(totalCount / pageSize)}
+        onClick={() => handlePageChange(currentPage + 1)}
         className="button __vsc"
       >
         <MdNavigateNext />

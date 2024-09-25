@@ -11,6 +11,7 @@ type UrlList = {
   shortUrl: string;
   views: number;
 }[];
+
 function Urls() {
   const [loading, setLoading] = useState(true);
   const [urls, setUrls] = useState<{ urls: UrlList; pages: { total: number } }>(
@@ -19,6 +20,10 @@ function Urls() {
   const [searchParams, setSearchParams] = useSearchParams();
   const num = parseInt(searchParams.get("page") || "");
   const page = typeof num && !isNaN(num) ? num : 1;
+
+  const handlePageChange = (value: number) => {
+    setSearchParams({ page: value.toString() });
+  };
 
   useEffect(() => {
     client
@@ -36,8 +41,10 @@ function Urls() {
         setUrls({ urls: [], pages: { total: 0 } });
       })
       .finally(() => setLoading(false));
-  }, []);
+  }, [page]);
+
   if (loading) return <div>loading...</div>;
+
   return (
     <div className="h-container">
       <div className="centered-container">
@@ -59,6 +66,7 @@ function Urls() {
               totalCount={85}
               currentPage={page}
               pageSize={10}
+              handlePageChange={handlePageChange}
             ></Pagination>
           )}
         </div>
