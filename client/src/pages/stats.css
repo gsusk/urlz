@@ -1,31 +1,29 @@
 .sepline {
-  background-color: var(--main-pink-color);
-  border-radius: 1rem 1rem 0 0;
-  font-size: 2rem;
-  display: flex;
-  justify-content: center;
-  margin: 0;
-  margin-top: 2rem;
+    background-color: var(--main-pink-color);
+    border-radius: 1rem 1rem 0 0;
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    margin-top: 2rem;
 }
 
 #chartdiv {
-  padding: 3rem 0;
-  margin-bottom: 6rem;
+    padding: 3rem 0;
+    margin-bottom: 6rem;
 }
 
 .clicks-ss {
-  margin-bottom: 4rem;
+    margin-bottom: 4rem;
 }
 
-  
 th {
-  border-bottom: 1px solid #ddd; /* Header cell borders */
-  border-collapse:collapse; 
-  margin-bottom: 5rem;
-  padding: 12px; /* Padding inside header cells */
+    border-bottom: 1px solid #ddd; /* Header cell borders */
+    border-collapse: collapse;
+    margin-bottom: 5rem;
+    padding: 12px; /* Padding inside header cells */
 }
 
 td {
-  padding: 1rem 0;
+    padding: 1rem 0;
 }
-

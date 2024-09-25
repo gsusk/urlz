@@ -1,38 +1,48 @@
 import { PaginationPropTypes, usePagination } from "../hooks/usePagination";
+import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
+
+type PaginationPagePropTypes = PaginationPropTypes & {
+  handlePageChange: (value: number) => void;
+};
 
 export function Pagination({
   totalCount,
   currentPage,
   pageSize,
-}: PaginationPropTypes) {
+  handlePageChange,
+}: PaginationPagePropTypes) {
   const paginationRange = usePagination({ totalCount, currentPage, pageSize });
   console.log("pagination upper comp", paginationRange);
   return (
     <div
       style={{
         width: "100%",
-        marginBottom: "3rem",
+        margin: "5rem 0",
+        display: "flex",
+        justifyContent: "center",
+        columnGap: "1rem",
       }}
     >
-      <button disabled={currentPage === 1}>Left</button>
+      <button disabled={currentPage === 1} className="button __vsc">
+        <MdNavigateBefore />
+      </button>
       {paginationRange?.map((page, index) => {
         return (
           <div key={index}>
             <button
               disabled={page === "..." || currentPage === page}
-              style={{
-                background: "transparent",
-                border: "none",
-                color: "red",
-              }}
+              className={`button __vsc pagbutt ${page === "..." ? "dot" : ""}`}
             >
               {page}
             </button>
           </div>
         );
       })}
-      <button disabled={currentPage === Math.floor(totalCount / pageSize)}>
-        Right
+      <button
+        disabled={currentPage === Math.floor(totalCount / pageSize)}
+        className="button __vsc"
+      >
+        <MdNavigateNext />
       </button>
     </div>
   );
