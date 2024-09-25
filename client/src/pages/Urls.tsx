@@ -17,7 +17,8 @@ function Urls() {
     { urls: [], pages: { total: 0 } },
   );
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get("page");
+  const num = parseInt(searchParams.get("page") || "");
+  const page = typeof num && !isNaN(num) ? num : 1;
 
   useEffect(() => {
     client
@@ -32,11 +33,10 @@ function Urls() {
       })
       .catch((err) => {
         console.log(err);
-        setUrls([]);
+        setUrls({ urls: [], pages: { total: 0 } });
       })
       .finally(() => setLoading(false));
   }, []);
-
   if (loading) return <div>loading...</div>;
   return (
     <div className="h-container">
@@ -57,7 +57,7 @@ function Urls() {
           {urls.pages.total && urls.pages.total > 10 && (
             <Pagination
               totalCount={85}
-              currentPage={parseInt("2")}
+              currentPage={page}
               pageSize={10}
             ></Pagination>
           )}
