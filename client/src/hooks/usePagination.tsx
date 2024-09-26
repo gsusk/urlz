@@ -39,7 +39,6 @@ export function usePagination({
       const middle = range(leftSiblingIdx, rightSiblingIdx);
       return [1, DOTS, ...middle, DOTS, totalPageCount];
     }
-    console.log("sds");
   }, [totalCount, currentPage, pageSize]);
   return paginationRange;
 }
