@@ -24,7 +24,9 @@ function Urls() {
   const handlePageChange = (value: number) => {
     setSearchParams({ page: value.toString() });
   };
+
   console.log("1 and outer: Urls");
+
   useEffect(() => {
     setLoading(true);
     client

@@ -1,4 +1,3 @@
-import { NavigateOptions, URLSearchParamsInit } from "react-router-dom";
 import { PaginationPropTypes, usePagination } from "../hooks/usePagination";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
 

@@ -1,5 +1,5 @@
 import UAParser from "ua-parser-js";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import client from "../services/axios";
 
 export type LogsPropType = {
@@ -68,10 +68,10 @@ function DetailedLogs({ details, url }: LogsPropType) {
             </tr>
           </thead>
           <tbody>
-            {details.map((row) => {
+            {details.map((row, idx) => {
               const parsedUA = new UAParser(row.user_agent);
               return (
-                <tr>
+                <tr key={idx}>
                   <td>{parsedUA.getBrowser().name ?? ""}</td>
                   <td>{parsedUA.getOS().name ?? ""}</td>
                   <td>{row.referrer ?? "-"}</td>
