@@ -10,12 +10,12 @@ import Verify from "./pages/Verify";
 import Authenticated from "./components/Authenticated";
 import EmailVerification from "./pages/EmailVerification";
 import Settings from "./pages/Settings";
-import Profile from "./components/Profile";
-import Security from "./components/Security";
-import Stats from "./pages/Stats";
 import { lazy, Suspense } from "react";
 
+const Stats = lazy(() => import("./pages/Stats"));
 const Urls = lazy(() => import("./pages/Urls"));
+const Profile = lazy(() => import("./components/Profile"));
+const Security = lazy(() => import("./components/Security"));
 
 function App() {
   return (
@@ -37,8 +37,22 @@ function App() {
             <Route element={<Authenticated />}>
               <Route path="/settings" element={<Settings />}>
                 <Route index element={<Navigate to="profile" />} />
-                <Route path="profile" element={<Profile />} />
-                <Route path="security" element={<Security />}></Route>
+                <Route
+                  path="profile"
+                  element={
+                    <Suspense fallback={<div>loading profile...</div>}>
+                      <Profile />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="security"
+                  element={
+                    <Suspense fallback={<div>loading security...</div>}>
+                      <Security />
+                    </Suspense>
+                  }
+                ></Route>
               </Route>
               <Route
                 path="/my-urls"
@@ -48,7 +62,14 @@ function App() {
                   </Suspense>
                 }
               ></Route>
-              <Route path="/stats" element={<Stats />}></Route>
+              <Route
+                path="/stats"
+                element={
+                  <Suspense fallback={<div>LOADING...</div>}>
+                    <Stats />
+                  </Suspense>
+                }
+              ></Route>
             </Route>
             {/* <Route path="*" element={<Navigate to="/" />} /> */}
           </Routes>
