@@ -1,5 +1,5 @@
 import UAParser from "ua-parser-js";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import client from "../services/axios";
 
 export type LogsPropType = {
@@ -15,7 +15,7 @@ export type LogsPropType = {
 // const logData = useMemo(() => {
 function DetailedLogs({ details, url }: LogsPropType) {
   const ref = useRef<HTMLAnchorElement>(null);
-  const handleClick = (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleClick = () => {
     client
       .get(`/url/${url}/download`, {
         __retry: false,

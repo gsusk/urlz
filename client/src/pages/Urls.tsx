@@ -23,14 +23,15 @@ function Urls() {
 
   const handlePageChange = (value: number) => {
     setSearchParams({ page: value.toString() });
+    setLoading(true);
   };
 
   console.log("1 and outer: Urls");
 
   useEffect(() => {
-    setLoading(true);
+    if (!loading) setLoading(true);
     client
-      .get(`http://localhost:8081/api/url?page=${page}`)
+      .get(`http://localhost:8081/api/url?page=${encodeURIComponent(page)}`)
       .then((response) => {
         const urls = response.data.urls.map((url: []) => ({
           ...url,
@@ -46,8 +47,12 @@ function Urls() {
       .finally(() => setLoading(false));
   }, [page]);
 
-  if (loading) return <div>loading...</div>;
+  if (loading) {
+    console.log("1: loading");
+    return <div>loading...</div>;
+  }
 
+  console.log("1: after loading");
   return (
     <div className="h-container">
       <div className="centered-container">

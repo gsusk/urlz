@@ -27,7 +27,7 @@ export default function Url({
     e.stopPropagation();
     setIsOpen(!isOpen);
   };
-
+  console.log("2: url section");
   useEffect(() => {
     const handleCLickOutside = (event: MouseEvent) => {
       if (
