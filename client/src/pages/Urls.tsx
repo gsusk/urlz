@@ -69,16 +69,14 @@ function Urls() {
           );
         })}
         <div>
-          {urls.pages.total &&
-            urls.pages.total > 10 &&
-            urls.urls.length > 0 && (
-              <Pagination
-                totalCount={urls.pages.total}
-                currentPage={page}
-                pageSize={10}
-                handlePageChange={handlePageChange}
-              ></Pagination>
-            )}
+          {urls.pages.total > 10 && urls.urls.length > 0 && (
+            <Pagination
+              totalCount={urls.pages.total}
+              currentPage={page}
+              pageSize={10}
+              handlePageChange={handlePageChange}
+            ></Pagination>
+          )}
         </div>
       </div>
     </div>
