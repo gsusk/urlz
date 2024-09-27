@@ -13,6 +13,7 @@ export default function Clicks({
   createdAt,
   originalUrl,
 }: PropType) {
+  console.log("2: clicks");
   return (
     <>
       <div className="click-counter-container">

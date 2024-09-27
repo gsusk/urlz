@@ -12,7 +12,9 @@ export type ScanDataType = {
 type PropTypes = { monthStats: ScanDataType[] };
 
 export default function ClickScan({ monthStats }: PropTypes) {
+  console.log("3: click-scan");
   useLayoutEffect(() => {
+    console.log("3.1: clickscan layout");
     if (!monthStats[0]) return;
     const root = am5.Root.new("chartdiv");
     root.setThemes([am5themes_Animated.new(root)]);
@@ -20,13 +22,13 @@ export default function ClickScan({ monthStats }: PropTypes) {
     const chart = root.container.children.push(
       am5xy.XYChart.new(root, {
         pinchZoomX: true,
-      })
+      }),
     );
 
     const yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         renderer: am5xy.AxisRendererY.new(root, {}),
-      })
+      }),
     );
 
     yAxis.get("renderer").labels.template.setAll({
@@ -39,7 +41,7 @@ export default function ClickScan({ monthStats }: PropTypes) {
         baseInterval: { timeUnit: "day", count: 1 },
         renderer: am5xy.AxisRendererX.new(root, {}),
         tooltip: am5.Tooltip.new(root, {}),
-      })
+      }),
     );
 
     xAxis.get("renderer").labels.template.setAll({
@@ -58,7 +60,7 @@ export default function ClickScan({ monthStats }: PropTypes) {
         tooltip: am5.Tooltip.new(root, {
           labelText: "{valueY}",
         }),
-      })
+      }),
     );
 
     series.fills.template.setAll({
@@ -80,7 +82,7 @@ export default function ClickScan({ monthStats }: PropTypes) {
           strokeWidth: 1, // Border thickness
           tooltipText: "{valueY}",
         }),
-      })
+      }),
     );
 
     const fillArray = Array.from({ length: 30 }, (_, i) => ({

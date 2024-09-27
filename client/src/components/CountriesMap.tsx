@@ -8,7 +8,9 @@ export type CountryMapPropTypes = {
 };
 
 function CountriesMap({ stats }: CountryMapPropTypes) {
+  console.log("4.0: countries map out");
   useLayoutEffect(() => {
+    console.log("4.1: counties map");
     const root = am5.Root.new("chartsection");
     const chart = root.container.children.push(
       am5map.MapChart.new(root, {
@@ -19,7 +21,7 @@ function CountriesMap({ stats }: CountryMapPropTypes) {
         panY: "none",
         maxPanOut: 0,
         layer: -1,
-      })
+      }),
     );
 
     const polygonSeries = chart.series.push(
@@ -27,7 +29,7 @@ function CountriesMap({ stats }: CountryMapPropTypes) {
         geoJSON: am5geodata_worldLow,
         stroke: am5.color(0xffffff),
         fill: am5.color(0xffffff),
-      })
+      }),
     );
 
     polygonSeries.mapPolygons.template.setAll({
