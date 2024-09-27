@@ -8,9 +8,7 @@ export type CountryMapPropTypes = {
 };
 
 function CountriesMap({ stats }: CountryMapPropTypes) {
-  console.log("4.0: countries map out");
   useLayoutEffect(() => {
-    console.log("4.1: counties map");
     const root = am5.Root.new("chartsection");
     const chart = root.container.children.push(
       am5map.MapChart.new(root, {

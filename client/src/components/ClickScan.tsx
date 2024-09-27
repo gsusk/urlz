@@ -12,9 +12,7 @@ export type ScanDataType = {
 type PropTypes = { monthStats: ScanDataType[] };
 
 export default function ClickScan({ monthStats }: PropTypes) {
-  console.log("3: click-scan");
   useLayoutEffect(() => {
-    console.log("3.1: clickscan layout");
     if (!monthStats[0]) return;
     const root = am5.Root.new("chartdiv");
     root.setThemes([am5themes_Animated.new(root)]);

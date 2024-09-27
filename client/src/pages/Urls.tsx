@@ -26,8 +26,6 @@ function Urls() {
     setLoading(true);
   };
 
-  console.log("1 and outer: Urls");
-
   useEffect(() => {
     if (!loading) setLoading(true);
     client
@@ -41,18 +39,15 @@ function Urls() {
         setUrls({ urls, pages: { total: response.data.pages.total } });
       })
       .catch((err) => {
-        console.log(err);
         setUrls({ urls: [], pages: { total: 0 } });
       })
       .finally(() => setLoading(false));
   }, [page]);
 
   if (loading) {
-    console.log("1: loading");
     return <div>loading...</div>;
   }
 
-  console.log("1: after loading");
   return (
     <div className="h-container">
       <div className="centered-container">

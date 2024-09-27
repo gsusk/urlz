@@ -38,23 +38,20 @@ function DetailedLogs({ details, url }: LogsPropType) {
         console.log(err);
       });
   };
-  console.log("5: detailed logs");
-  // const parsedDetails = details.map((row) => {
-  // return (<div>sds</div>)
-  // })
-  // }, [details])
+  console.log("2");
   return (
     <div>
       <div>
         <button type="button" onClick={handleClick}>
           Download CSV
         </button>
-        {/*
-          <a
-            download="data.csv"
-            href="http://localhost:8081/api/url/download"
-          ></a>
-        */}
+
+        <a
+          download="data.csv"
+          href={`http://localhost:8081/api/url/${url}/download`}
+        >
+          ss
+        </a>
         <a style={{ visibility: "hidden" }} ref={ref}></a>
       </div>
       <div>

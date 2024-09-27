@@ -11,11 +11,13 @@ import { StrictMode } from "react";
 const persistor = persistStore(store);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <PersistGate persistor={persistor}>
-    <Provider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </Provider>
-  </PersistGate>,
+  <StrictMode>
+    <PersistGate persistor={persistor}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    </PersistGate>
+  </StrictMode>,
 );

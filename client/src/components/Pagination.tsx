@@ -12,7 +12,6 @@ export function Pagination({
   handlePageChange,
 }: PaginationPagePropTypes) {
   const paginationRange = usePagination({ totalCount, currentPage, pageSize });
-  console.log("pagination upper comp", paginationRange);
   return (
     <div
       style={{
