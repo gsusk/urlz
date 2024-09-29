@@ -172,7 +172,7 @@ export const getUrlStatsById = async (
 
     const dailyClicks = await prisma.$queryRaw`
       SELECT DATE("visitedAt") as date, COUNT(*)::int as views FROM "UrlAnalytics" JOIN "Url" ON "UrlAnalytics"."urlId" = "Url"."id"
-      WHERE "Url"."shortUrl" = ${urlId} AND "UrlAnalytics"."visitedAt" >= NOW() - interval '30 days'
+      WHERE "Url"."shortUrl" = ${urlId} OR "Url"."custom" = ${urlId} AND "UrlAnalytics"."visitedAt" >= NOW() - interval '30 days'
       GROUP BY date ORDER BY date;
     `;
     const analytics = await prisma.urlAnalytics.groupBy({
