@@ -251,8 +251,14 @@ export const generateCSVFromURLDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
+    console.log(urlId, request.user);
     const urlData = await prisma.urlAnalytics.findMany({
-      where: { url: { shortUrl: urlId, userId: request.user?.id } },
+      where: {
+        url: {
+          OR: [{ shortUrl: urlId }, { custom: urlId }],
+          userId: request.user?.id,
+        },
+      },
       select: {
         country: true,
         local_time: true,
@@ -261,6 +267,7 @@ export const generateCSVFromURLDetails = async (
         user_agent: true,
       },
     });
+
     response.setHeader('Content-Type', 'text/csv');
     response.setHeader('Content-Disposition', 'attachment;filename="data.csv"');
     response.write('country,local_time,referrer,visitedAt,user_agent,\n');
