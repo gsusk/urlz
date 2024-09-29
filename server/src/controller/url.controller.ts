@@ -149,6 +149,7 @@ export const getUrlsByUserId = async (
       },
       take: limit,
       skip: offset,
+      orderBy: { analytics: { _count: 'desc' } },
     });
     response.json({
       urls,
@@ -208,7 +209,7 @@ export const getUrlDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
-    const urlDetails = await prisma.url.findUnique({
+    const urlDetails = await prisma.url.findFirst({
       select: {
         shortUrl: true,
         custom: true,
@@ -224,7 +225,12 @@ export const getUrlDetails = async (
           take: 10,
         },
       },
-      where: { shortUrl: urlId, userId: request.user?.id },
+      where: {
+        OR: [
+          { custom: urlId },
+          { shortUrl: urlId }, // Second condition (alternative)
+        ],
+      },
     });
 
     response.json({ details: urlDetails });

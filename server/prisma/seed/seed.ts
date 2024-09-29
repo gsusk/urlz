@@ -82,7 +82,10 @@ async function main() {
     //
     const ip = ipList[Math.floor(Math.random() * ipList.length)];
     const dataIp: Record<string, unknown> = await ipToGeolocation(ip).catch(
-      () => null,
+      (e) => {
+        console.log('error', e);
+        return null;
+      },
     );
     let ipdata = {};
     if (dataIp) {
