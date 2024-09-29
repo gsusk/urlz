@@ -177,7 +177,12 @@ export const getUrlStatsById = async (
     `;
     const analytics = await prisma.urlAnalytics.groupBy({
       by: ['country', 'country_code'],
-      where: { url: { shortUrl: urlId, userId: request.user?.id } },
+      where: {
+        url: {
+          OR: [{ shortUrl: urlId }, { custom: urlId }],
+          userId: request.user?.id,
+        },
+      },
       _count: true,
     });
 
