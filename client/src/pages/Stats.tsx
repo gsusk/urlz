@@ -44,7 +44,7 @@ function Stats() {
           client.get(`/url/${dataParam}/details`),
         ]);
 
-        setUrlStats(statsResponse.data);
+        setUrlStats(statsResponse.data ?? []);
         const detailsData = detailsResponse.data.details;
         setUrlDetails({
           ...detailsData,

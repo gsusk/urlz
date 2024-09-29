@@ -13,7 +13,6 @@ type PropTypes = { monthStats: ScanDataType[] };
 
 export default function ClickScan({ monthStats }: PropTypes) {
   useLayoutEffect(() => {
-    if (!monthStats[0]) return;
     const root = am5.Root.new("chartdiv");
     root.setThemes([am5themes_Animated.new(root)]);
 
@@ -26,6 +25,13 @@ export default function ClickScan({ monthStats }: PropTypes) {
     const yAxis = chart.yAxes.push(
       am5xy.ValueAxis.new(root, {
         renderer: am5xy.AxisRendererY.new(root, {}),
+        min: 0,
+        paddingBottom: 20,
+        extraMax: 0.05,
+        maxPrecision: 0,
+        numberFormatter: am5.NumberFormatter.new(root, {
+          numberFormat: "#", // This format shows only whole numbers
+        }),
       }),
     );
 
@@ -71,18 +77,6 @@ export default function ClickScan({ monthStats }: PropTypes) {
       visible: true, // Make sure the fill is visible"
     });
 
-    series.bullets.push(() =>
-      am5.Bullet.new(root, {
-        sprite: am5.Circle.new(root, {
-          radius: 5, // Size of the circle (dot)
-          fill: am5.color(0xffffff), // Fill color (white)
-          stroke: am5.color(0x67b7dc), // Border color (same as line)
-          strokeWidth: 1, // Border thickness
-          tooltipText: "{valueY}",
-        }),
-      }),
-    );
-
     const fillArray = Array.from({ length: 30 }, (_, i) => ({
       date: new Date(new Date().setDate(i + 1)).toISOString(), // Initialize with dates for each day of the month
       views: 0,
@@ -107,7 +101,6 @@ export default function ClickScan({ monthStats }: PropTypes) {
     });
 
     series.data.setAll(data);
-
     return () => root.dispose();
   }, [monthStats]);
 
