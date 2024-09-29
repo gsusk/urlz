@@ -76,6 +76,17 @@ export default function ClickScan({ monthStats }: PropTypes) {
       }),
       visible: true, // Make sure the fill is visible"
     });
+    series.bullets.push(function (root, series, dataItem) {
+      if (dataItem.dataContext?.views > 0) {
+        return am5.Bullet.new(root, {
+          sprite: am5.Circle.new(root, {
+            fill: series.get("fill"),
+            radius: 5,
+            tooltipText: "{valueY}",
+          }),
+        });
+      }
+    });
 
     const fillArray = Array.from({ length: 30 }, (_, i) => ({
       date: new Date(new Date().setDate(i + 1)).toISOString(), // Initialize with dates for each day of the month
@@ -96,7 +107,10 @@ export default function ClickScan({ monthStats }: PropTypes) {
           views,
         };
       } else {
-        return { date: new Date(dayData.date).getTime(), views: 0 };
+        return {
+          date: new Date(dayData.date).getTime(),
+          views: 0,
+        };
       }
     });
 

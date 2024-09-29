@@ -34,9 +34,6 @@ function CountriesMap({ stats }: CountryMapPropTypes) {
       stroke: am5.color(0x000000),
       strokeWidth: 1,
       fillOpacity: 0.5,
-    });
-
-    polygonSeries.mapPolygons.template.setAll({
       templateField: "polygonSettings",
     });
 
