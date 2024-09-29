@@ -38,7 +38,7 @@ function DetailedLogs({ details, url }: LogsPropType) {
         console.log(err);
       });
   };
-  console.log("2");
+
   return (
     <div>
       <div>
