@@ -3,6 +3,7 @@ import * as am5 from "@amcharts/amcharts5";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 
 import { useLayoutEffect } from "react";
+import { fillMissingDates } from "../utils/filldates";
 
 export type ScanDataType = {
   date: string;
@@ -88,33 +89,9 @@ export default function ClickScan({ monthStats }: PropTypes) {
       }
     });
 
-    const fillArray = Array.from({ length: 30 }, (_, i) => ({
-      date: new Date(new Date().setDate(i + 1)).toISOString(), // Initialize with dates for each day of the month
-      views: 0,
-    }));
+    const filledData = fillMissingDates(monthStats);
 
-    let pos = 0;
-
-    const data = fillArray.map((dayData, i) => {
-      if (
-        pos < monthStats.length &&
-        i + 1 === new Date(monthStats[pos].date).getDate()
-      ) {
-        const { date, views } = monthStats[pos];
-        pos++;
-        return {
-          date: new Date(date).getTime(),
-          views,
-        };
-      } else {
-        return {
-          date: new Date(dayData.date).getTime(),
-          views: 0,
-        };
-      }
-    });
-
-    series.data.setAll(data);
+    series.data.setAll(filledData);
     return () => root.dispose();
   }, [monthStats]);
 
