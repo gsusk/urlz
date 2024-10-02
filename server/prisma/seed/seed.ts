@@ -59,52 +59,52 @@ async function main() {
   const userID = '8ae72753-6310-4ebe-9783-acae31fce533';
   // await prisma.url.deleteMany({ where: { userId: userID } });
 
-  for (let i = 0; i < 2000; i++) {
-    //   const data = Array.from({ length: 5 }, (_, i) => ({
-    //     userId: userID,
-    //     original: d('https') + '.com',
-    //   }));
-    //   const urlid = await prisma.url.createManyAndReturn({
-    //     data: data,
-    //     select: { id: true },
-    //   });
-    //   const records: Promise<unknown>[] = [];
-    //   for (const record of urlid) {
-    //     const d = prisma.url.update({
-    //       where: { id: record.id },
-    //       data: {
-    //         custom: encodeBase62(record.id),
-    //       },
-    //     });
-    //     records.push(d);
-    //   }
-    //   await Promise.all(records).catch((e) => console.log('this failed!:', e));
-    //
-    const ip = ipList[Math.floor(Math.random() * ipList.length)];
-    const dataIp: Record<string, unknown> = await ipToGeolocation(ip).catch(
-      (e) => {
-        console.log('error', e);
-        return null;
-      },
-    );
-    let ipdata = {};
-    if (dataIp) {
-      const { zip, is_dst, local_time_unix, state, city, timezone, ...rest } =
-        dataIp;
-      ipdata = rest;
-    }
-    const dataFill = Array.from({ length: 5 }, (_, i) => ({
-      urlId: index[Math.floor(Math.random() * 3)],
-      ...ipdata,
-      referrer: [undefined, 'http://discord.com', 'http://tiktok.com'][
-        Math.floor(Math.random() * 3)
-      ],
-      user_agent: agent[Math.floor(Math.random() * 3)],
+  for (let i = 0; i < 92000; i++) {
+    const data = Array.from({ length: 5 }, (_, i) => ({
+      userId: userID,
+      original: d('https') + '.com',
     }));
-
-    await prisma.urlAnalytics.createMany({
-      data: dataFill,
+    const urlid = await prisma.url.createManyAndReturn({
+      data: data,
+      select: { id: true },
     });
+    const records: Promise<unknown>[] = [];
+    for (const record of urlid) {
+      const d = prisma.url.update({
+        where: { id: record.id },
+        data: {
+          custom: encodeBase62(record.id),
+        },
+      });
+      records.push(d);
+    }
+    await Promise.all(records).catch((e) => console.log('this failed!:', e));
+
+    // const ip = ipList[Math.floor(Math.random() * ipList.length)];
+    // const dataIp: Record<string, unknown> = await ipToGeolocation(ip).catch(
+    //   (e) => {
+    //     console.log('error', e);
+    //     return null;
+    //   },
+    // );
+    // let ipdata = {};
+    // if (dataIp) {
+    //   const { zip, is_dst, local_time_unix, state, city, timezone, ...rest } =
+    //     dataIp;
+    //   ipdata = rest;
+    // }
+    // const dataFill = Array.from({ length: 5 }, (_, i) => ({
+    //   urlId: index[Math.floor(Math.random() * 3)],
+    //   ...ipdata,
+    //   referrer: [undefined, 'http://discord.com', 'http://tiktok.com'][
+    //     Math.floor(Math.random() * 3)
+    //   ],
+    //   user_agent: agent[Math.floor(Math.random() * 3)],
+    // }));
+
+    // await prisma.urlAnalytics.createMany({
+    //   data: dataFill,
+    // });
   }
 }
 

@@ -29,7 +29,14 @@ app.use(
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(express.json());
 app.use(cookieParser());
-app.use('/public', express.static('public'));
+app.use(
+  '/public',
+  express.static('public', {
+    setHeaders: (res, _path, _stat) => {
+      res.set('Cache-Control', 'private, max-age=3600');
+    },
+  }),
+);
 app.use('/uploads', express.static('uploads'));
 app.use(express.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);

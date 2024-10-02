@@ -169,12 +169,12 @@ export const getUrlStatsById = async (
 ) => {
   try {
     const urlId = request.params.url;
-
     const dailyClicks = await prisma.$queryRaw`
       SELECT DATE("visitedAt") as date, COUNT(*)::int as views FROM "UrlAnalytics" JOIN "Url" ON "UrlAnalytics"."urlId" = "Url"."id"
       WHERE "Url"."shortUrl" = ${urlId} OR "Url"."custom" = ${urlId} AND "UrlAnalytics"."visitedAt" >= NOW() - interval '30 days'
       GROUP BY date ORDER BY date;
     `;
+
     const analytics = await prisma.urlAnalytics.groupBy({
       by: ['country', 'country_code'],
       where: {
@@ -237,7 +237,6 @@ export const getUrlDetails = async (
         ],
       },
     });
-
     response.json({ details: urlDetails });
   } catch (err) {
     next(err);
@@ -251,7 +250,6 @@ export const generateCSVFromURLDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
-    console.log(urlId, request.user);
     const urlData = await prisma.urlAnalytics.findMany({
       where: {
         url: {
