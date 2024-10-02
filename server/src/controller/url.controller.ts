@@ -151,6 +151,7 @@ export const getUrlsByUserId = async (
       skip: offset,
       orderBy: { analytics: { _count: 'desc' } },
     });
+    response.setHeader('Cache-Control', 'private, max-age=360');
     response.json({
       urls,
       pages: {
