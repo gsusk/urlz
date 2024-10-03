@@ -9,7 +9,6 @@ import {
 } from '@/validations/schemas';
 import { payloadData } from '@/utils/token.utils';
 import { FilteredGeoData } from '@/utils/ip';
-import { createReadStream, createWriteStream } from 'fs';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -253,12 +252,6 @@ export const generateCSVFromURLDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
-    //We need to get the data to download in a way that is not too big
-    //So we need to limit the data to the last 30 days
-    //We also need to avoid getting the server too bloated with data
-    //so we need to simulate a stream of data from prisma calling it in chunks
-    //using the cursor:
-    //https://www.prisma.io/docs/concepts/components/prisma-client/cursor-pagination
     let cursor = undefined;
     let run = true;
     response.setHeader('Content-Type', 'text/csv');
