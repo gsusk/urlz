@@ -253,7 +253,7 @@ export const generateCSVFromURLDetails = async (
   try {
     const urlId = request.params.url;
     let cursor = undefined;
-    let run = true;
+    const run = true;
     response.setHeader('Content-Type', 'text/csv');
     response.setHeader('Content-Disposition', 'attachment; filename=data.csv');
     response.write('id,country,local_time,referrer,visitedAt,user_agent\n');
@@ -274,10 +274,12 @@ export const generateCSVFromURLDetails = async (
           user_agent: true,
         },
         ...(cursor && {
-          cursor: {
-            id: cursor,
-          },
-          skip: 1,
+          cursor: cursor
+            ? {
+                visitedAt: cursor.visitedAt,
+                id: cursor.id,
+              }
+            : undefined,
         }),
         take: 100,
         orderBy: {
@@ -288,6 +290,7 @@ export const generateCSVFromURLDetails = async (
       if (urlData.length === 0) {
         break;
       }
+      console.log('haaaaaa', urlData[100 - 1]);
       const csvRow = urlData.map((row) => {
         return `${row.country},${row.local_time},${row.referrer},${row.visitedAt},${row.user_agent}\n`;
       });
@@ -299,11 +302,17 @@ export const generateCSVFromURLDetails = async (
         });
       }
 
-      cursor = urlData[100 - 1]?.id;
-      if (!cursor) {
-        run = false;
+      cursor = {
+        visitedAt: urlData[100 - 1]?.visitedAt,
+        id: urlData[100 - 1]?.id,
+      };
+
+      // If cursor is not defined (i.e., no more data to paginate), exit the loop
+      if (!cursor.id) {
+        break;
       }
     }
+
     response.end();
   } catch (err) {
     return next(err);

@@ -59,26 +59,26 @@ async function main() {
   const userID = '8ae72753-6310-4ebe-9783-acae31fce533';
   // await prisma.url.deleteMany({ where: { userId: userID } });
 
-  for (let i = 0; i < 92000; i++) {
-    const data = Array.from({ length: 5 }, (_, i) => ({
-      userId: userID,
-      original: d('https') + '.com',
-    }));
-    const urlid = await prisma.url.createManyAndReturn({
-      data: data,
-      select: { id: true },
-    });
-    const records: Promise<unknown>[] = [];
-    for (const record of urlid) {
-      const d = prisma.url.update({
-        where: { id: record.id },
-        data: {
-          custom: encodeBase62(record.id),
-        },
-      });
-      records.push(d);
-    }
-    await Promise.all(records).catch((e) => console.log('this failed!:', e));
+  // for (let i = 0; i < 92000; i++) {
+  //   const data = Array.from({ length: 5 }, (_, i) => ({
+  //     userId: userID,
+  //     original: d('https') + '.com',
+  //   }));
+  //   const urlid = await prisma.url.createManyAndReturn({
+  //     data: data,
+  //     select: { id: true },
+  //   });
+  //   const records: Promise<unknown>[] = [];
+  //   for (const record of urlid) {
+  //     const d = prisma.url.update({
+  //       where: { id: record.id },
+  //       data: {
+  //         custom: encodeBase62(record.id),
+  //       },
+  //     });
+  //     records.push(d);
+  //   }
+  //   await Promise.all(records).catch((e) => console.log('this failed!:', e));
 
     // const ip = ipList[Math.floor(Math.random() * ipList.length)];
     // const dataIp: Record<string, unknown> = await ipToGeolocation(ip).catch(
