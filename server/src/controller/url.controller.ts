@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+
 import { prisma } from '../db';
 import { HttpStatus } from '../constants/httpStatus';
 import { AppError } from '../utils/customErrors';
@@ -8,6 +9,7 @@ import {
 } from '@/validations/schemas';
 import { payloadData } from '@/utils/token.utils';
 import { FilteredGeoData } from '@/utils/ip';
+import { createReadStream, createWriteStream } from 'fs';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -151,7 +153,6 @@ export const getUrlsByUserId = async (
       skip: offset,
       orderBy: { analytics: { _count: 'desc' } },
     });
-    response.setHeader('Cache-Control', 'private, max-age=360');
     response.json({
       urls,
       pages: {
@@ -197,7 +198,7 @@ export const getUrlStatsById = async (
         views: stats._count,
       };
     });
-
+    response.setHeader('Cache-Control', 'no-cache');
     response.json({
       monthStats: dailyClicks,
       totalClicks,
@@ -238,6 +239,7 @@ export const getUrlDetails = async (
         ],
       },
     });
+    response.setHeader('Cache-Control', 'no-cache');
     response.json({ details: urlDetails });
   } catch (err) {
     next(err);
@@ -251,35 +253,65 @@ export const generateCSVFromURLDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
-    const urlData = await prisma.urlAnalytics.findMany({
-      where: {
-        url: {
-          OR: [{ shortUrl: urlId }, { custom: urlId }],
-          userId: request.user?.id,
-        },
-      },
-      select: {
-        country: true,
-        local_time: true,
-        referrer: true,
-        visitedAt: true,
-        user_agent: true,
-      },
-    });
-
+    //We need to get the data to download in a way that is not too big
+    //So we need to limit the data to the last 30 days
+    //We also need to avoid getting the server too bloated with data
+    //so we need to simulate a stream of data from prisma calling it in chunks
+    //using the cursor:
+    //https://www.prisma.io/docs/concepts/components/prisma-client/cursor-pagination
+    let cursor = undefined;
+    let run = true;
     response.setHeader('Content-Type', 'text/csv');
-    response.setHeader('Content-Disposition', 'attachment;filename="data.csv"');
-    response.write('country,local_time,referrer,visitedAt,user_agent,\n');
-    for (const row of urlData) {
-      const csvRow = `${row.country},${row.local_time},${row.referrer},${row.visitedAt},${row.user_agent},\n`;
-      const isWriteable = response.write(csvRow);
+    response.setHeader('Content-Disposition', 'attachment; filename=data.csv');
+    response.write('id,country,local_time,referrer,visitedAt,user_agent\n');
+    while (run) {
+      const urlData = await prisma.urlAnalytics.findMany({
+        where: {
+          url: {
+            OR: [{ shortUrl: urlId }, { custom: urlId }],
+            userId: request.user?.id,
+          },
+        },
+        select: {
+          country: true,
+          id: true,
+          local_time: true,
+          referrer: true,
+          visitedAt: true,
+          user_agent: true,
+        },
+        ...(cursor && {
+          cursor: {
+            id: cursor,
+          },
+          skip: 1,
+        }),
+        take: 100,
+        orderBy: {
+          id: 'desc',
+        },
+      });
+
+      if (urlData.length === 0) {
+        break;
+      }
+      const csvRow = urlData.map((row) => {
+        return `${row.country},${row.local_time},${row.referrer},${row.visitedAt},${row.user_agent}\n`;
+      });
+
+      const isWriteable = response.write(csvRow.join(''));
       if (!isWriteable) {
         await new Promise((resolve) => {
-          response.once('drain', resolve);
+          response.once('drain', resolve); // Resolve when the response is drained
         });
       }
+
+      cursor = urlData[100 - 1]?.id;
+      if (!cursor) {
+        run = false;
+      }
     }
-    return response.end();
+    response.end();
   } catch (err) {
     return next(err);
   }

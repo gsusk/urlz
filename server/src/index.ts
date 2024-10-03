@@ -8,14 +8,9 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import { geolocation } from './utils/ip';
 
-process
-  .on('unhandledRejection', (reason, p) => {
-    console.error(reason, 'Unhandled Rejection at Promise', p);
-  })
-  .on('uncaughtException', (err) => {
-    console.error(err, 'Uncaught Exception thrown');
-    process.exit(1);
-  });
+process.on('unhandledRejection', (reason, p) => {
+  console.error(reason, 'Unhandled Rejection at Promise', p);
+});
 
 const app = express();
 
@@ -32,8 +27,9 @@ app.use(cookieParser());
 app.use(
   '/public',
   express.static('public', {
+    etag: true,
     setHeaders: (res, _path, _stat) => {
-      res.set('Cache-Control', 'private, max-age=3600');
+      res.set('Cache-Control', 'max-age=0, must-revalidate, public');
     },
   }),
 );
