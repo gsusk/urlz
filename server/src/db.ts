@@ -8,6 +8,10 @@ export const prisma = new PrismaClient({
 
 const redis = new Redis();
 
+redis.on('connect', () => {
+  console.log('Redis Client Connected');
+});
+
 redis.on('error', (err) => {
   console.log('Redis Client Error', err);
   process.exit(1);
