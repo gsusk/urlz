@@ -147,7 +147,6 @@ export const getUrlsByUserId = async (
     const data = await redis.get(hash);
 
     if (data) {
-      console.log('==>', data, 'leaving');
       return response.status(200).json(JSON.parse(data || '{}'));
     }
 
@@ -165,7 +164,11 @@ export const getUrlsByUserId = async (
       orderBy: { analytics: { _count: 'desc' } },
     });
 
-    await redis.set(hash, JSON.stringify({ urls, pages: { total: count } }));
+    await redis.setex(
+      hash,
+      20,
+      JSON.stringify({ urls, pages: { total: count } }),
+    );
 
     response.json({
       urls,
