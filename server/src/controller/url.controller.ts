@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 
-import { prisma } from '../db';
+import { prisma, redis } from '../db';
 import { HttpStatus } from '../constants/httpStatus';
 import { AppError } from '../utils/customErrors';
 import {
@@ -9,6 +9,7 @@ import {
 } from '@/validations/schemas';
 import { payloadData } from '@/utils/token.utils';
 import { FilteredGeoData } from '@/utils/ip';
+import { createHash } from 'crypto';
 
 const BASE62C =
   'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -139,6 +140,17 @@ export const getUrlsByUserId = async (
       ? parseInt(request.query.page as string)
       : undefined;
     const offset = page && page > 1 ? limit * (page - 1) : undefined;
+    const hash = createHash('sha256')
+      .update(id + request.originalUrl)
+      .digest('hex');
+
+    const data = await redis.get(hash);
+
+    if (data) {
+      console.log('==>', data, 'leaving');
+      return response.status(200).json(JSON.parse(data || '{}'));
+    }
+
     const count = await prisma.url.count({ where: { userId: id } });
     const urls = await prisma.url.findMany({
       where: { userId: id },
@@ -152,6 +164,9 @@ export const getUrlsByUserId = async (
       skip: offset,
       orderBy: { analytics: { _count: 'desc' } },
     });
+
+    await redis.set(hash, JSON.stringify({ urls, pages: { total: count } }));
+
     response.json({
       urls,
       pages: {
