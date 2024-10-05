@@ -5,7 +5,6 @@ import type { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
-import { createHash } from 'crypto';
 
 export async function getUserProfile(
   request: Request & payloadData,
@@ -88,6 +87,18 @@ export async function updateUserProfile(
     setTokens(response, accessToken, refreshToken);
 
     const { isVerified: _, id: __, ...rest } = user;
+
+    await redis.setex(
+      'profile:' + user.username,
+      60 * 60,
+      JSON.stringify({
+        ...rest,
+        profilePic:
+          rest.profilePic ||
+          'http://localhost:8081/public/default-profile-photo.jpg',
+      }),
+    );
+
     return response.json({
       ...rest,
       profilePic:
