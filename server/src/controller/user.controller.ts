@@ -28,7 +28,16 @@ export async function getUserProfile(
     if (!user)
       return next(new AppError('User not found', HttpStatus.NOT_FOUND));
 
-    await redis.setex('profile:' + username, 60 * 60, JSON.stringify(user));
+    await redis.setex(
+      'profile:' + username,
+      60 * 60,
+      JSON.stringify({
+        ...user,
+        profilePic:
+          user.profilePic ||
+          'http://localhost:8081/public/default-profile-photo.jpg',
+      }),
+    );
 
     return response.json({
       ...user,
