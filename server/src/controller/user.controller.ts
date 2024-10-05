@@ -1,10 +1,11 @@
 import { AppError } from '../utils/customErrors';
-import { prisma } from '../db';
+import { prisma, redis } from '../db';
 import { buildTokens, setTokens, type payloadData } from '../utils/token.utils';
 import type { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../constants/httpStatus';
 import type { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { createHash } from 'crypto';
 
 export async function getUserProfile(
   request: Request & payloadData,
@@ -14,6 +15,11 @@ export async function getUserProfile(
   try {
     const { username } = request.user!;
 
+    const cachedProfile = await redis.get('profile:' + username);
+    if (cachedProfile) {
+      return response.json(JSON.parse(cachedProfile));
+    }
+
     const user = await prisma.user.findUnique({
       where: { username },
       select: { username: true, email: true, profilePic: true },
@@ -21,6 +27,8 @@ export async function getUserProfile(
 
     if (!user)
       return next(new AppError('User not found', HttpStatus.NOT_FOUND));
+
+    await redis.setex('profile:' + username, 60 * 60, JSON.stringify(user));
 
     return response.json({
       ...user,
