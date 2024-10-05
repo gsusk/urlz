@@ -170,14 +170,14 @@ export const getUrlsByUserId = async (
       JSON.stringify({ urls, pages: { total: count } }),
     );
 
-    response.json({
+    return response.json({
       urls,
       pages: {
         total: count,
       },
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -188,6 +188,16 @@ export const getUrlStatsById = async (
 ) => {
   try {
     const urlId = request.params.url;
+    const hash = createHash('sha256')
+      .update(urlId + request.originalUrl)
+      .digest('hex');
+
+    const cache = await redis.get(hash);
+
+    if (cache) {
+      return response.json(JSON.parse(cache || '{}'));
+    }
+
     const dailyClicks = await prisma.$queryRaw`
       SELECT DATE("visitedAt") as date, COUNT(*)::int as views FROM "UrlAnalytics" JOIN "Url" ON "UrlAnalytics"."urlId" = "Url"."id"
       WHERE "Url"."shortUrl" = ${urlId} OR "Url"."custom" = ${urlId} AND "UrlAnalytics"."visitedAt" >= NOW() - interval '30 days'
@@ -215,14 +225,26 @@ export const getUrlStatsById = async (
         views: stats._count,
       };
     });
+
     response.setHeader('Cache-Control', 'no-cache');
-    response.json({
+
+    await redis.setex(
+      hash,
+      20,
+      JSON.stringify({
+        monthStats: dailyClicks,
+        totalClicks,
+        stats: formatedUrlData,
+      }),
+    );
+
+    return response.json({
       monthStats: dailyClicks,
       totalClicks,
       stats: formatedUrlData,
     });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -233,6 +255,17 @@ export const getUrlDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
+
+    const hash = createHash('sha256')
+      .update(urlId + request.originalUrl)
+      .digest('hex');
+
+    const cache = await redis.get(hash);
+
+    if (cache) {
+      return response.json(JSON.parse(cache || '{}'));
+    }
+
     const urlDetails = await prisma.url.findFirst({
       select: {
         shortUrl: true,
@@ -256,10 +289,13 @@ export const getUrlDetails = async (
         ],
       },
     });
+
+    await redis.setex(hash, 20, JSON.stringify({ details: urlDetails }));
+
     response.setHeader('Cache-Control', 'no-cache');
-    response.json({ details: urlDetails });
+    return response.json({ details: urlDetails });
   } catch (err) {
-    next(err);
+    return next(err);
   }
 };
 
@@ -270,11 +306,12 @@ export const generateCSVFromURLDetails = async (
 ) => {
   try {
     const urlId = request.params.url;
-    let cursor = undefined;
+    let cursor: { visitedAt: Date; id: string } | undefined = undefined;
     const run = true;
     response.setHeader('Content-Type', 'text/csv');
     response.setHeader('Content-Disposition', 'attachment; filename=data.csv');
     response.write('id,country,local_time,referrer,visitedAt,user_agent\n');
+
     while (run) {
       const urlData = await prisma.urlAnalytics.findMany({
         where: {
@@ -308,10 +345,18 @@ export const generateCSVFromURLDetails = async (
       if (urlData.length === 0) {
         break;
       }
-      console.log('haaaaaa', urlData[100 - 1]);
-      const csvRow = urlData.map((row) => {
-        return `${row.country},${row.local_time},${row.referrer},${row.visitedAt},${row.user_agent}\n`;
-      });
+
+      const csvRow = urlData.map(
+        (row: {
+          country: unknown;
+          local_time: unknown;
+          referrer: unknown;
+          visitedAt: unknown;
+          user_agent: unknown;
+        }) => {
+          return `${row.country},${row.local_time},${row.referrer},${row.visitedAt},${row.user_agent}\n`;
+        },
+      );
 
       const isWriteable = response.write(csvRow.join(''));
       if (!isWriteable) {
