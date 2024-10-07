@@ -37,6 +37,7 @@ new Worker(
       orderBy: [{ analytics: { _count: 'desc' } }, { id: 'desc' }],
     });
     const pipeline = redis.pipeline();
+
     data.forEach((url) => {
       pipeline
         .hmset(

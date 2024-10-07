@@ -1,239 +1,241 @@
 .App {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
 }
 
 .heading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: var(--main-darkest-color);
-  height: 5.5308rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--main-darkest-color);
+    height: 5.5308rem;
+    z-index: 999;
 }
 
 .nav-container {
-  display: flex;
-  justify-content: space-around;
-  font-size: var(--font-size-var);
-  padding-left: 3rem;
-  padding-right: 3rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 0.05rem solid var(--main-gray-color);
-  overflow: hidden;
+    display: flex;
+    justify-content: space-around;
+    font-size: var(--font-size-var);
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.05rem solid var(--main-gray-color);
+    overflow: hidden;
 }
 
 .h-container {
-  padding-top: 5.5308rem;
-  overflow: hidden;
-  max-height: 100%;
+    padding-top: 5.5308rem;
+    overflow: hidden;
+    max-height: 100%;
 }
 
 .main-container {
-  display: flex;
-  justify-content: center;
-  padding-top: 5rem;
-  overflow: hidden;
-  gap: 1.5rem;
-  &.__f {
-    text-overflow: ellipsis;
-    max-width: 100%;
-  }
+    display: flex;
+    justify-content: center;
+    padding-top: 5rem;
+    overflow: hidden;
+    gap: 1.5rem;
+    &.__f {
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
 }
 
 .manager-header-container {
-  margin-right: 1rem;
+    margin-right: 1rem;
 }
 
 .profile-header-container {
-  display: flex;
-  max-width: 13rem;
-  max-height: 3rem;
+    display: flex;
+    max-width: 13rem;
+    max-height: 3rem;
 }
 
 .pfp-image-header-container {
-  width: 2.3rem;
-  height: 2.3rem;
-  cursor: pointer;
-  border-radius: 100%;
+    width: 2.3rem;
+    height: 2.3rem;
+    cursor: pointer;
+    border-radius: 100%;
 }
 
 .username-header-container {
-  display: flex;
-  width: 10rem;
-  justify-content: left;
-  align-items: center;
-  padding-left: 0.5rem;
+    display: flex;
+    width: 10rem;
+    justify-content: left;
+    align-items: center;
+    padding-left: 0.5rem;
 }
 
 .username-header-display {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: pointer;
 }
 
 .title {
-  font-size: 2.3rem;
-  margin-top: 0;
-  margin-bottom: 1rem;
-  text-transform: capitalize;
-  font-weight: 400;
+    font-size: 2.3rem;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-transform: capitalize;
+    font-weight: 400;
 }
 
 @keyframes fliker {
-  0% {
-    text-shadow: 0 0 0;
-  }
+    0% {
+        text-shadow: 0 0 0;
+    }
 
-  100% {
-    text-shadow: 0 0 0.4rem var(--main-pink-color);
-  }
+    100% {
+        text-shadow: 0 0 0.4rem var(--main-pink-color);
+    }
 }
 
 .presentation {
-  display: flex;
-  flex-direction: column;
-  max-width: 30rem;
-  padding-bottom: 3rem;
+    display: flex;
+    flex-direction: column;
+    max-width: 30rem;
+    padding-bottom: 3rem;
 }
 
 .main-description {
-  max-width: 35rem;
-  color: var(--main-lgray-color);
-  line-height: 1.6rem;
+    max-width: 35rem;
+    color: var(--main-lgray-color);
+    line-height: 1.6rem;
 }
 
 small {
-  color: var(--main-gray-color);
-  margin-bottom: 1rem;
+    color: var(--main-gray-color);
+    margin-bottom: 1rem;
 }
 
 .img-c-fit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  object-fit: contain;
-  width: 10.7rem;
-  height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    object-fit: contain;
+    width: 10.7rem;
+    height: 100%;
 }
 
 .img-logo {
-  height: 100%;
-  object-fit: contain;
+    height: 100%;
+    object-fit: contain;
 }
 
 .grow-end-c {
-  display: flex;
-  flex: 1 0 auto;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 1rem;
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
 }
 
 .button {
-  border-radius: 0.25rem;
-  height: 2.3rem;
-  padding: 0.5rem 1.6rem;
-  cursor: pointer;
-  text-decoration: none;
-  letter-spacing: 0.05rem;
-  font-size: 1rem;
-  &.__vmc {
-    background-color: var(--main-pink-color);
-    color: var(--main-white-color);
-    border: 1px solid var(--main-pink-color);
-    &:hover {
-      color: var(--main-pink-color);
-      background-color: var(--main-darkest-color);
+    border-radius: 0.25rem;
+    height: 2.3rem;
+    padding: 0.5rem 1.6rem;
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 0.05rem;
+    font-size: 1rem;
+    &.__vmc {
+        background-color: var(--main-pink-color);
+        color: var(--main-white-color);
+        border: 1px solid var(--main-pink-color);
+        &:hover {
+            color: var(--main-pink-color);
+            background-color: var(--main-darkest-color);
+        }
     }
-  }
 
-  &.__vsc {
-    color: var(--main-pink-color);
-    background-color: var(--main-darkest-color);
-    border: 1px solid var(--main-pink-color);
-    &:hover {
-      background-color: var(--main-pink-color);
-      color: var(--main-white-color);
+    &.__vsc {
+        color: var(--main-pink-color);
+        background-color: var(--main-darkest-color);
+        border: 1px solid var(--main-pink-color);
+        &:hover {
+            background-color: var(--main-pink-color);
+            color: var(--main-white-color);
+        }
     }
-  }
 
-  &.__sm {
-    padding: 0.5rem 1.1rem;
-    max-width: 7rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+    &.__sm {
+        padding: 0.5rem 1.1rem;
+        max-width: 7rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
 
-  &:disabled {
-    background-color: var(--main-gray-color) !important;
-  }
+    &:disabled {
+        background-color: var(--main-gray-color) !important;
+    }
 }
 
 .denote {
-  color: var(--main-pink-color);
-  animation: fliker 2s infinite ease-in-out alternate-reverse;
-  &.__c,
-  __c:checked,
-  __c:visited {
-    cursor: pointer;
-    text-decoration: none;
-    padding: 0 0.5rem;
-  }
+    color: var(--main-pink-color);
+    animation: fliker 2s infinite ease-in-out alternate-reverse;
+    &.__c,
+    __c:checked,
+    __c:visited {
+        cursor: pointer;
+        text-decoration: none;
+        padding: 0 0.5rem;
+    }
 }
 
 .rc {
-  position: relative;
+    position: relative;
 }
 
 .shortener-err-div {
-  font-size: 0.8rem;
-  min-height: 1.2rem;
-  color: var(--main-pink-color);
-  max-height: 1.25rem;
-  overflow-y: hidden;
-  overflow-x: auto;
-  text-wrap: nowrap;
+    font-size: 0.8rem;
+    min-height: 1.2rem;
+    color: var(--main-pink-color);
+    max-height: 1.25rem;
+    overflow-y: hidden;
+    overflow-x: auto;
+    text-wrap: nowrap;
 }
 
 .scroller {
-  --scrollbar-color-thumb: hotpink;
-  --scrollbar-color-track: transparent;
-  --scrollbar-width: thin;
-  --scrollbar-width-legacy: 0.3rem;
+    --scrollbar-color-thumb: hotpink;
+    --scrollbar-color-track: transparent;
+    --scrollbar-width: thin;
+    --scrollbar-width-legacy: 0.3rem;
 }
 
 /* Modern browsers with `scrollbar-*` support */
 @supports (scrollbar-width: auto) {
-  .scroller {
-    scrollbar-color: var(--scrollbar-color-thumb) var(--scrollbar-color-track);
-    scrollbar-width: var(--scrollbar-width);
-  }
+    .scroller {
+        scrollbar-color: var(--scrollbar-color-thumb)
+            var(--scrollbar-color-track);
+        scrollbar-width: var(--scrollbar-width);
+    }
 }
 
 /* Legacy browsers with `::-webkit-scrollbar-*` support */
 @supports selector(::-webkit-scrollbar) {
-  .scroller::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-color-thumb);
-  }
-  .scroller::-webkit-scrollbar-track {
-    background: var(--scrollbar-color-track);
-  }
-  .scroller::-webkit-scrollbar {
-    max-width: var(--scrollbar-width-legacy);
-    max-height: var(--scrollbar-width-legacy);
-  }
+    .scroller::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-color-thumb);
+    }
+    .scroller::-webkit-scrollbar-track {
+        background: var(--scrollbar-color-track);
+    }
+    .scroller::-webkit-scrollbar {
+        max-width: var(--scrollbar-width-legacy);
+        max-height: var(--scrollbar-width-legacy);
+    }
 }
 
 .footer-container {
-  background-color: var(--main-darkest-color);
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  /*
+    background-color: var(--main-darkest-color);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    /*
     margin-top: 0
   */
 }

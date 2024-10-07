@@ -23,7 +23,6 @@ function Stats() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const dataParam = params.get("url");
 
   useEffect(() => {

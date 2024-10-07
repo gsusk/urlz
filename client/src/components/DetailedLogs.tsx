@@ -1,5 +1,5 @@
 import UAParser from "ua-parser-js";
-import { useRef } from "react";
+import { memo, useRef } from "react";
 import client from "../services/axios";
 
 export type LogsPropType = {
@@ -13,7 +13,10 @@ export type LogsPropType = {
 };
 
 // const logData = useMemo(() => {
-function DetailedLogs({ details, url }: LogsPropType) {
+const DetailedLogs = memo(function DetailedLogs({
+  details,
+  url,
+}: LogsPropType) {
   const ref = useRef<HTMLAnchorElement>(null);
   const handleClick = () => {
     client
@@ -83,6 +86,6 @@ function DetailedLogs({ details, url }: LogsPropType) {
       </div>
     </div>
   );
-}
+});
 
 export default DetailedLogs;
