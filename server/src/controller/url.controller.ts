@@ -97,7 +97,8 @@ export const redirectUrl = async (
   next: NextFunction,
 ) => {
   try {
-    const { url } = request.params;
+    //to finish
+    const { url } = request.params!;
     const ipdata = response.locals;
     const referrer = request.get('Referer');
     const user_agent = request.get('user-agent');
